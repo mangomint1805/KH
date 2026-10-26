@@ -7,7 +7,7 @@
       'Nhạc mới: nhạc phòng chờ vui hơn, nhạc lúc trả lời dồn dập và nhanh dần ở 5 giây cuối, trống dồn trước bục vinh danh.',
       'Bảng xếp hạng có hiệu ứng đổi chỗ, điểm đếm tăng dần, mũi tên cho bạn vừa lên hạng.',
       'Điện thoại học sinh: nền xanh khi đúng, đỏ khi sai, hiện "kém bạn phía trên bao nhiêu điểm", pháo giấy khi lên bục.',
-      'Mạng yếu: điện thoại báo "Đang gửi…" và tự gửi lại khi chập chờn, tự vẽ lại màn hình khi có mạng hay mở lại màn hình; máy thầy mất mạng thì hiện thanh đỏ và tạm dừng.'
+      'Mạng yếu: điện thoại báo "Đang gửi…" và tự gửi lại khi chập chờn, điểm tốc độ tính theo lúc bấm nên mạng chậm vài giây không bị trừ điểm, tự vẽ lại màn hình khi có mạng hay mở lại màn hình; máy thầy mất mạng thì hiện thanh đỏ và tạm dừng.'
     ] },
     { v: '1.0', d: '2026-10-26', items: [
       'Ra mắt Minto Quiz: trò chơi trắc nghiệm trực tiếp trên lớp kiểu Kahoot, miễn phí.',
