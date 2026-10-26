@@ -262,3 +262,4 @@ body.play.st-no { background: linear-gradient(160deg, #a11a1a, #d13b3b); }
 .flame { display: inline-block; animation: bob 1s ease-in-out infinite; }
 .play #fx { position: fixed; inset: 0; pointer-events: none; z-index: 30; }
 .play .toast { background: #b0453a; }
+.vibe { text-align: center; color: #fff; font: 700 clamp(20px, 2.4vw, 32px)/1.2 "IBM Plex Sans", sans-serif; text-shadow: 0 2px 0 rgba(0,0,0,.25); animation: tilein .5s cubic-bezier(.2,1.4,.4,1) both; }
