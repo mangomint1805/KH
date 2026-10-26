@@ -1,0 +1,5 @@
+test/emu/database.rules.json
+test/emu/firestore.rules
+test/emu/*.log
+test/emu/.firebase/
+node_modules/

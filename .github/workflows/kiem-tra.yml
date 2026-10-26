@@ -1,0 +1,21 @@
+name: Kiểm tra
+on: [push, pull_request]
+jobs:
+  kiem-tra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Cú pháp JavaScript
+        run: |
+          for f in js/parse.js cap-nhat.js test/*.js; do node --check "$f"; done
+          for f in js/common.js js/host.js js/play.js js/admin.js; do node --input-type=module --check < "$f"; done
+      - name: Luật Firebase là JSON hợp lệ
+        run: node -e "JSON.parse(require('fs').readFileSync('firebase/database.rules.quiz.json','utf8'))"
+      - name: Đoạn luật để dán khớp với file luật gốc
+        run: node test/build-rules.js && git diff --exit-code firebase/dan-vao-rtdb.txt
+      - name: Bộ đọc câu hỏi
+        run: node test/parse.test.js
+      - name: Không lộ email trong code chạy trên trình duyệt
+        run: "! grep -n 'quangkhunpro' js/*.js *.html cap-nhat.js"
