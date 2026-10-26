@@ -118,6 +118,12 @@ function check(ok, msg) { console.log(ok ? '  ✔' : '  ✘', msg); if (!ok) fai
   for (let q = 0; q < 12; q++) {
     const ps = [P1, P2, P3].concat(P4 ? [P4] : []);
     await Promise.all(ps.map((p) => p.waitForSelector('#sAns:not([hidden]) .pbtn', { timeout: 20000 })));
+    if (q === 1) {
+      const early = await cheat(P1, "const st=(await P.D.get(P.D.ref(P.db,'quiz/'+arg.pin+'/state'))).val(); await P.D.set(P.D.ref(P.db,'quiz/'+arg.pin+'/answers/1/'+P.uid),{a:0,at:st.startAt-3000}); return 'ok'", pinArg);
+      check(/ERR/.test(early), 'không khai được giờ bấm trước lúc mở câu');
+      const back = await cheat(P1, "await P.D.set(P.D.ref(P.db,'quiz/'+arg.pin+'/answers/1/'+P.uid),{a:0,at:Date.now()-4000}); return 'ok'", pinArg);
+      check(/ERR/.test(back), 'không lùi giờ bấm về trước lúc mở câu (bấm ngay khi vừa mở)');
+    }
     if (q === 0 && process.env.SHOTS) { await host.screenshot({ path: process.env.SHOTS + '/host-question.png' }); await P1.screenshot({ path: process.env.SHOTS + '/phone-answer.png' }); }
     if (q === 2) { // tải lại trang giữa câu
       await P3.reload(); await P3.waitForSelector('#sAns:not([hidden]) .pbtn', { timeout: 20000 });
