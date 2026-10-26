@@ -305,7 +305,7 @@ function boardView(q) {
     '<div class="lead">' + (lead && res.list.length > 1 ? esc(lead.name) + ' đang dẫn đầu' + (lead.k >= 2 ? ' với chuỗi 🔥' + lead.k : '') : '') + '</div>' +
     '<div class="board2" id="bd" style="height:' + (Math.max(1, top.length) * H) + 'px">' +
     (top.length ? top.map((x) => {
-      const it = x.q[q] || {}, up = prevRank[x.uid] - res.list.indexOf(x);
+      const it = x.q[q] || {}, up = q > 0 ? prevRank[x.uid] - res.list.indexOf(x) : 0;
       return '<div class="r' + (x.r === 1 ? ' first' : '') + '" data-u="' + esc(x.uid) + '" style="top:' + (startOrder.indexOf(x.uid) * H) + 'px"><span class="rk">' + x.r + '</span><span class="nm">' + esc(x.name) + '</span>' +
         (it.pts ? '<span class="up">+' + it.pts + '</span>' : '') + (x.k >= 2 ? '<span class="up">🔥' + x.k + '</span>' : '') + '<span class="mv">' + (up > 0 ? '▲' + up : '') + '</span><span class="sc" data-from="' + (x.s - (it.pts || 0)) + '" data-to="' + x.s + '">' + (x.s - (it.pts || 0)) + '</span></div>';
     }).join('') : '<p class="muted" style="text-align:center">Chưa có ai.</p>') +
