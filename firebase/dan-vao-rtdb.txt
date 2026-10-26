@@ -158,7 +158,7 @@
                 ".validate": "newData.isNumber() && (newData.val() == 0 || newData.val() == 1 || newData.val() == 2 || newData.val() == 3)"
               },
               "at": {
-                ".validate": "newData.isNumber() && newData.val() <= now && newData.val() >= now - 5000"
+                ".validate": "newData.isNumber() && newData.val() <= now && newData.val() >= now - 5000 && newData.val() >= root.child('quiz/' + $pin + '/state/startAt').val() - 1000"
               },
               "$other": {
                 ".validate": false
