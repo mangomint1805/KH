@@ -201,6 +201,7 @@ body.host, body.play { background: linear-gradient(160deg, var(--bg1), var(--bg2
 @keyframes tilein { from { transform: translateY(30px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
 .hopt .shape { font-size: 1.15em; }
 .hopt.win { animation: winpulse 1.1s ease-in-out infinite; }
+.hopt.dim { animation: none; opacity: .28; transform: scale(.97); }
 @keyframes winpulse { 50% { transform: scale(1.03); box-shadow: 0 6px 0 rgba(0,0,0,.22), 0 0 0 6px rgba(255,255,255,.6); } }
 .timesup { font: 800 clamp(64px, 11vw, 150px)/1 "IBM Plex Sans", sans-serif; animation: shake .6s ease both; }
 @keyframes shake { 0% { transform: scale(2); opacity: 0; } 40% { transform: scale(1); opacity: 1; } 55% { transform: rotate(-4deg); } 70% { transform: rotate(4deg); } 85% { transform: rotate(-2deg); } 100% { transform: none; } }
