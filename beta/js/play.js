@@ -119,7 +119,7 @@ async function draw() {
   if (st.phase === 'lobby' || !st.phase) return msg('🎉', 'Bạn đã vào phòng!', 'Thấy tên mình trên màn chiếu chưa? Chờ thầy bắt đầu nhé.');
   if (st.phase === 'end') {
     const rk = score && score.r;
-    msg(rk === 1 ? '🏆' : rk === 2 ? '🥈' : rk === 3 ? '🥉' : '🎯', rk && rk <= 3 ? 'Bạn lên bục vinh danh!' : 'Kết thúc!', (score ? 'Bạn được ' + score.s + ' điểm' + (rk ? ', hạng ' + rk + '/' + score.n : '') : 'Cảm ơn bạn đã chơi!') + '.');
+    msg(rk === 1 ? '🏆' : rk === 2 ? '🥈' : rk === 3 ? '🥉' : '🎯', rk === 1 ? 'Quán quân!' : rk && rk <= 3 ? 'Bạn lên bục vinh danh!' : 'Kết thúc!', (score ? 'Bạn được ' + score.s + ' điểm' + (rk ? ', hạng ' + rk + '/' + score.n : '') : 'Cảm ơn bạn đã chơi!') + '.');
     if (rk && rk <= 3 && !endFx) { endFx = 1; setTimeout(() => confetti($('fx'), 6000), 2400); }
     return;
   }
@@ -174,8 +174,16 @@ async function pick(q, i) {
   clearInterval(tmr);
   sending = 1; waiting(i);
   const slow = setTimeout(() => sendSt('Mạng yếu, đang gửi lại…'), 2500);
-  try { await P.D.set(r('answers/' + q + '/' + P.uid), { a: i, at: P.D.serverTimestamp() }); sending = 0; sendSt('✓ Đã gửi'); }
+  // Ghi giờ bấm (giờ máy chủ ước lượng) để mạng chậm dưới 5 giây không bị trừ điểm tốc độ;
+  // nếu tới quá muộn, luật sẽ từ chối và mình gửi lại bằng giờ máy chủ.
+  const tap = Math.round(now()) - 100, ref = r('answers/' + q + '/' + P.uid);
+  try {
+    try { await P.D.set(ref, { a: i, at: tap }); }
+    catch (e1) { const s0 = await P.D.get(ref).catch(() => null); if (s0 && s0.exists()) throw 0; await P.D.set(ref, { a: i, at: P.D.serverTimestamp() }); }
+    sending = 0; sendSt('✓ Đã gửi');
+  }
   catch (e) {
+    if (e === 0) { sending = 0; sendSt('✓ Đã gửi'); clearTimeout(slow); return; }
     sending = 0;
     // có thể đã gửi rồi (mạng chập chờn) — kiểm tra lại
     delete mine[q];
