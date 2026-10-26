@@ -277,9 +277,9 @@ async function goReveal(q) {
 
 // Lời thầy trên màn chiếu (sửa được qua form lời nhắn)
 const HL = {
-  allOk: ['Cả lớp đúng hết luôn, tự hào ghê 🥹', '100% đúng, quá đỉnh 💯'],
-  allNo: ['Cả lớp sai hết vậy đó hả 😭', 'Ủa cả lớp?? Câu này thầy giảng lại nha 😭'],
-  lastQ: ['Câu cuối cùng rồi nè 🔥', 'Câu cuối, lật kèo là ở đây 😤'],
+  allOk: ['Cả lớp đúng hết luôn, tự hào ghê 🥹', '100% đúng, quá đỉnh 💯', 'Everyone got it! 🥹', 'Perfect score, class! 💯'],
+  allNo: ['Cả lớp sai hết vậy đó hả 😭', 'Ủa cả lớp?? Câu này thầy giảng lại nha 😭', 'Houston, we have a problem 😭', 'Everyone missed it?? 😭'],
+  lastQ: ['Câu cuối cùng rồi nè 🔥', 'Câu cuối, lật kèo là ở đây 😤', 'Final question! 🔥'],
 };
 const hsay = (arr, seed) => arr[String(seed).split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 9973, 7) % arr.length];
 function revealView(q) {

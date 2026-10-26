@@ -13,22 +13,22 @@ function bg(c) { document.body.classList.remove('st-ok', 'st-no'); if (c) docume
 // Lời thầy nói: chọn ngẫu nhiên nhưng cố định theo hạt giống, vẽ lại màn hình không bị nhảy chữ
 function say(arr, seed) { let h = 7; String(seed) .split('').forEach((c) => { h = (h * 31 + c.charCodeAt(0)) % 9973; }); return arr[h % arr.length]; }
 const L = {
-  ok: ['Đỉnh nóc kịch trần! 🔥', 'Ngon nha 😎', 'Out trình luôn á 🤯', 'Chuẩn không cần chỉnh ✨', 'Mãi đỉnh 💯', 'Ghê vậy sao 😳'],
-  fast: ['Nhanh như chớp luôn á ⚡', 'Tay nhanh hơn não 😳⚡', 'Vận tốc ánh sáng 🏎️', 'The early bird gets the worm 🐦'],
-  slow: ['Chậm mà chắc 🐢', 'Đúng rồi nhưng lần sau bấm lẹ hơn xíu nha 😝', 'Từ từ cũng tới nha 🐢'],
-  back: ['Gỡ lại rồi nè 😤', 'Comeback mạnh mẽ 💪', 'Biết ngay mà, sai một lần thôi 😎'],
-  no: ['Toang rồi em ơi 😭', 'Ủa alo?? 😭', 'Hụt mất tiêu 🥲', 'Ét o ét 🆘', 'U là trời 😭', 'Suýt nữa thui 🥲', 'Là cái gì nữa? 🤨', 'Hả? 😧', 'Học rồi mà???? 😤📚', 'Khóc rùi nè 😭'],
-  broken: ['Chuỗi đứt rồi 💔', 'Ủa sao rớt chuỗi vậy nè 😭', 'Đang ngon mà 💔'],
-  noSub: ['Khum sao, câu sau gỡ lại nha 💪', 'Ghi nhớ để lần sau hổng sai nữa nha 📝', 'Bình tĩnh, còn nhiều câu mà 😤'],
-  late: ['Ủa em đi đâu dzậy 😭', 'Ngủ quên hả 😴', 'Bấm đi chứ ơi 😭', 'Do somethingggg 🫵', 'Ground control to Major Tom? 👨‍🚀'],
-  streak: ['nóng quá trời', 'ai cản nổi nữa 😤', 'Godlike ⚡👑', 'Can\'t touch this 🕺', 'Ước gì bớt đẳng cấp một chút để sống hoà đồng thì tốt biết bao 😮‍💨✨', 'Woah woah woah 🗣️', 'Có được phép không cả lớp???? 🫨'],
-  chosen: ['Chốt đơn! ✅', 'Chốt rồi nha ✅', 'Bấm rồi, hông đổi được nữa nha 😝'],
-  wait: ['Chờ các bạn khác xíu nha…', 'Hồi hộp quá trời 🫣', 'Ngồi im chờ kết quả nha 🙏', 'Chờ chíu... hổng ai nhanh như em đâu! 😏'],
-  up: ['gét gô 🚀', 'cố lên nha 💪', 'rượt theo liền 🏃', 'lật kèo được nè 😤'],
-  rankUp: ['📈 Lên {len} hạng nè!', '🚀 Vượt lên {len} hạng luôn!'],
-  rankDown: ['😱 Bị vượt mặt rồi!', '📉 Tụt hạng rồi nè!'],
-  newTop: ['👑 Soán ngôi top 1 rồi nè!', '👑 Lên top 1 rồi, ai chơi lại 😤'],
-  last: ['Câu cuối rồi nè, quẩy hết mình nha 🔥', 'Câu cuối, lật kèo là ở đây nè 😤'],
+  ok: ['Đỉnh nóc kịch trần! 🔥', 'Ngon nha 😎', 'Out trình luôn á 🤯', 'Chuẩn không cần chỉnh ✨', 'Mãi đỉnh 💯', 'Ghê vậy sao 😳', 'Nailed it! 🎯', 'You got it! 🙌', 'Spot on! ✨', 'Big brain moment 🧠'],
+  fast: ['Nhanh như chớp luôn á ⚡', 'Tay nhanh hơn não 😳⚡', 'Vận tốc ánh sáng 🏎️', 'The early bird gets the worm 🐦', 'Speed demon! 💨', 'Faster than light! ⚡'],
+  slow: ['Chậm mà chắc 🐢', 'Đúng rồi nhưng lần sau bấm lẹ hơn xíu nha 😝', 'Từ từ cũng tới nha 🐢', 'Slow and steady wins the race 🐢', 'Better late than never 😅'],
+  back: ['Gỡ lại rồi nè 😤', 'Comeback mạnh mẽ 💪', 'Biết ngay mà, sai một lần thôi 😎', 'Welcome back! 😎', 'That\'s the spirit! 💪'],
+  no: ['Toang rồi em ơi 😭', 'Ủa alo?? 😭', 'Hụt mất tiêu 🥲', 'Ét o ét 🆘', 'U là trời 😭', 'Suýt nữa thui 🥲', 'Là cái gì nữa? 🤨', 'Hả? 😧', 'Học rồi mà???? 😤📚', 'Khóc rùi nè 😭', 'Oops! 🙈', 'Nope 🙅', 'So close! 🤏', 'Not quite 😬'],
+  broken: ['Chuỗi đứt rồi 💔', 'Ủa sao rớt chuỗi vậy nè 😭', 'Đang ngon mà 💔', 'Combo breaker! 💔', 'Noooo, the streak! 😭'],
+  noSub: ['Khum sao, câu sau gỡ lại nha 💪', 'Ghi nhớ để lần sau hổng sai nữa nha 📝', 'Bình tĩnh, còn nhiều câu mà 😤', 'Don\'t give up! 💪', 'You\'ll get it next time 🍀'],
+  late: ['Ủa em đi đâu dzậy 😭', 'Ngủ quên hả 😴', 'Bấm đi chứ ơi 😭', 'Do somethingggg 🫵', 'Ground control to Major Tom? 👨‍🚀', 'Hello? Anybody home? 👀', 'Time flies ⏰'],
+  streak: ['nóng quá trời', 'ai cản nổi nữa 😤', 'Godlike ⚡👑', 'Can\'t touch this 🕺', 'Ước gì bớt đẳng cấp một chút để sống hoà đồng thì tốt biết bao 😮‍💨✨', 'Woah woah woah 🗣️', 'Có được phép không cả lớp???? 🫨', 'On fire! 🔥', 'Unstoppable! 🚀', 'Hat trick! 🎩'],
+  chosen: ['Chốt đơn! ✅', 'Chốt rồi nha ✅', 'Bấm rồi, hông đổi được nữa nha 😝', 'Final answer! ✅', 'Locked in! 🔒'],
+  wait: ['Chờ các bạn khác xíu nha…', 'Hồi hộp quá trời 🫣', 'Ngồi im chờ kết quả nha 🙏', 'Chờ chíu... hổng ai nhanh như em đâu! 😏', 'Fingers crossed 🤞', 'Stay tuned 👀'],
+  up: ['gét gô 🚀', 'cố lên nha 💪', 'rượt theo liền 🏃', 'lật kèo được nè 😤', 'let\'s go! 🚀', 'catch up! 🏃'],
+  rankUp: ['📈 Lên {len} hạng nè!', '🚀 Vượt lên {len} hạng luôn!', '📈 Level up! +{len}'],
+  rankDown: ['😱 Bị vượt mặt rồi!', '📉 Tụt hạng rồi nè!', '😱 Someone just passed you!'],
+  newTop: ['👑 Soán ngôi top 1 rồi nè!', '👑 Lên top 1 rồi, ai chơi lại 😤', '👑 New champion!'],
+  last: ['Câu cuối rồi nè, quẩy hết mình nha 🔥', 'Câu cuối, lật kèo là ở đây nè 😤', 'Final question! Give it all you got 🔥'],
 };
 function msg(ic, t, s, q) {
   bg(''); show('sMsg'); $('sMsg').querySelectorAll('.x').forEach((e) => e.remove()); $('mIc').textContent = ic || ''; $('mT').textContent = t || ''; $('mS').textContent = s || '';
