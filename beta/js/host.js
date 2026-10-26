@@ -198,7 +198,7 @@ async function goShow(q) {
   } catch (e) { return fail(e); }
   state = { phase: 'show', q };
   Sound.mode(null); Sound.whoosh();
-  main.innerHTML = qHead(q) + '<div class="qbanner">Câu ' + (q + 1) + ' / ' + quiz.qs.length + '</div><div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + esc(Q.t) + '</div>' +
+  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div><div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + esc(Q.t) + '</div>' +
     (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
     '<div class="prog"><i id="pg"></i></div>';
   requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
@@ -275,11 +275,19 @@ async function goReveal(q) {
   revealView(q);
 }
 
+// Lời thầy trên màn chiếu (sửa được qua form lời nhắn)
+const HL = {
+  allOk: ['Cả lớp đúng hết luôn, tự hào ghê 🥹', '100% đúng, quá đỉnh 💯'],
+  allNo: ['Cả lớp sai hết vậy đó hả 😭', 'Ủa cả lớp?? Câu này thầy giảng lại nha 😭'],
+  lastQ: ['Câu cuối cùng rồi nè 🔥', 'Câu cuối, lật kèo là ở đây 😤'],
+};
+const hsay = (arr, seed) => arr[String(seed).split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 9973, 7) % arr.length];
 function revealView(q) {
   const Q = quiz.qs[q], a = answers[q] || {}, cnt = [0, 0, 0, 0];
   Object.keys(a).forEach((k) => { if (players[k] && a[k] && cnt[a[k].a] != null) cnt[a[k].a]++; });
-  const mx = Math.max(1, ...cnt);
-  main.innerHTML = qHead(q) + '<div class="qtext">' + esc(Q.t) + '</div>' +
+  const mx = Math.max(1, ...cnt), tot = cnt.reduce((x, y) => x + y, 0), right = Q.c.reduce((x, i) => x + (cnt[i] || 0), 0);
+  const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
+  main.innerHTML = qHead(q) + '<div class="qtext">' + esc(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' +
     '<div style="text-align:right"><button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';

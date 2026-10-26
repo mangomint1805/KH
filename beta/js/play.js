@@ -13,14 +13,22 @@ function bg(c) { document.body.classList.remove('st-ok', 'st-no'); if (c) docume
 // Lời thầy nói: chọn ngẫu nhiên nhưng cố định theo hạt giống, vẽ lại màn hình không bị nhảy chữ
 function say(arr, seed) { let h = 7; String(seed) .split('').forEach((c) => { h = (h * 31 + c.charCodeAt(0)) % 9973; }); return arr[h % arr.length]; }
 const L = {
-  ok: ['Đỉnh nóc kịch trần! 🔥', 'Keo lì tái châu 😎', 'Out trình luôn á 🤯', 'Chuẩn không cần chỉnh ✨', 'Mãi đỉnh 💯', 'Ghê dữ thần 😳'],
-  fast: ['Nhanh như chớp luôn á ⚡', 'Tay nhanh hơn não 😳⚡', 'Bấm lẹ dữ vậy em 🏎️'],
-  no: ['Toang rồi em ơi 😭', 'Ủa alo?? 😭', 'Hụt mất tiêu 🥲', 'Ét o ét 🆘', 'U là trời 😭', 'Suýt nữa thui 🥲'],
+  ok: ['Đỉnh nóc kịch trần! 🔥', 'Ngon nha 😎', 'Out trình luôn á 🤯', 'Chuẩn không cần chỉnh ✨', 'Mãi đỉnh 💯', 'Ghê vậy sao 😳', 'Woah woah woah 🗣️', 'Có được phép không cả lớp????'],
+  fast: ['Nhanh như chớp luôn á ⚡', 'Tay nhanh hơn não 😳⚡', 'Vận tốc ánh sáng 🏎️', 'The early bird gets the worm 🐦'],
+  slow: ['Chậm mà chắc 🐢', 'Đúng rồi nhưng lần sau bấm lẹ hơn xíu nha 😝', 'Từ từ cũng tới nha 🐢'],
+  back: ['Gỡ lại rồi nè 😤', 'Comeback mạnh mẽ 💪', 'Biết ngay mà, sai một lần thôi 😎'],
+  no: ['Toang rồi em ơi 😭', 'Ủa alo?? 😭', 'Hụt mất tiêu 🥲', 'Ét o ét 🆘', 'U là trời 😭', 'Suýt nữa thui 🥲', 'Là cái gì nữa?', 'Hả?', 'Học rồi mà????', 'Khóc rùi nè'],
+  broken: ['Chuỗi đứt rồi 💔', 'Ủa sao rớt chuỗi vậy nè 😭', 'Đang ngon mà 💔'],
   noSub: ['Khum sao, câu sau gỡ lại nha 💪', 'Ghi nhớ để lần sau hổng sai nữa nha 📝', 'Bình tĩnh, còn nhiều câu mà 😤'],
-  late: ['Ủa em đi đâu dzậy 😭', 'Ngủ quên hả em 😴', 'Bấm đi chứ em ơi 😭'],
+  late: ['Ủa em đi đâu dzậy 😭', 'Ngủ quên hả 😴', 'Bấm đi chứ ơi 😭', 'Do somethingggg', 'Ground control to Major Tom?'],
+  streak: ['nóng quá trời', 'ai cản nổi nữa 😤', 'Godlike', 'Can\'t touch this', 'Ước gì bớt đẳng cấp một chút để sống hoà đồng thì tốt biết bao'],
   chosen: ['Chốt đơn! ✅', 'Chốt rồi nha ✅', 'Bấm rồi, hông đổi được nữa nha 😝'],
-  wait: ['Chờ các bạn khác xíu nha…', 'Hồi hộp quá trời 🫣', 'Ngồi im chờ kết quả nha 🙏'],
+  wait: ['Chờ các bạn khác xíu nha…', 'Hồi hộp quá trời 🫣', 'Ngồi im chờ kết quả nha 🙏', 'Chờ chíu... hổng ai nhanh như em đâu!'],
   up: ['gét gô 🚀', 'cố lên nha 💪', 'rượt theo liền 🏃', 'lật kèo được nè 😤'],
+  rankUp: ['📈 Lên {len} hạng nè!', '🚀 Vượt lên {len} hạng luôn!'],
+  rankDown: ['😱 Bị vượt mặt rồi!', '📉 Tụt hạng rồi nè!'],
+  newTop: ['👑 Soán ngôi top 1 rồi nè!', '👑 Lên top 1 rồi, ai chơi lại 😤'],
+  last: ['Câu cuối rồi nè, quẩy hết mình nha 🔥', 'Câu cuối, lật kèo là ở đây nè 😤'],
 };
 function msg(ic, t, s, q) {
   bg(''); show('sMsg'); $('sMsg').querySelectorAll('.x').forEach((e) => e.remove()); $('mIc').textContent = ic || ''; $('mT').textContent = t || ''; $('mS').textContent = s || '';
@@ -138,7 +146,7 @@ async function draw() {
   const Q = await getQ(q); if (my !== seq) return;
   if (!Q) return msg('⏳', 'Câu ' + (q + 1) + '/' + n, 'Đang tải câu hỏi…');
   if (st.phase === 'show') {
-    msg('👀', 'Câu ' + (q + 1) + '/' + n, 'Nhìn lên bảng nè, chuẩn bị bấm nha 👀', Q.t);
+    msg('👀', 'Câu ' + (q + 1) + '/' + n, q + 1 === n && n > 1 ? say(L.last, PIN) : 'Nhìn lên bảng nè, chuẩn bị bấm nha 👀', Q.t);
     $('mS').insertAdjacentHTML('afterend', '<div class="loadbar x" id="lb"><i></i></div>');
     return;
   }
@@ -206,30 +214,40 @@ async function pick(q, i) {
 }
 
 let shownRes = '';
+// nhớ kết quả từng câu trong phiên để biết câu trước đúng hay sai, chuỗi và hạng câu trước
+function hist() { try { return JSON.parse(SS.get('qz.h.' + PIN) || '{}'); } catch (e) { return {}; } }
+function remember(q) { const h = hist(); h[q] = { ok: !!score.ok, k: score.k || 0, r: score.r || 0 }; SS.set('qz.h.' + PIN, JSON.stringify(h)); }
 function result(q, Q, a) {
   show('sRes');
   const ok = score.ok, box = $('rBox'), key = q + ':' + score.s;
   bg(ok ? 'st-ok' : 'st-no');
   box.className = 'res ' + (ok ? 'ok' : 'no');
+  const sd = q + (P && P.uid || ''), pv = hist()[q - 1];
+  remember(q);
   let h;
-  const sd = q + (P && P.uid || '');
   if (a == null) h = '<div class="ic">⌛</div><h2>' + say(L.late, sd) + '</h2><div>Câu này em chưa chọn đáp án nè</div>';
-  else if (ok) h = '<div class="ic">✔</div><h2>' + say(score.p >= 900 ? L.fast : L.ok, sd) + '</h2>' + (score.p ? '<div class="pts">+<span id="rp">' + score.p + '</span></div>' : '<div>Câu này hông tính điểm nha</div>');
-  else h = '<div class="ic">✘</div><h2>' + say(L.no, sd) + '</h2><div>Đáp án đúng là <b>' + esc((score.c || []).map((x) => LETTERS[x]).join(', ')) + '</b> nè. ' + say(L.noSub, sd + 'n') + '</div>';
-  if (score.k >= 2) h += '<div style="margin-top:10px;font-weight:600"><span class="flame">🔥</span> Chuỗi ' + score.k + ' câu đúng' + (score.b ? ' (+' + score.b + ')' : '') + (score.k >= 4 ? ', ai cản nổi nữa 😤' : ', nóng quá trời') + '</div>';
+  else if (ok) {
+    const t = pv && !pv.ok ? L.back : score.p >= 900 * (Q.pts || 1) ? L.fast : score.p && score.p < 600 * (Q.pts || 1) ? L.slow : L.ok;
+    h = '<div class="ic">✔</div><h2>' + say(t, sd) + '</h2>' + (score.p ? '<div class="pts">+<span id="rp">' + score.p + '</span></div>' : '<div>Câu này hông tính điểm nha</div>');
+  } else h = '<div class="ic">✘</div><h2>' + say(pv && pv.k >= 3 ? L.broken : L.no, sd) + '</h2><div>Đáp án đúng là <b>' + esc((score.c || []).map((x) => LETTERS[x]).join(', ')) + '</b> nè. ' + say(L.noSub, sd + 'n') + '</div>';
+  if (score.k >= 2) h += '<div style="margin-top:10px;font-weight:600"><span class="flame">🔥</span> Chuỗi ' + score.k + ' câu đúng' + (score.b ? ' (+' + score.b + ')' : '') + ', ' + say(L.streak, sd + 'k') + '</div>';
   box.innerHTML = h;
   const fresh = shownRes !== key; shownRes = key;
   if (fresh) { countUp($('rp'), 0, score.p || 0, 700); countUp($('rScore'), Math.max(0, score.s - (score.p || 0)), score.s, 900); try { navigator.vibrate && navigator.vibrate(ok ? [40, 60, 40] : 200); } catch (e) {} }
   else $('rScore').textContent = score.s;
   $('rRank').textContent = score.r ? score.r + '/' + score.n : '–';
-  rankMsg(q);
+  rankMsg(q, pv);
 }
-// "Bạn đang hạng 2, kém An 120 điểm" — đọc điểm cả lớp (luật cho phép người trong phòng đọc scores)
+// "Em đang hạng 2, chỉ kém An 120 điểm" — đọc điểm cả lớp (luật cho phép người trong phòng đọc scores)
 let rankQ = -1;
-async function rankMsg(q) {
+async function rankMsg(q, pv) {
   const el = $('rMsg'); if (!el) return;
   if (!score || !score.r) { el.hidden = true; return; }
-  if (score.r === 1) { el.hidden = false; el.textContent = score.n > 1 ? '👑 Em đang top 1 nè, giữ vững phong độ nha!' : '👑 Em đang top 1 nè!'; return; }
+  const sd = q + (P && P.uid || '');
+  let pre = '';
+  if (pv && pv.r && score.r < pv.r) pre = (score.r === 1 ? say(L.newTop, sd) : say(L.rankUp, sd).replace('{len}', pv.r - score.r)) + ' ';
+  else if (pv && pv.r && score.r > pv.r) pre = say(L.rankDown, sd) + ' ';
+  if (score.r === 1) { el.hidden = false; el.textContent = pre && score.n > 1 ? pre.trim() : score.n > 1 ? '👑 Em đang top 1 nè, giữ vững phong độ nha!' : '👑 Em đang top 1 nè!'; return; }
   if (rankQ === q && el.textContent) { el.hidden = false; return; }
   rankQ = q;
   try {
@@ -238,8 +256,8 @@ async function rankMsg(q) {
     let best = null;
     Object.keys(S).forEach((u) => { const x = S[u]; if (u !== P.uid && x && x.s > score.s && (!best || x.s < best.s)) best = { s: x.s, name: (N[u] && N[u].name) || 'bạn phía trên' }; });
     el.hidden = false;
-    el.textContent = best ? 'Em đang hạng ' + score.r + ', chỉ kém ' + best.name + ' ' + (best.s - score.s) + ' điểm thui, ' + say(L.up, q + best.name) : 'Em đang hạng ' + score.r + ' nè.';
-  } catch (e) { el.hidden = false; el.textContent = 'Em đang hạng ' + score.r + ' nè.'; }
+    el.textContent = pre + (best ? 'Em đang hạng ' + score.r + ', chỉ kém ' + best.name + ' ' + (best.s - score.s) + ' điểm thui, ' + say(L.up, q + best.name) : 'Em đang hạng ' + score.r + ' nè.');
+  } catch (e) { el.hidden = false; el.textContent = pre + 'Em đang hạng ' + score.r + ' nè.'; }
 }
 
 // điện thoại tắt màn hình rồi mở lại: vẽ lại ngay
