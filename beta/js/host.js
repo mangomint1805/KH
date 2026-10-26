@@ -362,7 +362,10 @@ function compute() {
     const K = keys[q]; if (!K) return;
     const a = answers[q] || {};
     ids.forEach((uid) => {
-      const x = by[uid], an = a[uid];
+      const x = by[uid];
+      let an = a[uid];
+      // giờ bấm sớm hơn lúc mở câu là khai gian (luật đã chặn, đây là lớp chặn thứ hai): không tính
+      if (an && an.at < K.s - 1500) an = null;
       const ok = !!(an && K.c.includes(an.a));
       const ms = an ? an.at - K.s : null;
       let pts = points(ok, ms, Q.time, Q.pts), b = 0;
