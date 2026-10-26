@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.2', d: '2026-10-26', items: [
+      'Lịch sử kết quả: chơi xong mỗi ván, bảng điểm tự lưu lại. Mở từ nút "📒 Lịch sử kết quả" trên trang bộ câu hỏi để xem lại từng buổi, tải CSV hoặc xoá buổi.',
+      'Cộng dồn điểm nhiều buổi theo tên học sinh: chọn các buổi muốn cộng, xem tổng điểm, số lần top 1, top 3, số câu đúng. Tên gõ khác dấu hay chữ hoa vẫn được gộp; bạn nào gõ khác hẳn thì tick rồi bấm Gộp.',
+      'Chống gian lận: điện thoại không khai được giờ bấm sớm hơn lúc mở câu để lấy đủ điểm tốc độ.'
+    ] },
     { v: '1.1', d: '2026-10-26', items: [
       'Giao diện giống Kahoot hơn: nền tím có hình trôi, đếm ngược 3–2–1 trước câu đầu, chữ "Hết giờ!", ô đáp án đúng nhấp nháy, cột biểu đồ mọc lên.',
       'Nhạc mới: nhạc phòng chờ vui hơn, nhạc lúc trả lời dồn dập và nhanh dần ở 5 giây cuối, trống dồn trước bục vinh danh.',
