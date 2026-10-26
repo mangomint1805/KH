@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#faf8f4">
+<title>Minto Quiz</title>
+<link rel="icon" type="image/png" href="/fav-64.png?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/quiz.css?v=1">
+</head>
+<body class="play">
+  <div class="top"><span class="serif" style="color:var(--brand-ink)">Minto Quiz</span><span id="who"></span></div>
+  <div id="net" class="toast" hidden>Mất kết nối… đang thử lại</div>
+  <main>
+    <section id="sJoin" data-screen class="join">
+      <h1 style="margin:0">Vào chơi</h1>
+      <input id="pin" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="Mã PIN" aria-label="Mã PIN">
+      <input id="name" maxlength="20" autocomplete="nickname" placeholder="Tên của bạn" aria-label="Tên hiển thị">
+      <button id="go" class="btn pri">Vào phòng</button>
+      <div id="jerr" class="err" role="alert"></div>
+    </section>
+
+    <section id="sMsg" data-screen class="center" hidden>
+      <div id="mIc" class="big-ic"></div>
+      <h2 id="mT" style="margin:0"></h2>
+      <div id="mS" class="muted" style="font-size:18px"></div>
+      <div id="mQ" class="pq" hidden></div>
+    </section>
+
+    <section id="sAns" data-screen hidden style="flex:1;display:flex;flex-direction:column;gap:10px">
+      <div class="qmeta" style="font-size:16px"><span id="aNum"></span><span id="aTime"></span></div>
+      <div id="aQ" class="pq"></div>
+      <div id="aGrid" class="pgrid"></div>
+    </section>
+
+    <section id="sRes" data-screen class="center" hidden>
+      <div id="rBox" class="res"></div>
+      <div style="display:flex;gap:28px;justify-content:center">
+        <div class="stat">Tổng điểm<b id="rScore">0</b></div>
+        <div class="stat">Hạng<b id="rRank">–</b></div>
+      </div>
+    </section>
+  </main>
+<script src="/acc.js?v=7"></script>
+<script type="module" src="js/play.js?v=1"></script>
+</body>
+</html>

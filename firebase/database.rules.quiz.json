@@ -1,0 +1,93 @@
+{
+  "quiz": {
+    ".read": "auth != null && auth.token.email == 'quangkhunpro@gmail.com' && auth.token.email_verified == true",
+    "$pin": {
+      ".write": "auth != null && auth.token.email == 'quangkhunpro@gmail.com' && auth.token.email_verified == true && $pin.matches(/^[0-9]{6}$/)",
+      "meta": {
+        ".read": "auth != null",
+        ".validate": "newData.hasChildren(['title', 'n', 'at', 'qz'])",
+        "title": { ".validate": "newData.isString() && newData.val().length <= 120" },
+        "n": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 500" },
+        "at": { ".validate": "newData.isNumber()" },
+        "qz": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "streak": { ".validate": "newData.isBoolean()" },
+        "$other": { ".validate": false }
+      },
+      "state": {
+        ".read": "auth != null",
+        ".validate": "newData.hasChildren(['phase', 'q', 'qs'])",
+        "phase": { ".validate": "newData.isString() && newData.val().matches(/^(lobby|show|answer|reveal|board|end)$/)" },
+        "q": { ".validate": "newData.isNumber()" },
+        "qs": { ".validate": "newData.isString() && newData.val().length <= 4" },
+        "startAt": { ".validate": "newData.isNumber()" },
+        "endAt": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      },
+      "qpub": {
+        ".read": "auth != null",
+        "$q": {
+          ".validate": "$q.matches(/^[0-9]{1,3}$/) && newData.hasChildren(['t', 'o', 'time', 'pts'])",
+          "t": { ".validate": "newData.isString() && newData.val().length <= 1000" },
+          "o": { "$k": { ".validate": "$k.matches(/^[0-3]$/) && newData.isString() && newData.val().length <= 500" } },
+          "time": { ".validate": "newData.isNumber()" },
+          "pts": { ".validate": "newData.isNumber()" },
+          "$other": { ".validate": false }
+        }
+      },
+      "key": {
+        ".read": "auth != null",
+        "$q": {
+          ".validate": "$q.matches(/^[0-9]{1,3}$/) && newData.hasChildren(['c', 's', 'e'])",
+          "c": { "$k": { ".validate": "newData.isNumber()" } },
+          "s": { ".validate": "newData.isNumber()" },
+          "e": { ".validate": "newData.isNumber()" },
+          "$other": { ".validate": false }
+        }
+      },
+      "players": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && auth.uid == $uid && !data.exists() && newData.exists() && root.child('quiz/' + $pin + '/meta').exists() && root.child('quiz/' + $pin + '/state/phase').val() != 'end' && root.child('quiz/' + $pin + '/meta/at').val() > now - 21600000 && !root.child('quiz/' + $pin + '/kick/' + $uid).exists()",
+          ".validate": "newData.hasChildren(['name', 'at'])",
+          "name": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20" },
+          "at": { ".validate": "newData.isNumber() && newData.val() <= now" },
+          "$other": { ".validate": false }
+        }
+      },
+      "kick": {
+        "$uid": {
+          ".read": "auth != null && auth.uid == $uid",
+          ".validate": "newData.isBoolean()"
+        }
+      },
+      "scores": {
+        ".read": "auth != null",
+        "$uid": {
+          "s": { ".validate": "newData.isNumber()" },
+          "k": { ".validate": "newData.isNumber()" },
+          "r": { ".validate": "newData.isNumber()" },
+          "n": { ".validate": "newData.isNumber()" },
+          "q": { ".validate": "newData.isNumber()" },
+          "p": { ".validate": "newData.isNumber()" },
+          "b": { ".validate": "newData.isNumber()" },
+          "ok": { ".validate": "newData.isBoolean()" },
+          "c": { "$k": { ".validate": "newData.isNumber()" } },
+          "$other": { ".validate": false }
+        }
+      },
+      "answers": {
+        "$q": {
+          "$uid": {
+            ".read": "auth != null && auth.uid == $uid",
+            ".write": "auth != null && auth.uid == $uid && !data.exists() && newData.exists() && root.child('quiz/' + $pin + '/players/' + $uid).exists() && root.child('quiz/' + $pin + '/state/phase').val() == 'answer' && root.child('quiz/' + $pin + '/state/qs').val() == $q && now <= root.child('quiz/' + $pin + '/state/endAt').val() + 1500",
+            ".validate": "newData.hasChildren(['a', 'at'])",
+            "a": { ".validate": "newData.isNumber() && (newData.val() == 0 || newData.val() == 1 || newData.val() == 2 || newData.val() == 3)" },
+            "at": { ".validate": "newData.isNumber() && newData.val() <= now && newData.val() >= now - 5000" },
+            "$other": { ".validate": false }
+          }
+        }
+      },
+      "$other": { ".validate": false }
+    }
+  }
+}
