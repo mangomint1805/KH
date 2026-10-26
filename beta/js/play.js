@@ -10,6 +10,18 @@ let joined = false, tmr = 0, endFx = 0, sending = 0;
 
 // màu nền theo trạng thái: tím (mặc định), xanh (đúng), đỏ (sai)
 function bg(c) { document.body.classList.remove('st-ok', 'st-no'); if (c) document.body.classList.add(c); }
+// Lời thầy nói: chọn ngẫu nhiên nhưng cố định theo hạt giống, vẽ lại màn hình không bị nhảy chữ
+function say(arr, seed) { let h = 7; String(seed) .split('').forEach((c) => { h = (h * 31 + c.charCodeAt(0)) % 9973; }); return arr[h % arr.length]; }
+const L = {
+  ok: ['Đỉnh nóc kịch trần! 🔥', 'Keo lì tái châu 😎', 'Out trình luôn á 🤯', 'Chuẩn không cần chỉnh ✨', 'Mãi đỉnh 💯', 'Ghê dữ thần 😳'],
+  fast: ['Nhanh như chớp luôn á ⚡', 'Tay nhanh hơn não 😳⚡', 'Bấm lẹ dữ vậy em 🏎️'],
+  no: ['Toang rồi em ơi 😭', 'Ủa alo?? 😭', 'Hụt mất tiêu 🥲', 'Ét o ét 🆘', 'U là trời 😭', 'Suýt nữa thui 🥲'],
+  noSub: ['Khum sao, câu sau gỡ lại nha 💪', 'Ghi nhớ để lần sau hổng sai nữa nha 📝', 'Bình tĩnh, còn nhiều câu mà 😤'],
+  late: ['Ủa em đi đâu dzậy 😭', 'Ngủ quên hả em 😴', 'Bấm đi chứ em ơi 😭'],
+  chosen: ['Chốt đơn! ✅', 'Chốt rồi nha ✅', 'Bấm rồi, hông đổi được nữa nha 😝'],
+  wait: ['Chờ các bạn khác xíu nha…', 'Hồi hộp quá trời 🫣', 'Ngồi im chờ kết quả nha 🙏'],
+  up: ['gét gô 🚀', 'cố lên nha 💪', 'rượt theo liền 🏃', 'lật kèo được nè 😤'],
+};
 function msg(ic, t, s, q) {
   bg(''); show('sMsg'); $('sMsg').querySelectorAll('.x').forEach((e) => e.remove()); $('mIc').textContent = ic || ''; $('mT').textContent = t || ''; $('mS').textContent = s || '';
   $('mQ').hidden = !q; $('mQ').textContent = q || '';
@@ -30,7 +42,7 @@ $('go').onclick = async () => {
   const pin = $('pin').value.trim(), name = $('name').value.replace(/\s+/g, ' ').trim().slice(0, 20);
   $('jerr').textContent = '';
   if (!/^\d{6}$/.test(pin)) { $('jerr').textContent = 'Mã PIN gồm 6 chữ số.'; return; }
-  if (!name) { $('jerr').textContent = 'Nhập tên của bạn nhé.'; return; }
+  if (!name) { $('jerr').textContent = 'Nhập tên của em nha.'; return; }
   $('go').disabled = true; $('go').textContent = 'Đang vào…';
   try { await join(pin, name); } catch (e) { console.error(e); $('jerr').textContent = errText(e); }
   $('go').disabled = false; $('go').textContent = 'Vào phòng';
@@ -87,12 +99,12 @@ function listen() {
   offs.push(P.D.onValue(r('players/' + P.uid), (s) => {
     if (!s.exists() && joined) {
       joined = false; SS.del('qz.pin'); stopAll();
-      msg('🚪', 'Bạn đã được mời ra khỏi phòng', 'Hỏi thầy nếu có nhầm lẫn nhé.');
+      msg('🚪', 'Em bị mời ra khỏi phòng rồi', 'Có nhầm lẫn gì thì nói thầy nha.');
     }
   }));
   offs.push(P.D.onValue(r('scores/' + P.uid), (s) => { score = s.val(); render(); }));
   offs.push(P.D.onValue(r('meta'), (s) => {
-    if (!s.exists() && joined) { joined = false; SS.del('qz.pin'); stopAll(); msg('👋', 'Phòng đã đóng', 'Cảm ơn bạn đã chơi!'); }
+    if (!s.exists() && joined) { joined = false; SS.del('qz.pin'); stopAll(); msg('👋', 'Phòng đóng rồi nè', 'Cảm ơn em đã chơi nha 💖'); }
   }));
 }
 function stopAll() { offs.splice(1).forEach((f) => f()); clearInterval(tmr); }
@@ -116,35 +128,35 @@ async function draw() {
   if (!joined || !state) return;
   const my = ++seq, st = state, q = st.q, n = meta.n;
   clearInterval(tmr);
-  if (st.phase === 'lobby' || !st.phase) return msg('🎉', 'Bạn đã vào phòng!', 'Thấy tên mình trên màn chiếu chưa? Chờ thầy bắt đầu nhé.');
+  if (st.phase === 'lobby' || !st.phase) return msg('🎉', 'Vào phòng rồi nè!', 'Thấy tên mình trên màn chiếu chưa? Chờ thầy xíu nha 😚');
   if (st.phase === 'end') {
     const rk = score && score.r;
-    msg(rk === 1 ? '🏆' : rk === 2 ? '🥈' : rk === 3 ? '🥉' : '🎯', rk === 1 ? 'Quán quân!' : rk && rk <= 3 ? 'Bạn lên bục vinh danh!' : 'Kết thúc!', (score ? 'Bạn được ' + score.s + ' điểm' + (rk ? ', hạng ' + rk + '/' + score.n : '') : 'Cảm ơn bạn đã chơi!') + '.');
+    msg(rk === 1 ? '👑' : rk === 2 ? '🥈' : rk === 3 ? '🥉' : '🎮', rk === 1 ? 'Quán quân là em chứ ai 👑' : rk && rk <= 3 ? 'Lên bục rồi nè, đỉnh quá 🥳' : 'Hết game rồi nè!', score ? 'Em được ' + score.s + ' điểm' + (rk ? ', hạng ' + rk + '/' + score.n : '') + (rk && rk <= 3 ? '. Quá dữ 🔥' : '. Lần sau quẩy tiếp nha 💪') : 'Cảm ơn em đã chơi nha 💖');
     if (rk && rk <= 3 && !endFx) { endFx = 1; setTimeout(() => confetti($('fx'), 6000), 2400); }
     return;
   }
   const Q = await getQ(q); if (my !== seq) return;
   if (!Q) return msg('⏳', 'Câu ' + (q + 1) + '/' + n, 'Đang tải câu hỏi…');
   if (st.phase === 'show') {
-    msg('👀', 'Câu ' + (q + 1) + '/' + n, 'Nhìn lên màn hình, chuẩn bị nhé…', Q.t);
+    msg('👀', 'Câu ' + (q + 1) + '/' + n, 'Nhìn lên bảng nè, chuẩn bị bấm nha 👀', Q.t);
     $('mS').insertAdjacentHTML('afterend', '<div class="loadbar x" id="lb"><i></i></div>');
     return;
   }
   if (st.phase === 'answer') {
     const a = await getMine(q); if (my !== seq) return;
     if (a != null) return waiting(a);
-    if (now() > st.endAt) return msg('⌛', 'Hết giờ!', 'Chờ thầy công bố đáp án nhé.');
+    if (now() > st.endAt) return msg('⌛', 'Hết giờ mất rồi 😭', 'Chờ thầy công bố đáp án nha.');
     return answerScreen(q, Q, st);
   }
   if (st.phase === 'reveal' || st.phase === 'board') {
     const a = await getMine(q); if (my !== seq) return;
-    if (!score || score.q !== q) return st.phase === 'reveal' && a != null ? msg('⏳', 'Đang chấm…', '') : msg('🎉', 'Bạn đã vào phòng!', 'Chờ câu tiếp theo nhé.');
+    if (!score || score.q !== q) return st.phase === 'reveal' && a != null ? msg('🤔', 'Đang chấm nè…', '') : msg('🎉', 'Vào phòng rồi nè!', 'Chờ câu tiếp theo nha 😚');
     return result(q, Q, a);
   }
 }
 
 function waiting(a) {
-  msg('', 'Đã chọn, chờ các bạn khác…', 'Bạn chọn ' + LETTERS[a]);
+  msg('', say(L.chosen, 'c' + a + (state && state.qs)), 'Em chọn ' + LETTERS[a] + '. ' + say(L.wait, 'w' + a + (state && state.qs)));
   $('mIc').innerHTML = '<span style="display:inline-flex;width:110px;height:110px;border-radius:20px;align-items:center;justify-content:center;color:#fff;font-size:56px;box-shadow:0 6px 0 rgba(0,0,0,.25);background:' + COLORS[a] + '">' + SHAPES[a] + '</span>';
   $('mS').insertAdjacentHTML('afterend', '<div class="spin x"></div><div class="sendst x" id="sendst">' + (sending ? 'Đang gửi…' : '✓ Đã gửi') + '</div>');
 }
@@ -188,7 +200,7 @@ async function pick(q, i) {
     // có thể đã gửi rồi (mạng chập chờn) — kiểm tra lại
     delete mine[q];
     const a = await getMine(q).catch(() => null);
-    if (a == null) msg('⌛', 'Không gửi kịp', 'Mạng chậm nên câu trả lời tới sau khi hết giờ.');
+    if (a == null) msg('📶', 'Mạng lag quá, gửi không kịp 😭', 'Câu trả lời tới sau khi hết giờ mất rồi. Câu sau gỡ nha!');
   }
   clearTimeout(slow);
 }
@@ -200,10 +212,11 @@ function result(q, Q, a) {
   bg(ok ? 'st-ok' : 'st-no');
   box.className = 'res ' + (ok ? 'ok' : 'no');
   let h;
-  if (a == null) h = '<div class="ic">⌛</div><h2>Hết giờ</h2><div>Bạn chưa trả lời câu này</div>';
-  else if (ok) h = '<div class="ic">✔</div><h2>Chính xác!</h2>' + (score.p ? '<div class="pts">+<span id="rp">' + score.p + '</span></div>' : '<div>Câu này không tính điểm</div>');
-  else h = '<div class="ic">✘</div><h2>Chưa đúng</h2><div>Đáp án đúng: ' + esc((score.c || []).map((x) => LETTERS[x]).join(', ')) + '</div>';
-  if (score.k >= 2) h += '<div style="margin-top:10px;font-weight:600"><span class="flame">🔥</span> Chuỗi đúng: ' + score.k + (score.b ? ' (+' + score.b + ')' : '') + '</div>';
+  const sd = q + (P && P.uid || '');
+  if (a == null) h = '<div class="ic">⌛</div><h2>' + say(L.late, sd) + '</h2><div>Câu này em chưa chọn đáp án nè</div>';
+  else if (ok) h = '<div class="ic">✔</div><h2>' + say(score.p >= 900 ? L.fast : L.ok, sd) + '</h2>' + (score.p ? '<div class="pts">+<span id="rp">' + score.p + '</span></div>' : '<div>Câu này hông tính điểm nha</div>');
+  else h = '<div class="ic">✘</div><h2>' + say(L.no, sd) + '</h2><div>Đáp án đúng là <b>' + esc((score.c || []).map((x) => LETTERS[x]).join(', ')) + '</b> nè. ' + say(L.noSub, sd + 'n') + '</div>';
+  if (score.k >= 2) h += '<div style="margin-top:10px;font-weight:600"><span class="flame">🔥</span> Chuỗi ' + score.k + ' câu đúng' + (score.b ? ' (+' + score.b + ')' : '') + (score.k >= 4 ? ', ai cản nổi nữa 😤' : ', nóng quá trời') + '</div>';
   box.innerHTML = h;
   const fresh = shownRes !== key; shownRes = key;
   if (fresh) { countUp($('rp'), 0, score.p || 0, 700); countUp($('rScore'), Math.max(0, score.s - (score.p || 0)), score.s, 900); try { navigator.vibrate && navigator.vibrate(ok ? [40, 60, 40] : 200); } catch (e) {} }
@@ -216,7 +229,7 @@ let rankQ = -1;
 async function rankMsg(q) {
   const el = $('rMsg'); if (!el) return;
   if (!score || !score.r) { el.hidden = true; return; }
-  if (score.r === 1) { el.hidden = false; el.textContent = score.n > 1 ? '🏆 Bạn đang dẫn đầu! Giữ vững nhé!' : '🏆 Bạn đang dẫn đầu!'; return; }
+  if (score.r === 1) { el.hidden = false; el.textContent = score.n > 1 ? '👑 Em đang top 1 nè, giữ vững phong độ nha!' : '👑 Em đang top 1 nè!'; return; }
   if (rankQ === q && el.textContent) { el.hidden = false; return; }
   rankQ = q;
   try {
@@ -225,8 +238,8 @@ async function rankMsg(q) {
     let best = null;
     Object.keys(S).forEach((u) => { const x = S[u]; if (u !== P.uid && x && x.s > score.s && (!best || x.s < best.s)) best = { s: x.s, name: (N[u] && N[u].name) || 'bạn phía trên' }; });
     el.hidden = false;
-    el.textContent = best ? 'Bạn đang hạng ' + score.r + ', kém ' + best.name + ' ' + (best.s - score.s) + ' điểm. Cố lên!' : 'Bạn đang hạng ' + score.r + '.';
-  } catch (e) { el.hidden = false; el.textContent = 'Bạn đang hạng ' + score.r + '.'; }
+    el.textContent = best ? 'Em đang hạng ' + score.r + ', chỉ kém ' + best.name + ' ' + (best.s - score.s) + ' điểm thui, ' + say(L.up, q + best.name) : 'Em đang hạng ' + score.r + ' nè.';
+  } catch (e) { el.hidden = false; el.textContent = 'Em đang hạng ' + score.r + ' nè.'; }
 }
 
 // điện thoại tắt màn hình rồi mở lại: vẽ lại ngay

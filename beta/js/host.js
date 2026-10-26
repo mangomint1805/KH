@@ -252,7 +252,7 @@ async function goReveal(q) {
     Sound.timeup();
     ov = document.createElement('div'); ov.className = 'overlay';
     const all = Object.keys(answers[q] || {}).filter((k) => players[k]).length >= Object.keys(players).length;
-    ov.innerHTML = '<div class="timesup">' + (all ? 'Cả lớp đã trả lời!' : 'Hết giờ!') + '</div>';
+    ov.innerHTML = '<div class="timesup">' + (all ? 'Cả lớp chốt đơn hết rồi! ✅' : 'Hết giờ! ⏰') + '</div>';
     document.body.appendChild(ov);
   }
   const t0 = Date.now();
@@ -302,7 +302,7 @@ function boardView(q) {
   const startOrder = top.slice().sort((a, b) => prevRank[a.uid] - prevRank[b.uid]).map((x) => x.uid);
   const lead = res.list[0];
   main.innerHTML = '<h1 style="text-align:center;margin:0">Bảng xếp hạng</h1>' +
-    '<div class="lead">' + (lead && res.list.length > 1 ? esc(lead.name) + ' đang dẫn đầu' + (lead.k >= 2 ? ' với chuỗi 🔥' + lead.k : '') : '') + '</div>' +
+    '<div class="lead">' + (lead && res.list.length > 1 ? '👑 ' + esc(lead.name) + ' đang top 1' + (lead.k >= 2 ? ', chuỗi 🔥' + lead.k + ' nóng quá trời' : ' nè') : '') + '</div>' +
     '<div class="board2" id="bd" style="height:' + (Math.max(1, top.length) * H) + 'px">' +
     (top.length ? top.map((x) => {
       const it = x.q[q] || {}, up = q > 0 ? prevRank[x.uid] - res.list.indexOf(x) : 0;
