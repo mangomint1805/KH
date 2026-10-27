@@ -157,7 +157,19 @@ body.host, body.play { background: linear-gradient(160deg, var(--bg1), var(--bg2
 .joinbar .lbl { font-size: 22px; line-height: 1.3; }
 .joinbar .lbl b { font-size: 26px; }
 .joinbar .pin { font-size: clamp(64px, 9vw, 130px); }
-.joinbar .qr svg { width: 170px; height: 170px; }
+.joinbar .qr svg { width: clamp(220px, 32vh, 340px); height: clamp(220px, 32vh, 340px); }
+/* thanh tham gia khi đang chơi */
+.jstrip { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 8px 16px; background: rgba(15,5,35,.55); color: #fff; font: 500 clamp(18px, 2vw, 26px)/1.2 "IBM Plex Sans", sans-serif; }
+.jstrip b { font-weight: 700; }
+.jstrip .jpin { letter-spacing: .04em; }
+.jstrip .qrbtn { border: 0; background: rgba(255,255,255,.15); color: #fff; border-radius: 10px; padding: 6px; display: flex; cursor: pointer; }
+.jstrip .qrbtn:hover { background: rgba(255,255,255,.28); }
+.qrov { cursor: pointer; }
+.qrov .qrcard { background: #fff; color: var(--ink); border-radius: 20px; padding: 24px 30px; text-align: center; display: grid; gap: 10px; justify-items: center; animation: drop .4s ease both; }
+.qrov .qr { border: 0; padding: 0; }
+.qrov .qr svg { width: min(58vh, 480px); height: min(58vh, 480px); }
+.qrov .lbl { font-size: 26px; }
+.qrov .pin { font: 700 clamp(60px, 9vw, 120px)/1 "IBM Plex Sans", sans-serif; letter-spacing: .06em; color: var(--ink); }
 @keyframes drop { from { transform: translateY(-40px); opacity: 0; } to { transform: none; opacity: 1; } }
 .lobbyrow { display: flex; align-items: center; gap: 18px; }
 .lobbyrow .count { background: rgba(0,0,0,.25); color: #fff; border-radius: 12px; padding: 10px 18px; font-size: 26px; }

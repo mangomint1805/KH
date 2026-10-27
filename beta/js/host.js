@@ -9,6 +9,24 @@ let unsub = [], ansOff = null, timer = 0, autoT = 0, wake = null;
 
 const main = $('main');
 function r(p) { return D.ref(B.db, 'quiz/' + PIN + (p ? '/' + p : '')); }
+// Thanh "Tham gia tại …" trên cùng khi đang chơi (giống Kahoot), bấm biểu tượng QR để phóng to
+const QR_IC = '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v3h-3zm-5 0h3v3h-3zm3 3h3v3h-3zm-3 3h3v2h-3zm5 0h3v2h-3z"/></svg>';
+function qrSvg(cell) { try { const g = window.qrcode(0, 'M'); g.addData(playUrl(true)); g.make(); return g.createSvgTag({ cellSize: cell || 6, margin: 2, scalable: true }); } catch (e) { return ''; } }
+function paintStrip() {
+  const el = $('jstrip'); if (!el) return;
+  const on = !!PIN && !!state.phase && state.phase !== 'lobby' && state.phase !== 'end';
+  el.hidden = !on;
+  if (!on || el.dataset.pin === PIN) return;
+  el.dataset.pin = PIN;
+  el.innerHTML = '<button type="button" class="qrbtn" title="Hiện mã QR">' + QR_IC + '</button><span>Tham gia tại <b>' + esc(shortUrl()) + '</b> · PIN <b class="jpin">' + PIN + '</b></span>';
+  el.querySelector('.qrbtn').onclick = bigQr;
+}
+function bigQr() {
+  const ov = document.createElement('div'); ov.className = 'overlay qrov';
+  ov.innerHTML = '<div class="qrcard"><div class="qr">' + qrSvg(8) + '</div><div class="lbl">Tham gia tại <b>' + esc(shortUrl()) + '</b></div><div class="pin">' + PIN + '</div><div class="muted">Bấm vào đâu cũng được để đóng</div></div>';
+  ov.onclick = () => ov.remove();
+  document.body.appendChild(ov);
+}
 function stat(t) { $('stat').textContent = t || ''; }
 function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 function fail(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }
@@ -120,6 +138,7 @@ function attach() {
   unsub.push(D.onValue(r('state'), (s) => {
     const first = !state.phase;
     state = s.val() || { phase: 'lobby' };
+    paintStrip();
     if (first) restore();
   }));
   unsub.push(D.onValue(r('meta'), (s) => { if (!s.exists()) { toast('Phòng đã bị xoá.'); try { localStorage.removeItem(LS_KEY); } catch (e) {} setTimeout(() => location.reload(), 1200); } }));
@@ -147,8 +166,7 @@ function onPlayers() {
 // ---------- phòng chờ ----------
 function lobby() {
   Sound.mode('lobby');
-  let qr = '';
-  try { const g = window.qrcode(0, 'M'); g.addData(playUrl(true)); g.make(); qr = g.createSvgTag({ cellSize: 6, margin: 2, scalable: true }); } catch (e) {}
+  const qr = qrSvg(8);
   main.innerHTML = '<div class="lobby2"><div class="joinbar"><div class="lbl">Vào <b>' + esc(shortUrl()) + '</b><br>hoặc quét mã QR</div>' +
     '<div><div class="lbl">Mã PIN</div><div class="pin">' + PIN + '</div></div>' + (qr ? '<div class="qr">' + qr + '</div>' : '') + '</div>' +
     '<div class="lobbyrow"><span class="count" id="cnt">0 người chơi</span><span class="brand">Minto Quiz</span>' +
@@ -223,7 +241,14 @@ function answerView(q) {
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
   stopAns();
-  ansOff = D.onValue(r('answers/' + q), (s) => { answers[q] = s.val() || {}; updAnswered(); });
+  let heard = -1;
+  ansOff = D.onValue(r('answers/' + q), (s) => {
+    answers[q] = s.val() || {};
+    const n = Object.keys(answers[q]).filter((k) => players[k]).length;
+    if (heard >= 0 && n > heard && state.phase === 'answer') Sound.answer(n); // lần đầu là dữ liệu có sẵn (vd. tải lại trang): không kêu
+    heard = n;
+    updAnswered();
+  });
   let last = -1;
   clearInterval(timer);
   timer = setInterval(() => {

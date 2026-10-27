@@ -147,6 +147,8 @@ export const Sound = (() => {
     mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; paused = false; startLoop(); },
     hurry(v) { fast = !!v; },
     pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
+    // có bạn vừa chọn đáp án: tiếng 'bụp' nhỏ, cao dần theo số người đã trả lời
+    answer(n) { if (sfxOn) { const f = 520 + Math.min(n, 24) * 28; tone(f, 0.07, 'sine', 0.16); tone(f * 1.5, 0.06, 'triangle', 0.06, later(0.04)); } },
     tick() { if (sfxOn) { tone(1320, 0.05, 'square', 0.06); } },
     join() { if (sfxOn) { tone(523, 0.08, 'sine', 0.14); tone(784, 0.1, 'sine', 0.14, later(0.07)); tone(1047, 0.12, 'sine', 0.1, later(0.14)); } },
     go() { if (sfxOn) [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.22, 'triangle', 0.16, later(i * 0.08))); },

@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.3', d: '2026-10-27', items: [
+      'Phòng chờ: mã QR to hơn, nằm ngay đầu màn chiếu.',
+      'Đang chơi: thanh "Tham gia tại … · PIN" trên cùng màn chiếu như Kahoot, bạn vào trễ vẫn thấy chỗ vào. Bấm biểu tượng QR để phóng to mã QR.',
+      'Mỗi lần có bạn chọn đáp án, máy thầy kêu một tiếng "bụp" nhỏ, càng nhiều bạn trả lời tiếng càng cao.'
+    ] },
     { v: '1.2', d: '2026-10-26', items: [
       'Lịch sử kết quả: chơi xong mỗi ván, bảng điểm tự lưu lại. Mở từ nút "📒 Lịch sử kết quả" trên trang bộ câu hỏi để xem lại từng buổi, tải CSV hoặc xoá buổi.',
       'Cộng dồn điểm nhiều buổi theo tên học sinh: chọn các buổi muốn cộng, xem tổng điểm, số lần top 1, top 3, số câu đúng. Tên gõ khác dấu hay chữ hoa vẫn được gộp; bạn nào gõ khác hẳn thì tick rồi bấm Gộp.',
