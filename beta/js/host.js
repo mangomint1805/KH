@@ -384,26 +384,51 @@ async function goBoard(q) {
 }
 function boardView(q) {
   Sound.mode('lobby');
-  const res = compute(), H = 74;
-  // điểm trước câu này để làm hiệu ứng đổi chỗ và đếm điểm
+  const res = compute(), H = 74, TOP = 5;
+  // thứ hạng trước câu này (theo điểm trước câu) để biết ai lên, ai xuống
   const prev = res.list.map((x) => ({ x, ps: x.s - ((x.q[q] && x.q[q].pts) || 0) })).sort((a, b) => b.ps - a.ps || a.x.name.localeCompare(b.x.name));
   const prevRank = {}; prev.forEach((p, i) => { prevRank[p.x.uid] = i; });
-  const top = res.list.slice(0, 5), ids = top.map((x) => x.uid);
-  const startOrder = top.slice().sort((a, b) => prevRank[a.uid] - prevRank[b.uid]).map((x) => x.uid);
+  const top = res.list.slice(0, TOP);
+  const anim = q > 0;
+  // bạn rớt khỏi top 5: vẫn vẽ để thấy bị đẩy xuống
+  const dropped = anim ? prev.filter((p, i) => i < TOP && res.list.indexOf(p.x) >= TOP).map((p) => p.x) : [];
+  const rows = top.concat(dropped);
+  let below = 0;
+  const startTop = (x) => { const pi = prevRank[x.uid]; return !anim || pi < TOP ? (anim ? pi : res.list.indexOf(x)) * H : (TOP + below++) * H + 30; };
+  // lội ngược dòng: trước ngoài top 5, giờ vào top 5
+  const climb = (x) => anim && prevRank[x.uid] >= TOP && res.list.indexOf(x) < TOP;
+  // bạn tiến nhiều nhất ngoài top 5 (vượt từ 3 bậc): nhắc tên ở dưới bảng
+  const riser = anim ? res.list.slice(TOP).map((x) => ({ x, up: prevRank[x.uid] - res.list.indexOf(x) })).filter((o) => o.up >= 3).sort((a, b) => b.up - a.up)[0] : null;
   const lead = res.list[0];
   main.innerHTML = '<h1 style="text-align:center;margin:0">Bảng xếp hạng</h1>' +
-    '<div class="lead">' + (lead && res.list.length > 1 ? '👑 ' + esc(lead.name) + ' đang top 1' + (lead.k >= 2 ? ', chuỗi 🔥' + lead.k + ' nóng quá trời' : ' nè') : '') + '</div>' +
+    '<div class="lead" id="lead"></div>' +
     '<div class="board2" id="bd" style="height:' + (Math.max(1, top.length) * H) + 'px">' +
-    (top.length ? top.map((x) => {
-      const it = x.q[q] || {}, up = q > 0 ? prevRank[x.uid] - res.list.indexOf(x) : 0;
-      return '<div class="r' + (x.r === 1 ? ' first' : '') + '" data-u="' + esc(x.uid) + '" style="top:' + (startOrder.indexOf(x.uid) * H) + 'px"><span class="rk">' + x.r + '</span><span class="nm">' + esc(x.name) + '</span>' +
-        (it.pts ? '<span class="up">+' + it.pts + '</span>' : '') + (x.k >= 2 ? '<span class="up">🔥' + x.k + '</span>' : '') + '<span class="mv">' + (up > 0 ? '▲' + up : '') + '</span><span class="sc" data-from="' + (x.s - (it.pts || 0)) + '" data-to="' + x.s + '">' + (x.s - (it.pts || 0)) + '</span></div>';
+    (rows.length ? rows.map((x) => {
+      const it = x.q[q] || {}, ni = res.list.indexOf(x), up = anim ? prevRank[x.uid] - ni : 0, out = ni >= TOP, c = climb(x);
+      return '<div class="r' + (x.r === 1 && !out ? ' first' : '') + (c ? ' cl' : '') + (out ? ' out' : '') + '" data-u="' + esc(x.uid) + '" data-to="' + (out ? TOP * H + 10 : ni * H) + '" style="top:' + startTop(x) + 'px">' +
+        '<span class="rk" data-r="' + x.r + '">' + (anim ? prevRank[x.uid] + 1 : x.r) + '</span><span class="nm">' + esc(x.name) + '</span>' +
+        (c ? '<span class="badge">🚀 Lội ngược dòng ▲' + up + '</span>' : '') +
+        (it.pts ? '<span class="up">+' + it.pts + '</span>' : '') + (x.k >= 2 ? '<span class="up">🔥' + x.k + '</span>' : '') +
+        '<span class="mv' + (up >= 3 ? ' big' : '') + (up < 0 ? ' dn' : '') + '">' + (up > 0 && !c ? '▲' + up : up < 0 && !out ? '▼' + (-up) : '') + '</span>' +
+        '<span class="sc" data-from="' + (x.s - (it.pts || 0)) + '" data-to="' + x.s + '">' + (x.s - (it.pts || 0)) + '</span></div>';
     }).join('') : '<p class="muted" style="text-align:center">Chưa có ai.</p>') +
-    '</div><div style="text-align:right;margin-top:auto"><button class="btn big pri" id="bNext">Câu tiếp ▶</button></div>';
+    '</div><div class="riser" id="riser"></div><div style="text-align:right;margin-top:auto"><button class="btn big pri" id="bNext">Câu tiếp ▶</button></div>';
   $('bNext').onclick = next;
   const bd = $('bd');
+  // 1) điểm đếm tăng  2) đổi chỗ: bạn lội ngược dòng bay từ dưới lên, sáng rực; bạn rớt hạng trượt xuống mờ dần  3) nhắc bạn tiến xa nhất ngoài top 5
   bd.querySelectorAll('.sc').forEach((el) => countUp(el, +el.dataset.from, +el.dataset.to, 1100));
-  setTimeout(() => { bd.querySelectorAll('.r').forEach((el) => { el.style.top = (ids.indexOf(el.dataset.u) * H) + 'px'; }); bd.classList.add('done'); }, 1200);
+  const cls = bd.querySelectorAll('.r.cl');
+  if (!anim && lead && res.list.length > 1) { $('lead').textContent = '👑 ' + lead.name + ' đang top 1 nè'; $('lead').classList.add('on'); }
+  setTimeout(() => {
+    bd.querySelectorAll('.r').forEach((el) => { el.style.top = el.dataset.to + 'px'; const rk = el.querySelector('.rk'); rk.textContent = rk.dataset.r; });
+    bd.classList.add('done');
+    if (cls.length) { Sound.climb(); cls.forEach((el) => el.classList.add('go')); }
+  }, 1200);
+  setTimeout(() => {
+    cls.forEach((el) => el.classList.add('glow'));
+    const ld = $('lead'); if (ld && lead && res.list.length > 1) { ld.textContent = '👑 ' + lead.name + ' đang top 1' + (lead.k >= 2 ? ', chuỗi 🔥' + lead.k + ' nóng quá trời' : ' nè'); ld.classList.add('on'); }
+    if (riser) { const el = $('riser'); if (el) { el.innerHTML = '📈 <b>' + esc(riser.x.name) + '</b> vượt ' + riser.up + ' bậc, lên hạng ' + riser.x.r + '. Cố lên nữa nha!'; el.classList.add('on'); } }
+  }, 2200);
 }
 
 async function goEnd() {

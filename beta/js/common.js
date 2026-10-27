@@ -158,6 +158,8 @@ export const Sound = (() => {
     end() { this.timeup(); },
     reveal() { if (sfxOn) [784, 988, 1175, 1568].forEach((f, i) => tone(f, 0.3, 'sine', 0.12, later(i * 0.07))); },
     drum(sec) { if (!sfxOn || !ac()) return; const n = Math.round((sec || 2) * 16); for (let i = 0; i < n; i++) noise(0.05, 0.03 + 0.07 * i / n, later(i / 16), 1500); tone(98, 0.6, 'sine', 0.25, later(sec || 2)); noise(0.6, 0.12, later(sec || 2), 3000); },
+    // bạn lội ngược dòng vào top 5: tiếng vút lên + leng keng
+    climb() { if (sfxOn) { tone(330, 0.5, 'sawtooth', 0.05, null, null, 1320); [1047, 1319, 1568, 2093].forEach((f, i) => tone(f, 0.22, 'sine', 0.1, later(0.45 + i * 0.07))); } },
     win() { if (sfxOn) [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i === 6 ? 0.8 : 0.28, 'triangle', 0.15, later(i * 0.14))); },
   };
 })();

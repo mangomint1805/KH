@@ -225,7 +225,7 @@ body.host, body.play { background: linear-gradient(160deg, var(--bg1), var(--bg2
 
 /* ---- host: bảng xếp hạng có chuyển chỗ ---- */
 .board2 { position: relative; max-width: 920px; width: 100%; margin: 0 auto; }
-.board2 .r { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 12px; padding: 14px 20px; font: 600 30px/1.2 "IBM Plex Sans", sans-serif; box-shadow: 0 5px 0 rgba(0,0,0,.18); transition: top .9s cubic-bezier(.3,1.3,.4,1); }
+.board2 .r { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 12px; padding: 14px 20px; font: 600 30px/1.2 "IBM Plex Sans", sans-serif; box-shadow: 0 5px 0 rgba(0,0,0,.18); transition: top .9s cubic-bezier(.3,1.3,.4,1), opacity .6s, transform .4s; }
 .board2 .r .rk { width: 1.6em; color: var(--bg1); font-weight: 800; }
 .board2 .r .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .board2 .r .up { font-size: 20px; color: var(--ok); }
@@ -304,3 +304,20 @@ body.play.st-no { background: linear-gradient(160deg, #a11a1a, #d13b3b); }
 /* ---- trang soạn: hình của câu ---- */
 .imgrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .imgrow .qthumb { height: 90px; max-width: 200px; object-fit: contain; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+
+/* ---- bảng xếp hạng: lội ngược dòng, rớt hạng ---- */
+.board2 .r .mv.big { font-size: 22px; font-weight: 800; }
+.board2 .r.out { opacity: .9; z-index: 0; }
+.board2.done .r.out { opacity: 0; transform: scale(.94); transition: top .9s ease-in, opacity .9s .3s, transform .9s; }
+.board2 .r.cl { opacity: 0; z-index: 3; transform: scale(.9); }
+.board2 .r.cl.go { opacity: 1; transform: scale(1.06); transition: top 1s cubic-bezier(.2,1.25,.35,1), opacity .3s, transform .4s; }
+.board2 .r.cl.glow { transform: scale(1.02); background: linear-gradient(90deg, #fff6c9, #ffe27a 45%, #fff6c9); background-size: 200% 100%; animation: shine 1.6s linear 3; box-shadow: 0 0 0 4px #ffd400, 0 0 28px 6px rgba(255,212,0,.65), 0 5px 0 rgba(0,0,0,.18); }
+.board2 .r.cl.first.glow { background: #ffd400; }
+.board2 .r .badge { font-size: 18px; font-weight: 800; color: #fff; background: linear-gradient(90deg, #ff6a00, #e21b3c); border-radius: 999px; padding: 4px 12px; white-space: nowrap; opacity: 0; transform: translateY(6px) scale(.8); transition: opacity .3s .5s, transform .4s .5s cubic-bezier(.2,1.6,.4,1); }
+.board2 .r.cl.go .badge { opacity: 1; transform: none; }
+@keyframes shine { from { background-position: 200% 0; } to { background-position: 0 0; } }
+.riser { text-align: center; color: #fff; font-size: 24px; min-height: 1.4em; opacity: 0; transform: translateY(10px); transition: opacity .5s, transform .5s; }
+.riser.on { opacity: 1; transform: none; }
+.board2 .r .mv.dn { color: #c2410c; }
+.lead { opacity: 0; transform: translateY(-6px); transition: opacity .5s, transform .5s; }
+.lead.on { opacity: 1; transform: none; }

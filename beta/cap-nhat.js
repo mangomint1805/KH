@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.5', d: '2026-10-27', items: [
+      'Bảng xếp hạng đẹp hơn: điểm đếm tăng ở chỗ cũ trước, rồi mới đổi chỗ.',
+      'Bạn từ ngoài top 5 lội ngược dòng: bay từ dưới lên, nhãn "🚀 Lội ngược dòng ▲n", viền sáng vàng và tiếng vút lên.',
+      'Bạn bị đẩy khỏi top 5 trượt xuống mờ dần; mũi tên tụt hạng màu cam cho dễ phân biệt.',
+      'Bạn ngoài top 5 mà vượt từ 3 bậc trở lên được nhắc tên dưới bảng để cổ vũ.'
+    ] },
     { v: '1.4', d: '2026-10-27', items: [
       'Hình cho câu hỏi (ví dụ Part 1 tả tranh): trong trang soạn, bấm "🖼 Thêm hình" ở từng câu. Hình chỉ hiện trên màn chiếu, máy tự thu nhỏ cho nhẹ.',
       'Nút ⏸ Tạm dừng giữa câu (hoặc phím P): đồng hồ đứng yên, điện thoại học sinh báo "Thầy tạm dừng xíu nha" và chưa bấm được. Thời gian dừng không bị tính vào điểm tốc độ.',
