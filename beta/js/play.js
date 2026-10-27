@@ -145,6 +145,10 @@ async function draw() {
   }
   const Q = await getQ(q); if (my !== seq) return;
   if (!Q) return msg('⏳', 'Câu ' + (q + 1) + '/' + n, 'Đang tải câu hỏi…');
+  if (st.phase === 'show' && st.endAt) { // thầy bấm tạm dừng giữa câu
+    const a = await getMine(q); if (my !== seq) return;
+    return msg('⏸', 'Thầy tạm dừng xíu nha', a != null ? 'Em chọn ' + LETTERS[a] + ' rồi, chờ thầy bấm tiếp tục nha.' : 'Đồng hồ đang dừng, chờ thầy bấm tiếp tục rồi chọn đáp án nha.', Q.t);
+  }
   if (st.phase === 'show') {
     msg('👀', 'Câu ' + (q + 1) + '/' + n, q + 1 === n && n > 1 ? say(L.last, PIN) : 'Nhìn lên bảng nè, chuẩn bị bấm nha 👀', Q.t);
     $('mS').insertAdjacentHTML('afterend', '<div class="loadbar x" id="lb"><i></i></div>');

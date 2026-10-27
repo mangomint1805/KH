@@ -10,3 +10,9 @@
         && request.auth.token.email == 'quangkhunpro@gmail.com'
         && request.auth.token.email_verified == true;
     }
+    // Minto Quiz — hình của câu hỏi (thu nhỏ sẵn, mỗi hình < 1MB): chỉ tài khoản giáo viên đọc/ghi
+    match /quizImg/{id} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email == 'quangkhunpro@gmail.com'
+        && request.auth.token.email_verified == true;
+    }

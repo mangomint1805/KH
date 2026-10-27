@@ -286,3 +286,21 @@ body.play.st-no { background: linear-gradient(160deg, #a11a1a, #d13b3b); }
 .tbl tbody tr:hover { background: var(--paper); }
 .picks { display: grid; gap: 6px; max-height: 320px; overflow: auto; }
 .picks label { display: flex; gap: 8px; align-items: baseline; }
+
+/* ---- hình trong câu hỏi (chỉ màn chiếu) ---- */
+.qimgbox { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
+.qimg { display: block; max-width: 100%; border-radius: 14px; background: #fff; box-shadow: 0 6px 0 rgba(0,0,0,.18); object-fit: contain; }
+.qimg.big { max-height: 42vh; }
+.qtext.sm { font-size: clamp(22px, 2.6vw, 38px); padding: 14px 22px; }
+#pics { flex: 1; display: flex; justify-content: center; align-items: center; min-width: 0; }
+#pics .qimg { max-height: 24vh; }
+/* ---- tạm dừng ---- */
+.pauseov { background: rgba(20,5,45,.72); }
+.pauseov .pic { font-size: 110px; line-height: 1; }
+.pauseov .t { font-size: 34px; font-weight: 700; }
+.pauseov .pbtns { display: flex; gap: 12px; }
+.pauseov .pbtns .btn { font-size: 24px; padding: 14px 28px; border-radius: 14px; }
+.pauseov .ph { color: rgba(255,255,255,.8); }
+/* ---- trang soạn: hình của câu ---- */
+.imgrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.imgrow .qthumb { height: 90px; max-width: 200px; object-fit: contain; border-radius: 8px; border: 1px solid var(--line); background: #fff; }

@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.4', d: '2026-10-27', items: [
+      'Hình cho câu hỏi (ví dụ Part 1 tả tranh): trong trang soạn, bấm "🖼 Thêm hình" ở từng câu. Hình chỉ hiện trên màn chiếu, máy tự thu nhỏ cho nhẹ.',
+      'Nút ⏸ Tạm dừng giữa câu (hoặc phím P): đồng hồ đứng yên, điện thoại học sinh báo "Thầy tạm dừng xíu nha" và chưa bấm được. Thời gian dừng không bị tính vào điểm tốc độ.',
+      'Lớp đông bấm cùng lúc thì tiếng "bụp" không còn dồn dập loạn xạ.',
+      'Bản beta và bản chính không còn tự mở nhầm phòng của nhau.'
+    ] },
     { v: '1.3', d: '2026-10-27', items: [
       'Phòng chờ: mã QR to hơn, nằm ngay đầu màn chiếu.',
       'Đang chơi: thanh "Tham gia tại … · PIN" trên cùng màn chiếu như Kahoot, bạn vào trễ vẫn thấy chỗ vào. Bấm biểu tượng QR để phóng to mã QR.',

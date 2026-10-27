@@ -64,6 +64,7 @@ node test/build-rules.js                      # ghép luật cho Emulator
 cd test/emu && npx firebase-tools emulators:start --project minto-english
 node test/server.js                           # cửa sổ khác: http://127.0.0.1:8000/KH/
 node test/e2e.js "Kahoot - ….xlsx"            # chơi thử cả trận: 1 host + 4 người chơi
+node test/e2e-beta.js "Kahoot - ….xlsx"       # như trên cho bản beta/ (thêm hình, tạm dừng, thanh tham gia)
 ```
 
 `test/server.js` thay `/acc.js` bằng `test/mock-acc.js` để nối vào Emulator.

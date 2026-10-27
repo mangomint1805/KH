@@ -2,10 +2,25 @@
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
 import { $, esc, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS } from './common.js?v=2';
 
-const SHOW_MS = 3000, LS_KEY = 'qz.host';
+const SHOW_MS = 3000, LS_KEY = 'qz.host.beta'; // bản chính dùng 'qz.host': hai bản không tự mở nhầm phòng của nhau
 let B = null, D = null, now = () => Date.now();
 let PIN = '', meta = null, quiz = null, state = {}, players = {}, answers = {}, keys = {};
 let unsub = [], ansOff = null, timer = 0, autoT = 0, wake = null;
+// hình của câu hỏi (Firestore quizImg/{id}), tải sẵn lúc tạo phòng
+const IMGS = {}; let imgP = Promise.resolve();
+function loadImgs() {
+  const ids = [...new Set(quiz.qs.map((Q) => Q.img).filter(Boolean))];
+  if (!ids.length) return Promise.resolve();
+  return window.MACC.fs().then((x) => Promise.all(ids.map((id) => x.F.getDoc(x.F.doc(x.db, 'quizImg', id)).then((d) => { if (d.exists()) IMGS[id] = d.data().d; }).catch((e) => console.warn('img', id, e)))));
+}
+function imgTag(Q, cls) { return Q.img && IMGS[Q.img] ? '<img class="' + cls + '" src="' + IMGS[Q.img] + '" alt="">' : ''; }
+// (8) tạm dừng: lúc dừng, state.phase = 'show' nhưng vẫn giữ startAt/endAt (luật cũ chấp nhận, điện thoại không gửi được đáp án).
+// Khoảng dừng lưu trên máy thầy để trừ ra khi tính thời gian trả lời.
+let PZ = {};
+function pzLoad() { try { PZ = JSON.parse(localStorage.getItem('qz.pz.' + PIN) || '{}'); } catch (e) { PZ = {}; } }
+function pzSave() { try { localStorage.setItem('qz.pz.' + PIN, JSON.stringify(PZ)); } catch (e) {} }
+function pausedMs(q, at) { return (PZ[q] || []).reduce((t, [a, b]) => t + (a < at ? Math.min(b, at) - a : 0), 0); }
+const isPaused = () => state.phase === 'show' && state.endAt != null;
 
 const main = $('main');
 function r(p) { return D.ref(B.db, 'quiz/' + PIN + (p ? '/' + p : '')); }
@@ -107,6 +122,7 @@ async function create(q) {
   }
   PIN = pin;
   meta = { title: String(q.title || 'Minto Quiz').slice(0, 120), n: q.qs.length, qz: q.id, streak: $('optStreak').checked, at: D.serverTimestamp() };
+  imgP = loadImgs(); pzLoad();
   try { await D.set(r(), { meta, state: { phase: 'lobby', q: -1, qs: '-1' } }); } catch (e) { return fail(e); }
   meta.at = Date.now();
   try { localStorage.setItem(LS_KEY, PIN); } catch (e) {}
@@ -127,6 +143,8 @@ async function resume(pin) {
   quiz.qs = quiz.qs.slice(0, meta.n);
   if (quiz.qs.length < meta.n) return false;
   keys = room.key || {}; answers = room.answers || {};
+  imgP = loadImgs(); pzLoad();
+  await imgP;
   attach();
   return true;
 }
@@ -149,7 +167,7 @@ function attach() {
 function restore() {
   const p = state.phase, q = state.q;
   if (p === 'lobby') return lobby();
-  if (p === 'show') return goShow(q);
+  if (p === 'show') return isPaused() ? pauseView(q) : goShow(q);
   if (p === 'answer') return now() < state.endAt ? answerView(q) : goReveal(q);
   if (p === 'reveal') return goReveal(q);
   if (p === 'board') return boardView(q);
@@ -208,6 +226,7 @@ function start() {
 async function goShow(q) {
   clearTimeout(autoT); clearInterval(timer); stopAns();
   const Q = quiz.qs[q];
+  await Promise.race([imgP, new Promise((ok) => setTimeout(ok, 4000))]);
   try {
     await D.update(r(), {
       ['qpub/' + q]: { t: Q.t, o: Q.o.map((x) => x || ''), time: Q.time, pts: Q.pts },
@@ -216,7 +235,7 @@ async function goShow(q) {
   } catch (e) { return fail(e); }
   state = { phase: 'show', q };
   Sound.mode(null); Sound.whoosh();
-  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div><div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + esc(Q.t) + '</div>' +
+  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm">' + esc(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + esc(Q.t) + '</div>') +
     (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
     '<div class="prog"><i id="pg"></i></div>';
   requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
@@ -232,25 +251,28 @@ async function goAnswer(q) {
   answerView(q);
 }
 
-function answerView(q) {
+function answerView(q, still) {
   const Q = quiz.qs[q];
-  Sound.mode('q');
+  if (!still) Sound.mode('q');
   const C = 2 * Math.PI * 58;
-  main.innerHTML = qHead(q) + '<div class="qtext">' + esc(Q.t) + '</div>' +
-    '<div class="mid"><div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + Q.time + '</div></div><div id="pics"></div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
+  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + '">' + esc(Q.t) + '</div>' +
+    '<div class="mid"><div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + Q.time + '</div></div><div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
+  $('bPause').onclick = () => pause();
   stopAns();
-  let heard = -1;
+  let heard = -1, lastBeep = 0;
   ansOff = D.onValue(r('answers/' + q), (s) => {
     answers[q] = s.val() || {};
     const n = Object.keys(answers[q]).filter((k) => players[k]).length;
-    if (heard >= 0 && n > heard && state.phase === 'answer') Sound.answer(n); // lần đầu là dữ liệu có sẵn (vd. tải lại trang): không kêu
+    // lần đầu là dữ liệu có sẵn (vd. tải lại trang): không kêu; lớp đông bấm dồn: cách nhau ít nhất 120ms
+    if (heard >= 0 && n > heard && state.phase === 'answer' && Date.now() - lastBeep > 120) { Sound.answer(n); lastBeep = Date.now(); }
     heard = n;
     updAnswered();
   });
   let last = -1;
   clearInterval(timer);
+  if (still) return;
   timer = setInterval(() => {
     const ms = Math.max(0, state.endAt - now()), left = Math.min(Q.time, Math.ceil(ms / 1000)), tm = $('tm');
     if (tm) { tm.textContent = left; $('ring').classList.toggle('low', left <= 5); $('arc').style.strokeDashoffset = (C * (1 - Math.min(1, ms / (Q.time * 1000)))).toFixed(1); }
@@ -258,6 +280,39 @@ function answerView(q) {
     last = left;
     if (now() > state.endAt + 500) goReveal(q);
   }, 200);
+}
+let pauseOv = null;
+async function pause() {
+  if (state.phase !== 'answer') return;
+  const q = state.q, at = Math.round(now());
+  clearInterval(timer); Sound.mode(null);
+  PZ.cur = { q, at }; pzSave();
+  const st = { phase: 'show', q, qs: String(q), startAt: state.startAt, endAt: state.endAt };
+  try { await D.set(r('state'), st); } catch (e) { delete PZ.cur; pzSave(); answerView(q); return fail(e); }
+  state = st;
+  pauseView(q);
+}
+function pauseView(q) {
+  clearInterval(timer); clearTimeout(autoT);
+  if (!$('tm')) answerView(q, true);
+  const left = Math.max(0, Math.ceil((state.endAt - (PZ.cur ? PZ.cur.at : now())) / 1000));
+  const tm = $('tm'); if (tm) tm.textContent = left;
+  if (pauseOv) pauseOv.remove();
+  pauseOv = document.createElement('div'); pauseOv.className = 'overlay pauseov';
+  pauseOv.innerHTML = '<div class="pic">⏸</div><div class="t">Tạm dừng · còn ' + left + ' giây</div><div class="pbtns"><button class="btn pri" id="bResume">▶ Tiếp tục</button><button class="btn" id="bSkip2">Bỏ qua ⏭</button></div><div class="ph">Phím Space hoặc P để tiếp tục</div>';
+  document.body.appendChild(pauseOv);
+  $('bResume').onclick = unpause; $('bSkip2').onclick = () => goReveal(q);
+}
+function closePause() { if (pauseOv) { pauseOv.remove(); pauseOv = null; } }
+async function unpause() {
+  if (!isPaused()) return;
+  const q = state.q, t = Math.round(now()), from = PZ.cur && PZ.cur.q === q ? PZ.cur.at : t;
+  const dur = Math.max(0, t - from);
+  const st = { phase: 'answer', q, qs: String(q), startAt: state.startAt, endAt: state.endAt + dur };
+  try { await D.set(r('state'), st); } catch (e) { return fail(e); }
+  (PZ[q] = PZ[q] || []).push([from, t]); delete PZ.cur; pzSave();
+  state = st; closePause();
+  answerView(q);
 }
 function updAnswered() {
   const q = state.q, a = answers[q] || {}, n = Object.keys(a).filter((k) => players[k]).length, total = Object.keys(players).length;
@@ -270,10 +325,12 @@ let revealing = -1;
 async function goReveal(q) {
   if (revealing === q) return;
   revealing = q;
-  clearInterval(timer); stopAns(); Sound.mode(null);
+  clearInterval(timer); stopAns(); Sound.mode(null); closePause();
+  const wasOpen = state.phase === 'answer' || isPaused();
+  if (isPaused()) { const t = Math.round(now()), from = PZ.cur ? PZ.cur.at : t; (PZ[q] = PZ[q] || []).push([from, t]); delete PZ.cur; pzSave(); }
   const Q = quiz.qs[q];
   let ov = null;
-  if (state.phase === 'answer') {
+  if (wasOpen) {
     Sound.timeup();
     ov = document.createElement('div'); ov.className = 'overlay';
     const all = Object.keys(answers[q] || {}).filter((k) => players[k]).length >= Object.keys(players).length;
@@ -282,7 +339,7 @@ async function goReveal(q) {
   }
   const t0 = Date.now();
   try {
-    if (state.phase === 'answer') await D.update(r('state'), { phase: 'reveal' });
+    if (wasOpen) await D.update(r('state'), { phase: 'reveal' });
     state.phase = 'reveal';
     const s = await D.get(r('answers/' + q)); answers[q] = s.val() || {};
     if (!keys[q]) keys[q] = { c: Q.c.slice(), s: state.startAt, e: state.endAt };
@@ -405,7 +462,7 @@ function endView(anim) {
 function next() {
   const p = state.phase, q = state.q;
   if (p === 'lobby') return start();
-  if (p === 'show') return goAnswer(q);
+  if (p === 'show') return isPaused() ? unpause() : goAnswer(q);
   if (p === 'answer') return goReveal(q);
   if (p === 'reveal') return q + 1 < quiz.qs.length ? goBoard(q) : goEnd();
   if (p === 'board') return goShow(q + 1);
@@ -424,7 +481,7 @@ function compute() {
       // giờ bấm sớm hơn lúc mở câu là khai gian (luật đã chặn, đây là lớp chặn thứ hai): không tính
       if (an && an.at < K.s - 1500) an = null;
       const ok = !!(an && K.c.includes(an.a));
-      const ms = an ? an.at - K.s : null;
+      const ms = an ? an.at - K.s - pausedMs(q, an.at) : null;
       let pts = points(ok, ms, Q.time, Q.pts), b = 0;
       if (Q.pts) { x.k = ok ? x.k + 1 : 0; if (ok && meta.streak) b = streakBonus(x.k); }
       pts += b; x.s += pts; if (ok) x.ok++;
@@ -463,6 +520,7 @@ document.addEventListener('keydown', (e) => {
     next();
   }
   if (e.key === 'f' || e.key === 'F') full();
+  if ((e.key === 'p' || e.key === 'P') && PIN) { if (state.phase === 'answer') pause(); else if (isPaused()) unpause(); }
 });
 function full() { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
 $('bFull').onclick = full;

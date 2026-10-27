@@ -138,7 +138,7 @@ function check(ok, msg) { console.log(ok ? '  ✔' : '  ✘', msg); if (!ok) fai
       const a = acts[i]; if (!a) continue;
       const idx = a === 'c' ? KEY[q] : (KEY[q] + 1) % 4;
       await ps[i].click('.pbtn.k' + idx);
-      await ps[i].waitForSelector('text=Đã chọn');
+      await ps[i].waitForSelector('#sMsg:not([hidden]):has-text("Đã chọn"), #sRes:not([hidden])'); // bạn bấm cuối: máy thầy công bố ngay, có thể qua luôn màn kết quả
       if (i === 0 && q === 0) {
         const k = await cheat(P1, "const s=await P.D.get(P.D.ref(P.db,'quiz/'+arg.pin+'/key/0')); return s.exists()?'leak':'none'", pinArg);
         check(k === 'none', 'đáp án đúng chưa có trên máy chủ khi đang trả lời');
