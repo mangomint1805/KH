@@ -78,54 +78,130 @@ export function points(ok, ms, limitSec, mult) {
 }
 export function streakBonus(streak) { return streak >= 2 ? Math.min(500, 100 * (streak - 1)) : 0; }
 
-// ---------- âm thanh tự tạo (WebAudio) ----------
+// ---------- âm thanh tự tạo (WebAudio), không dùng nhạc của Kahoot ----------
+// Nhạc nền có 2 kiểu: 'lobby' (phòng chờ, vui) và 'q' (lúc trả lời, dồn dập hơn). Lịch nốt chạy trước ~0.2 giây để không giật.
 export const Sound = (() => {
-  let ctx = null, musicOn = false, sfxOn = true, loop = 0, step = 0, master = null;
+  let ctx = null, master = null, musicBus = null, noiseBuf = null;
+  let musicOn = false, sfxOn = true, mode = 'lobby', paused = true, loop = 0, step = 0, nextT = 0, fast = false;
   function ac() {
-    if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; ctx = new C(); master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination); }
+    if (!ctx) {
+      const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+      ctx = new C(); master = ctx.createGain(); master.gain.value = 0.55; master.connect(ctx.destination);
+      musicBus = ctx.createGain(); musicBus.gain.value = 0.9; musicBus.connect(master);
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
+      const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
     if (ctx.state === 'suspended') ctx.resume();
     return ctx;
   }
-  function tone(f, dur, type, vol, when) {
+  function tone(f, dur, type, vol, when, bus, glide) {
     const c = ac(); if (!c) return;
-    const t = c.currentTime + (when || 0), o = c.createOscillator(), g = c.createGain();
-    o.type = type || 'sine'; o.frequency.value = f;
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+    const t = Math.max(c.currentTime, when == null ? c.currentTime : when), o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+    if (glide) o.frequency.exponentialRampToValueAtTime(glide, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(bus || master); o.start(t); o.stop(t + dur + 0.05);
   }
-  // nhạc nền: vòng hợp âm C – Am – F – G, nhịp nhẹ
-  const CH = [[262, 330, 392], [220, 262, 330], [175, 220, 262], [196, 247, 294]];
-  function tick() {
-    const ch = CH[Math.floor(step / 8) % 4], n = step % 8;
-    tone(ch[n % 3] * (n >= 4 ? 2 : 1), 0.22, 'triangle', 0.06);
-    if (n % 4 === 0) tone(ch[0] / 2, 0.4, 'sine', 0.09);
+  function noise(dur, vol, when, hp, bus) {
+    const c = ac(); if (!c) return;
+    const t = Math.max(c.currentTime, when == null ? c.currentTime : when), s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = noiseBuf; f.type = 'highpass'; f.frequency.value = hp || 6000;
+    g.gain.setValueAtTime(vol || 0.1, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(bus || master); s.start(t); s.stop(t + dur + 0.02);
+  }
+  const later = (s) => (ctx ? ctx.currentTime + s : 0);
+  // ---- nhạc phòng chờ: C – G – Am – F, nhịp 112 ----
+  const LOBBY = { bpm: 112, ch: [[262, 330, 392], [196, 247, 294], [220, 262, 330], [175, 220, 262]], bass: [131, 98, 110, 87] };
+  // ---- nhạc trả lời: Am – Am – F – E, nhịp 132, ostinato + hi-hat ----
+  const QUEST = { bpm: 132, ch: [[220, 262, 330], [220, 262, 330], [175, 220, 262], [165, 208, 247]], bass: [110, 110, 87, 82] };
+  function schedule(t) {
+    const L = mode === 'q' ? QUEST : LOBBY, bar = Math.floor(step / 8) % 4, n = step % 8, ch = L.ch[bar];
+    if (mode === 'q') {
+      tone(ch[[0, 2, 1, 2][n % 4]] * 2, 0.12, 'square', fast ? 0.045 : 0.032, t, musicBus);
+      if (n % 2 === 0) tone(L.bass[bar], 0.2, 'triangle', 0.16, t, musicBus);
+      noise(0.03, fast ? 0.06 : 0.035, t, 8000, musicBus);
+      if (n === 4) noise(0.08, 0.05, t, 1800, musicBus);
+    } else {
+      const arp = [0, 1, 2, 1, 0, 2, 1, 2][n];
+      tone(ch[arp] * 2, 0.22, 'triangle', 0.05, t, musicBus);
+      if (n % 4 === 0) tone(L.bass[bar], 0.38, 'sine', 0.14, t, musicBus);
+      if (n === 2 || n === 6) noise(0.06, 0.03, t, 2500, musicBus);
+      if (n === 0 && bar % 2 === 0) tone(ch[2] * 4, 0.18, 'sine', 0.03, t + 0.01, musicBus);
+    }
     step++;
   }
-  function startLoop() { if (loop || !musicOn) return; ac(); loop = setInterval(tick, 230); }
+  function pump() {
+    if (!ctx) return;
+    const L = mode === 'q' ? QUEST : LOBBY, dt = 60 / (fast ? L.bpm * 1.25 : L.bpm) / 2;
+    if (nextT < ctx.currentTime) nextT = ctx.currentTime + 0.05;
+    while (nextT < ctx.currentTime + 0.2) { schedule(nextT); nextT += dt; }
+  }
+  function startLoop() { if (loop || !musicOn || paused) return; if (!ac()) return; nextT = 0; loop = setInterval(pump, 50); pump(); }
   function stopLoop() { clearInterval(loop); loop = 0; }
   return {
     get music() { return musicOn; }, get sfx() { return sfxOn; },
     setMusic(v) { musicOn = v; if (v) startLoop(); else stopLoop(); },
     setSfx(v) { sfxOn = v; },
     unlock() { ac(); },
-    pauseMusic() { stopLoop(); }, resumeMusic() { startLoop(); },
-    tick() { if (sfxOn) tone(880, 0.06, 'square', 0.05); },
-    join() { if (sfxOn) { tone(660, 0.1, 'sine', 0.12); tone(990, 0.12, 'sine', 0.12, 0.08); } },
-    go() { if (sfxOn) [523, 659, 784].forEach((f, i) => tone(f, 0.18, 'triangle', 0.15, i * 0.09)); },
-    end() { if (sfxOn) { tone(196, 0.5, 'sawtooth', 0.08); tone(147, 0.6, 'sine', 0.15, 0.05); } },
-    reveal() { if (sfxOn) [784, 988, 1175, 1568].forEach((f, i) => tone(f, 0.25, 'sine', 0.12, i * 0.07)); },
-    win() { if (sfxOn) [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, 0.3, 'triangle', 0.14, i * 0.15)); },
+    // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
+    mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; paused = false; startLoop(); },
+    hurry(v) { fast = !!v; },
+    pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
+    tick() { if (sfxOn) { tone(1320, 0.05, 'square', 0.06); } },
+    join() { if (sfxOn) { tone(523, 0.08, 'sine', 0.14); tone(784, 0.1, 'sine', 0.14, later(0.07)); tone(1047, 0.12, 'sine', 0.1, later(0.14)); } },
+    go() { if (sfxOn) [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.22, 'triangle', 0.16, later(i * 0.08))); },
+    count(n) { if (sfxOn) tone(n ? 660 : 990, n ? 0.18 : 0.4, 'triangle', 0.2); },
+    whoosh() { if (sfxOn) { noise(0.35, 0.08, null, 900); tone(300, 0.35, 'sine', 0.05, null, null, 900); } },
+    timeup() { if (sfxOn) { tone(196, 0.9, 'sawtooth', 0.07); tone(147, 1.1, 'sine', 0.2, later(0.02)); noise(0.5, 0.06, null, 300); } },
+    end() { this.timeup(); },
+    reveal() { if (sfxOn) [784, 988, 1175, 1568].forEach((f, i) => tone(f, 0.3, 'sine', 0.12, later(i * 0.07))); },
+    drum(sec) { if (!sfxOn || !ac()) return; const n = Math.round((sec || 2) * 16); for (let i = 0; i < n; i++) noise(0.05, 0.03 + 0.07 * i / n, later(i / 16), 1500); tone(98, 0.6, 'sine', 0.25, later(sec || 2)); noise(0.6, 0.12, later(sec || 2), 3000); },
+    win() { if (sfxOn) [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i === 6 ? 0.8 : 0.28, 'triangle', 0.15, later(i * 0.14))); },
   };
 })();
 
+// Nền chuyển động: các hình ▲ ◆ ● ■ trôi chầm chậm (CSS transform, nhẹ cho máy chiếu cũ)
+export function bgfx(n) {
+  if (document.querySelector('.bgfx')) return;
+  const d = document.createElement('div'); d.className = 'bgfx'; d.setAttribute('aria-hidden', 'true');
+  const shapes = ['▲', '◆', '●', '■'];
+  let h = '';
+  for (let i = 0; i < (n || 14); i++) {
+    const sz = 40 + Math.round(Math.random() * 120), x = Math.round(Math.random() * 100), dur = 18 + Math.round(Math.random() * 22), del = -Math.round(Math.random() * dur);
+    h += '<span style="left:' + x + '%;font-size:' + sz + 'px;animation-duration:' + dur + 's;animation-delay:' + del + 's">' + shapes[i % 4] + '</span>';
+  }
+  d.innerHTML = h; document.body.prepend(d);
+}
+
+// Đếm số tăng dần (điểm, số người trả lời)
+export function countUp(el, from, to, ms) {
+  if (!el) return; const t0 = performance.now(), d = ms || 900;
+  (function f(t) { const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e); if (k < 1) requestAnimationFrame(f); })(t0);
+}
+
 // Pháo giấy cho bục vinh danh
 export function confetti(canvas, ms) {
+  if (!canvas) return;
   const c = canvas.getContext('2d'), W = (canvas.width = innerWidth), H = (canvas.height = innerHeight), P = [];
-  for (let i = 0; i < 180; i++) P.push({ x: Math.random() * W, y: -Math.random() * H, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4, r: 4 + Math.random() * 6, a: Math.random() * 6, col: COLORS[i % 4] });
+  const cols = COLORS.concat(['#ffffff', '#ffd400', '#a46bff']);
+  for (let i = 0; i < 220; i++) P.push({ x: Math.random() * W, y: -Math.random() * H, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4, r: 5 + Math.random() * 7, a: Math.random() * 6, col: cols[i % cols.length] });
   const t0 = performance.now();
   (function f(t) {
     c.clearRect(0, 0, W, H);
-    P.forEach((p) => { p.x += p.vx; p.y += p.vy; p.a += 0.1; if (p.y > H) p.y = -10; c.save(); c.translate(p.x, p.y); c.rotate(p.a); c.fillStyle = p.col; c.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); c.restore(); });
+    P.forEach((p) => { p.x += p.vx + Math.sin((t + p.a * 300) / 400) * 0.6; p.y += p.vy; p.a += 0.1; if (p.y > H) p.y = -10; c.save(); c.translate(p.x, p.y); c.rotate(p.a); c.fillStyle = p.col; c.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); c.restore(); });
     if (t - t0 < (ms || 6000)) requestAnimationFrame(f); else c.clearRect(0, 0, W, H);
   })(t0);
+}
+
+// Giả lập mạng yếu để kiểm thử: thêm ?sim=weak vào địa chỉ. Cứ 8–14 giây mất mạng 2–5 giây.
+export function simWeak(D, db, label) {
+  if (!/[?&]sim=weak/.test(location.search)) return false;
+  const tag = document.createElement('div'); tag.className = 'simtag'; tag.textContent = 'SIM mạng yếu'; document.body.appendChild(tag);
+  (function cyc() {
+    setTimeout(() => {
+      D.goOffline(db); tag.textContent = 'SIM: mất mạng'; console.log('[sim]', label, 'offline');
+      setTimeout(() => { D.goOnline(db); tag.textContent = 'SIM mạng yếu'; console.log('[sim]', label, 'online'); cyc(); }, 2000 + Math.random() * 3000);
+    }, 8000 + Math.random() * 6000);
+  })();
+  return true;
 }

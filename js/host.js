@@ -1,6 +1,6 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, COLORS, SHAPES, LETTERS } from './common.js?v=1';
+import { $, esc, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS } from './common.js?v=2';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
@@ -29,6 +29,7 @@ async function boot() {
     return;
   }
   now = serverClock(D, B.db);
+  watchNet(); simWeak(D, B.db, 'host');
   $('ctrl').hidden = false;
   cleanup();
   const params = new URLSearchParams(location.search);
@@ -38,6 +39,18 @@ async function boot() {
     if (ok) return;
   }
   pick(params.get('quiz'));
+}
+
+// Mất mạng: hiện thanh đỏ trên cùng; Firebase tự gửi lại khi có mạng, trò chơi tạm dừng tới lúc đó.
+function watchNet() {
+  let seen = false, bar = null;
+  D.onValue(D.ref(B.db, '.info/connected'), (s) => {
+    const on = s.val() === true;
+    if (on) { seen = true; if (bar) { bar.remove(); bar = null; toast('Đã có mạng lại ✓'); } return; }
+    if (!seen || bar) return;
+    bar = document.createElement('div'); bar.className = 'netbar'; bar.textContent = '⚠ Máy thầy mất mạng — trò chơi tạm dừng, sẽ tự tiếp tục khi có mạng lại';
+    document.body.appendChild(bar);
+  });
 }
 
 // Xoá phòng quá 24 giờ (không có máy chủ nên trang host tự dọn mỗi lần mở)
@@ -133,14 +146,14 @@ function onPlayers() {
 
 // ---------- phòng chờ ----------
 function lobby() {
-  Sound.resumeMusic();
+  Sound.mode('lobby');
   let qr = '';
   try { const g = window.qrcode(0, 'M'); g.addData(playUrl(true)); g.make(); qr = g.createSvgTag({ cellSize: 6, margin: 2, scalable: true }); } catch (e) {}
-  main.innerHTML = '<div class="lobby"><div class="pinbox card"><div class="lbl">Vào <span class="url">' + esc(shortUrl()) + '</span></div><div class="lbl" style="margin-top:6px">Mã PIN</div><div class="pin">' + PIN + '</div>' +
-    (qr ? '<div class="qr" style="margin-top:12px">' + qr + '</div>' : '') + '</div>' +
-    '<div><div style="display:flex;align-items:center;gap:16px;margin-bottom:16px"><span class="count" id="cnt">0 người chơi</span><span class="sp" style="flex:1"></span>' +
+  main.innerHTML = '<div class="lobby2"><div class="joinbar"><div class="lbl">Vào <b>' + esc(shortUrl()) + '</b><br>hoặc quét mã QR</div>' +
+    '<div><div class="lbl">Mã PIN</div><div class="pin">' + PIN + '</div></div>' + (qr ? '<div class="qr">' + qr + '</div>' : '') + '</div>' +
+    '<div class="lobbyrow"><span class="count" id="cnt">0 người chơi</span><span class="brand">Minto Quiz</span>' +
     '<button class="btn big pri" id="bStart" disabled>Bắt đầu ▶</button></div><div class="names" id="names"></div>' +
-    '<p class="muted" id="hint">Đang chờ học sinh vào phòng… Bấm vào × để mời một bạn ra (ví dụ tên không phù hợp).</p></div></div>';
+    '<p class="hint" id="hint">Đang chờ học sinh vào phòng<span class="waitdots"></span> Bấm × để mời một bạn ra (ví dụ tên không phù hợp).</p></div>';
   $('bStart').onclick = () => start();
   lobbyNames();
 }
@@ -158,7 +171,20 @@ function kick(uid) {
   D.update(r(), { ['players/' + uid]: null, ['kick/' + uid]: true, ['scores/' + uid]: null }).catch(fail);
 }
 
-function start() { if (!Object.keys(players).length) return; Sound.go(); goShow(0); }
+let starting = false;
+// Đếm ngược 3–2–1 trước câu đầu (giống Kahoot), phím Space không bấm được hai lần
+function start() {
+  if (!Object.keys(players).length || starting) return;
+  starting = true; Sound.mode(null); Sound.go();
+  const ov = document.createElement('div'); ov.className = 'overlay'; document.body.appendChild(ov);
+  let n = 3;
+  const step = () => {
+    if (n === 0) { ov.remove(); starting = false; goShow(0); return; }
+    ov.innerHTML = '<div class="t">' + esc(meta.title) + '</div><div class="big" key="' + n + '">' + n + '</div><div class="t" style="font-size:26px">Chuẩn bị nhé!</div>';
+    Sound.count(n); n--; setTimeout(step, 1000);
+  };
+  step();
+}
 
 // ---------- câu hỏi ----------
 async function goShow(q) {
@@ -171,9 +197,9 @@ async function goShow(q) {
     });
   } catch (e) { return fail(e); }
   state = { phase: 'show', q };
-  Sound.pauseMusic();
-  main.innerHTML = qHead(q) + '<div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + esc(Q.t) + '</div>' +
-    (Q.pts === 2 ? '<div class="answered" style="color:var(--brand-ink)">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="answered muted">Câu này không tính điểm</div>' : '') +
+  Sound.mode(null); Sound.whoosh();
+  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div><div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + esc(Q.t) + '</div>' +
+    (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
     '<div class="prog"><i id="pg"></i></div>';
   requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
   autoT = setTimeout(() => goAnswer(q), SHOW_MS);
@@ -190,9 +216,10 @@ async function goAnswer(q) {
 
 function answerView(q) {
   const Q = quiz.qs[q];
-  Sound.resumeMusic();
+  Sound.mode('q');
+  const C = 2 * Math.PI * 58;
   main.innerHTML = qHead(q) + '<div class="qtext">' + esc(Q.t) + '</div>' +
-    '<div class="mid"><div class="timer" id="tm">' + Q.time + '</div><div id="pics"></div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
+    '<div class="mid"><div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + Q.time + '</div></div><div id="pics"></div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
   stopAns();
@@ -200,9 +227,9 @@ function answerView(q) {
   let last = -1;
   clearInterval(timer);
   timer = setInterval(() => {
-    const left = Math.min(Q.time, Math.max(0, Math.ceil((state.endAt - now()) / 1000))), tm = $('tm');
-    if (tm) { tm.textContent = left; tm.classList.toggle('low', left <= 5); }
-    if (left !== last && left <= 5 && left > 0) Sound.tick();
+    const ms = Math.max(0, state.endAt - now()), left = Math.min(Q.time, Math.ceil(ms / 1000)), tm = $('tm');
+    if (tm) { tm.textContent = left; $('ring').classList.toggle('low', left <= 5); $('arc').style.strokeDashoffset = (C * (1 - Math.min(1, ms / (Q.time * 1000)))).toFixed(1); }
+    if (left !== last && left <= 5 && left > 0) { Sound.tick(); Sound.hurry(true); }
     last = left;
     if (now() > state.endAt + 500) goReveal(q);
   }, 200);
@@ -218,8 +245,17 @@ let revealing = -1;
 async function goReveal(q) {
   if (revealing === q) return;
   revealing = q;
-  clearInterval(timer); stopAns(); Sound.pauseMusic();
+  clearInterval(timer); stopAns(); Sound.mode(null);
   const Q = quiz.qs[q];
+  let ov = null;
+  if (state.phase === 'answer') {
+    Sound.timeup();
+    ov = document.createElement('div'); ov.className = 'overlay';
+    const all = Object.keys(answers[q] || {}).filter((k) => players[k]).length >= Object.keys(players).length;
+    ov.innerHTML = '<div class="timesup">' + (all ? 'Cả lớp chốt đơn hết rồi! ✅' : 'Hết giờ! ⏰') + '</div>';
+    document.body.appendChild(ov);
+  }
+  const t0 = Date.now();
   try {
     if (state.phase === 'answer') await D.update(r('state'), { phase: 'reveal' });
     state.phase = 'reveal';
@@ -234,19 +270,29 @@ async function goReveal(q) {
     await D.update(r(), up);
   } catch (e) { fail(e); }
   revealing = -1;
+  if (ov) { await new Promise((ok) => setTimeout(ok, Math.max(0, 1300 - (Date.now() - t0)))); ov.remove(); }
   Sound.reveal();
   revealView(q);
 }
 
+// Lời thầy trên màn chiếu (sửa được qua form lời nhắn)
+const HL = {
+  allOk: ['Cả lớp đúng hết luôn, tự hào ghê 🥹', '100% đúng, quá đỉnh 💯', 'Everyone got it! 🥹', 'Perfect score, class! 💯'],
+  allNo: ['Cả lớp sai hết vậy đó hả 😭', 'Ủa cả lớp?? Câu này thầy giảng lại nha 😭', 'Houston, we have a problem 😭', 'Everyone missed it?? 😭'],
+  lastQ: ['Câu cuối cùng rồi nè 🔥', 'Câu cuối, lật kèo là ở đây 😤', 'Final question! 🔥'],
+};
+const hsay = (arr, seed) => arr[String(seed).split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 9973, 7) % arr.length];
 function revealView(q) {
   const Q = quiz.qs[q], a = answers[q] || {}, cnt = [0, 0, 0, 0];
   Object.keys(a).forEach((k) => { if (players[k] && a[k] && cnt[a[k].a] != null) cnt[a[k].a]++; });
-  const mx = Math.max(1, ...cnt);
-  main.innerHTML = qHead(q) + '<div class="qtext">' + esc(Q.t) + '</div>' +
-    '<div class="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="height:' + Math.round(cnt[i] / mx * 120) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
-    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? '' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' +
+  const mx = Math.max(1, ...cnt), tot = cnt.reduce((x, y) => x + y, 0), right = Q.c.reduce((x, i) => x + (cnt[i] || 0), 0);
+  const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
+  main.innerHTML = qHead(q) + '<div class="qtext">' + esc(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
+    '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
+    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' +
     '<div style="text-align:right"><button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = next;
+  requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
 }
 
 async function goBoard(q) {
@@ -255,12 +301,27 @@ async function goBoard(q) {
   boardView(q);
 }
 function boardView(q) {
-  const res = compute(), top = res.list.slice(0, 5);
-  main.innerHTML = '<h1 style="text-align:center;margin:0">Bảng xếp hạng</h1><div class="board">' +
-    (top.length ? top.map((x, i) => '<div class="r" style="animation-delay:' + (i * 0.08) + 's"><span class="rk">' + x.r + '</span><span class="nm">' + esc(x.name) + '</span>' +
-      (x.q[q] && x.q[q].pts ? '<span class="up">+' + x.q[q].pts + '</span>' : '') + (x.k >= 2 ? '<span class="up">🔥' + x.k + '</span>' : '') + '<span>' + x.s + '</span></div>').join('') : '<p class="muted" style="text-align:center">Chưa có ai.</p>') +
+  Sound.mode('lobby');
+  const res = compute(), H = 74;
+  // điểm trước câu này để làm hiệu ứng đổi chỗ và đếm điểm
+  const prev = res.list.map((x) => ({ x, ps: x.s - ((x.q[q] && x.q[q].pts) || 0) })).sort((a, b) => b.ps - a.ps || a.x.name.localeCompare(b.x.name));
+  const prevRank = {}; prev.forEach((p, i) => { prevRank[p.x.uid] = i; });
+  const top = res.list.slice(0, 5), ids = top.map((x) => x.uid);
+  const startOrder = top.slice().sort((a, b) => prevRank[a.uid] - prevRank[b.uid]).map((x) => x.uid);
+  const lead = res.list[0];
+  main.innerHTML = '<h1 style="text-align:center;margin:0">Bảng xếp hạng</h1>' +
+    '<div class="lead">' + (lead && res.list.length > 1 ? '👑 ' + esc(lead.name) + ' đang top 1' + (lead.k >= 2 ? ', chuỗi 🔥' + lead.k + ' nóng quá trời' : ' nè') : '') + '</div>' +
+    '<div class="board2" id="bd" style="height:' + (Math.max(1, top.length) * H) + 'px">' +
+    (top.length ? top.map((x) => {
+      const it = x.q[q] || {}, up = q > 0 ? prevRank[x.uid] - res.list.indexOf(x) : 0;
+      return '<div class="r' + (x.r === 1 ? ' first' : '') + '" data-u="' + esc(x.uid) + '" style="top:' + (startOrder.indexOf(x.uid) * H) + 'px"><span class="rk">' + x.r + '</span><span class="nm">' + esc(x.name) + '</span>' +
+        (it.pts ? '<span class="up">+' + it.pts + '</span>' : '') + (x.k >= 2 ? '<span class="up">🔥' + x.k + '</span>' : '') + '<span class="mv">' + (up > 0 ? '▲' + up : '') + '</span><span class="sc" data-from="' + (x.s - (it.pts || 0)) + '" data-to="' + x.s + '">' + (x.s - (it.pts || 0)) + '</span></div>';
+    }).join('') : '<p class="muted" style="text-align:center">Chưa có ai.</p>') +
     '</div><div style="text-align:right;margin-top:auto"><button class="btn big pri" id="bNext">Câu tiếp ▶</button></div>';
   $('bNext').onclick = next;
+  const bd = $('bd');
+  bd.querySelectorAll('.sc').forEach((el) => countUp(el, +el.dataset.from, +el.dataset.to, 1100));
+  setTimeout(() => { bd.querySelectorAll('.r').forEach((el) => { el.style.top = (ids.indexOf(el.dataset.u) * H) + 'px'; }); bd.classList.add('done'); }, 1200);
 }
 
 async function goEnd() {
@@ -269,18 +330,51 @@ async function goEnd() {
   state.phase = 'end';
   endView(true);
 }
+
+// ---------- lưu bản tổng kết vào Firestore (chỉ thầy đọc được) để xem lại trong Lịch sử kết quả ----------
+let savedPin = '';
+function resultId() {
+  const d = new Date(meta.at || Date.now()), pad = (n) => ('0' + n).slice(-2);
+  return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + PIN;
+}
+function saveMark(t, retry) {
+  const el = $('saveSt'); if (!el) return;
+  el.innerHTML = t + (retry ? ' <button class="btn sm" id="bSaveAgain">Thử lại</button>' : '');
+  if (retry) $('bSaveAgain').onclick = saveResult;
+}
+async function saveResult() {
+  if (savedPin === PIN) return saveMark('✅ Đã lưu vào <a href="ket-qua.html">Lịch sử kết quả</a>');
+  const res = compute(); if (!res.n) return saveMark('');
+  saveMark('Đang lưu vào lịch sử…');
+  try {
+    const x = await window.MACC.fs(), F = x.F;
+    const nq = quiz.qs.filter((Q) => Q.pts).length;
+    await F.setDoc(F.doc(x.db, 'quizResults', resultId()), {
+      title: meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq, streak: !!meta.streak,
+      players: res.list.map((p) => ({ name: String(p.name || '').slice(0, 40), s: p.s, r: p.r, ok: p.ok })),
+    });
+    savedPin = PIN;
+    saveMark('✅ Đã lưu vào <a href="ket-qua.html">Lịch sử kết quả</a>');
+  } catch (e) {
+    console.error(e);
+    saveMark('⚠️ Chưa lưu được vào lịch sử (' + esc(e.code || e.message || 'lỗi') + ').', true);
+  }
+}
 function endView(anim) {
-  Sound.pauseMusic();
+  Sound.mode(null);
   const res = compute(), t = res.list;
   const slot = (x, k) => x ? '<div class="p p' + k + '"><div class="nm">' + esc(x.name) + '</div><div class="blk">' + k + '<small>' + x.s + ' điểm</small></div></div>' : '<div class="p p' + k + '"></div>';
   main.innerHTML = '<h1 style="text-align:center;margin:0">🏆 ' + esc(meta.title) + '</h1>' +
     '<div class="podium">' + slot(t[1], 2) + slot(t[0], 1) + slot(t[2], 3) + '</div>' +
+    (t.length > 3 ? '<div class="rest">' + t.slice(3, 10).map((x) => '<span>' + x.r + '. ' + esc(x.name) + ' · ' + x.s + '</span>').join('') + '</div>' : '') +
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn pri" id="bCsv">⬇ Tải kết quả CSV</button><button class="btn" id="bNew">Chơi bộ khác</button><button class="btn danger" id="bClose">Đóng phòng (xoá dữ liệu)</button></div>' +
-    '<p class="muted" style="text-align:center">Dữ liệu phòng tự xoá sau 24 giờ. Nhớ tải CSV trước khi đóng phòng.</p>';
+    '<p class="muted" style="text-align:center" id="saveSt"></p>' +
+    '<p class="muted" style="text-align:center">Phòng chơi tự xoá sau 24 giờ. Bảng điểm đã lưu trong Lịch sử kết quả, file CSV có thêm chi tiết từng câu.</p>';
   $('bCsv').onclick = csv;
   $('bNew').onclick = () => { try { localStorage.removeItem(LS_KEY); } catch (e) {} location.href = 'host.html'; };
   $('bClose').onclick = async () => { if (!confirm('Xoá phòng ' + PIN + '? Học sinh sẽ không xem lại được kết quả.')) return; unsub.forEach((f) => f()); unsub = []; await D.remove(r()).catch(fail); try { localStorage.removeItem(LS_KEY); } catch (e) {} location.href = 'host.html'; };
-  if (anim) { setTimeout(() => { Sound.win(); confetti($('fx'), 7000); }, 2300); }
+  saveResult();
+  if (anim) { Sound.drum(2.1); setTimeout(() => { Sound.win(); confetti($('fx'), 8000); }, 2300); }
 }
 
 function next() {
@@ -352,13 +446,16 @@ const setPref = (k, v) => { try { localStorage.setItem(k, v ? '1' : '0'); } catc
 function paintCtl() { $('bMusic').style.opacity = Sound.music ? 1 : 0.4; $('bSfx').style.opacity = Sound.sfx ? 1 : 0.4; }
 Sound.setSfx(pref('qz.sfx', true));
 const musicWanted = pref('qz.music', true);
-$('bMusic').onclick = () => { Sound.setMusic(!Sound.music); if (Sound.music && !['lobby', 'answer'].includes(state.phase)) Sound.pauseMusic(); setPref('qz.music', Sound.music); paintCtl(); };
+function musicFor() { const p = state.phase; Sound.mode(p === 'lobby' || p === 'board' ? 'lobby' : p === 'answer' ? 'q' : null); }
+$('bMusic').onclick = () => { Sound.setMusic(!Sound.music); if (Sound.music) musicFor(); setPref('qz.music', Sound.music); paintCtl(); };
 $('bSfx').onclick = () => { Sound.setSfx(!Sound.sfx); setPref('qz.sfx', Sound.sfx); paintCtl(); };
 // trình duyệt chỉ cho phát âm thanh sau khi người dùng bấm/chạm
-document.addEventListener('pointerdown', function once() { document.removeEventListener('pointerdown', once); Sound.unlock(); if (musicWanted) { Sound.setMusic(true); if (!['lobby', 'answer'].includes(state.phase)) Sound.pauseMusic(); } paintCtl(); });
-document.addEventListener('keydown', function once() { document.removeEventListener('keydown', once); Sound.unlock(); if (musicWanted && !Sound.music) { Sound.setMusic(true); if (!['lobby', 'answer'].includes(state.phase)) Sound.pauseMusic(); } paintCtl(); });
+function firstGesture() { document.removeEventListener('pointerdown', firstGesture); document.removeEventListener('keydown', firstGesture); Sound.unlock(); if (musicWanted && !Sound.music) { Sound.setMusic(true); musicFor(); } paintCtl(); }
+document.addEventListener('pointerdown', firstGesture);
+document.addEventListener('keydown', firstGesture);
 paintCtl();
 async function keepAwake() { try { if (navigator.wakeLock && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch (e) {} }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && PIN) keepAwake(); });
 
+bgfx(14);
 boot();
