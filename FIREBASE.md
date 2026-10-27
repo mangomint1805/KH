@@ -22,14 +22,16 @@ Luật này làm gì:
 - Học sinh không đọc được câu trả lời của bạn khác. Đáp án đúng chỉ được ghi lên khi thầy công bố.
 - Phòng quá 6 giờ thì không vào mới được nữa.
 
-## 3. Thêm luật Firestore cho bộ câu hỏi
+## 3. Thêm luật Firestore cho bộ câu hỏi và lịch sử kết quả
 
 1. Mở **Firestore Database** → thẻ **Rules**.
 2. Tìm dòng `match /databases/{database}/documents {`.
 3. Dán nội dung file [`firebase/firestore.rules.quiz.txt`](firebase/firestore.rules.quiz.txt) ngay **sau** dòng đó (bên trong cặp ngoặc). Giữ nguyên các `match` đang có.
 4. Bấm **Publish**.
 
-Chỉ tài khoản của thầy đọc và ghi được bộ câu hỏi. Nội dung câu hỏi không nằm trong repo.
+Chỉ tài khoản của thầy đọc và ghi được bộ câu hỏi (`quizzes`) và lịch sử kết quả (`quizResults`). Nội dung câu hỏi và tên học sinh không nằm trong repo.
+
+Nếu trước đây thầy đã dán phần `quizzes` rồi thì chỉ cần dán thêm khối `match /quizResults/{id}` ở cuối file.
 
 ## 4. Bật GitHub Pages cho repo KH
 

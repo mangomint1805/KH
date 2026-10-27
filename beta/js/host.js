@@ -330,6 +330,36 @@ async function goEnd() {
   state.phase = 'end';
   endView(true);
 }
+
+// ---------- lưu bản tổng kết vào Firestore (chỉ thầy đọc được) để xem lại trong Lịch sử kết quả ----------
+let savedPin = '';
+function resultId() {
+  const d = new Date(meta.at || Date.now()), pad = (n) => ('0' + n).slice(-2);
+  return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + PIN;
+}
+function saveMark(t, retry) {
+  const el = $('saveSt'); if (!el) return;
+  el.innerHTML = t + (retry ? ' <button class="btn sm" id="bSaveAgain">Thử lại</button>' : '');
+  if (retry) $('bSaveAgain').onclick = saveResult;
+}
+async function saveResult() {
+  if (savedPin === PIN) return saveMark('✅ Đã lưu vào <a href="ket-qua.html">Lịch sử kết quả</a>');
+  const res = compute(); if (!res.n) return saveMark('');
+  saveMark('Đang lưu vào lịch sử…');
+  try {
+    const x = await window.MACC.fs(), F = x.F;
+    const nq = quiz.qs.filter((Q) => Q.pts).length;
+    await F.setDoc(F.doc(x.db, 'quizResults', resultId()), {
+      title: meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq, streak: !!meta.streak,
+      players: res.list.map((p) => ({ name: String(p.name || '').slice(0, 40), s: p.s, r: p.r, ok: p.ok })),
+    });
+    savedPin = PIN;
+    saveMark('✅ Đã lưu vào <a href="ket-qua.html">Lịch sử kết quả</a>');
+  } catch (e) {
+    console.error(e);
+    saveMark('⚠️ Chưa lưu được vào lịch sử (' + esc(e.code || e.message || 'lỗi') + ').', true);
+  }
+}
 function endView(anim) {
   Sound.mode(null);
   const res = compute(), t = res.list;
@@ -338,10 +368,12 @@ function endView(anim) {
     '<div class="podium">' + slot(t[1], 2) + slot(t[0], 1) + slot(t[2], 3) + '</div>' +
     (t.length > 3 ? '<div class="rest">' + t.slice(3, 10).map((x) => '<span>' + x.r + '. ' + esc(x.name) + ' · ' + x.s + '</span>').join('') + '</div>' : '') +
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn pri" id="bCsv">⬇ Tải kết quả CSV</button><button class="btn" id="bNew">Chơi bộ khác</button><button class="btn danger" id="bClose">Đóng phòng (xoá dữ liệu)</button></div>' +
-    '<p class="muted" style="text-align:center">Dữ liệu phòng tự xoá sau 24 giờ. Nhớ tải CSV trước khi đóng phòng.</p>';
+    '<p class="muted" style="text-align:center" id="saveSt"></p>' +
+    '<p class="muted" style="text-align:center">Phòng chơi tự xoá sau 24 giờ. Bảng điểm đã lưu trong Lịch sử kết quả, file CSV có thêm chi tiết từng câu.</p>';
   $('bCsv').onclick = csv;
   $('bNew').onclick = () => { try { localStorage.removeItem(LS_KEY); } catch (e) {} location.href = 'host.html'; };
   $('bClose').onclick = async () => { if (!confirm('Xoá phòng ' + PIN + '? Học sinh sẽ không xem lại được kết quả.')) return; unsub.forEach((f) => f()); unsub = []; await D.remove(r()).catch(fail); try { localStorage.removeItem(LS_KEY); } catch (e) {} location.href = 'host.html'; };
+  saveResult();
   if (anim) { Sound.drum(2.1); setTimeout(() => { Sound.win(); confetti($('fx'), 8000); }, 2300); }
 }
 
