@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.7.1', d: '2026-10-28', items: [
+      'Sửa lỗi: khi dùng theme Hành baro, Thiên thần hoặc Băng hoại, điện thoại học sinh không hiện nền xanh (đúng) / đỏ (sai). Giờ theme nào cũng hiện đúng màu.',
+      'Theme Thiên thần: dải "Tham gia tại… PIN" phía trên đậm hơn, chữ trắng dễ đọc.',
+      'Màn đếm ngược và tạm dừng đổi màu theo theme, không còn phủ tím.',
+      'Hành baro: nền xanh ngọc đậm hơn một chút cho chữ trắng rõ hơn; đáp án sai mờ hẳn đi; nút chính màu hồng. Thiên thần: nút chính màu hồng đậm.'
+    ] },
     { v: '1.7', d: '2026-10-28', items: [
       'Thêm 3 theme giống web Minto English: Hành baro (xanh ngọc), Thiên thần (hồng – lavender), Băng hoại (xanh đêm neon). Chọn lúc tạo phòng, hoặc bấm 🎨 / phím T để đổi giữa chừng.',
       'Điện thoại học sinh tự đổi màu theo theme của màn chiếu.',

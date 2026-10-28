@@ -332,7 +332,7 @@ body.play.st-no { background: linear-gradient(160deg, #a11a1a, #d13b3b); }
 .thm.on { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(0,0,0,.12); }
 body.host, body.play { background-attachment: fixed; }
 /* Hành baro: xanh ngọc, điểm hồng, họa tiết sao + nốt nhạc */
-html[data-qz=idol] { --bg1: #075a59; --bg2: #12a4a3; --accent: #ff5fa2; }
+html[data-qz=idol] { --bg1: #075a59; --bg2: #0e8f8e; --accent: #ff5fa2; }
 html[data-qz=idol] body.host, html[data-qz=idol] body.play {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M15 8l2 5 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z' fill='%23fff' opacity='.16'/%3E%3Cpath d='M45 38v-10l8-2v10M45 38a3 3 0 1 1-1-1M53 36a3 3 0 1 1-1-1' stroke='%23ff9cc8' stroke-width='1.8' fill='none' opacity='.45'/%3E%3C/svg%3E") 0 0/60px 60px, linear-gradient(160deg, var(--bg1), var(--bg2)); background-attachment: fixed; }
 html[data-qz=idol] .jstrip { background: rgba(4,40,40,.55); box-shadow: inset 0 -2px 0 #ff9cc8; }
@@ -341,7 +341,7 @@ html[data-qz=y2k] { --bg1: #b03a7a; --bg2: #7c4ddb; --accent: #ffd6ec; }
 html[data-qz=y2k] body.host, html[data-qz=y2k] body.play {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='16' height='16' fill='%23fff' opacity='.06'/%3E%3Crect x='16' y='16' width='16' height='16' fill='%23fff' opacity='.06'/%3E%3Cpath d='M22 6h2v1h1v-1h2v1h1v3h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1h-1v-3h1z' fill='%23ffd6ec' opacity='.4'/%3E%3C/svg%3E") 0 0/32px 32px, linear-gradient(160deg, var(--bg1), var(--bg2)); background-attachment: fixed; }
 html[data-qz=y2k] :is(.qtext, .joinbar, .board2 .r, .pq, .card) { box-shadow: 4px 4px 0 #c7a6f0 !important; border: 2px solid #d9a6e6; }
-html[data-qz=y2k] .jstrip { background: linear-gradient(90deg, rgba(255,214,236,.28), rgba(232,220,255,.28)); }
+html[data-qz=y2k] .jstrip { background: rgba(70,12,60,.5); box-shadow: inset 0 -2px 0 #ffd6ec; }
 /* Băng hoại: xanh đêm, neon xanh – tím, nút vàng */
 html[data-qz=scifi] { --bg1: #0a1024; --bg2: #1a1140; --accent: #4ad7ff; }
 html[data-qz=scifi] body.host, html[data-qz=scifi] body.play {
@@ -353,3 +353,19 @@ html[data-qz=scifi] .btn.pri { color: #1a1140; background: linear-gradient(180de
 html[data-qz=scifi] .jstrip { background: rgba(5,8,20,.75); box-shadow: inset 0 -1px 0 rgba(74,215,255,.5); }
 html[data-qz=scifi] :is(h1, .brand) { text-shadow: 0 0 18px rgba(74,215,255,.45); }
 html[data-qz=scifi] .bgfx span { color: #4ad7ff; opacity: .1; }
+
+/* ---- 1.7.1: sửa màu theme ---- */
+/* màn đúng / sai trên điện thoại: theme không được che nền xanh – đỏ */
+html[data-qz] body.play.st-ok { background: linear-gradient(160deg, #1f8a0a, #43b02a); }
+html[data-qz] body.play.st-no { background: linear-gradient(160deg, #a11a1a, #d13b3b); }
+/* lớp phủ (đếm ngược, tạm dừng) theo màu theme, không dùng tím Kahoot */
+html[data-qz=idol] .overlay { background: rgba(3,42,42,.62); } html[data-qz=idol] .pauseov { background: rgba(3,42,42,.8); }
+html[data-qz=y2k] .overlay { background: rgba(80,16,70,.55); } html[data-qz=y2k] .pauseov { background: rgba(60,12,55,.78); }
+html[data-qz=scifi] .overlay { background: rgba(5,8,20,.6); } html[data-qz=scifi] .pauseov { background: rgba(5,8,20,.82); }
+/* đáp án sai mờ đi: nền xanh ngọc làm ô vàng / xanh lá mờ bị lẫn, nên giảm màu */
+html[data-qz=idol] :is(.hopt.dim, .chart .col.dim .b, .chart .col.dim .s) { opacity: .5; filter: grayscale(.6); }
+/* nút chính theo màu theme */
+html[data-qz=idol] .btn.pri { background: #d63c80; border-color: #d63c80; }
+html[data-qz=idol] .btn.pri:hover { background: #b92e6c; }
+html[data-qz=y2k] .btn.pri { background: #9b2c66; border-color: #9b2c66; }
+html[data-qz=y2k] .btn.pri:hover { background: #83235a; }
