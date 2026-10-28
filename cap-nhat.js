@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.8.1', d: '2026-10-28', items: [
+      'Tiếng báo khi có bạn chọn đáp án to và rõ hơn hẳn (trước bị nhạc nền che mất). Mỗi lần có bạn trả lời, nhạc nền tự nhỏ lại một chút cho tiếng báo nghe rõ.'
+    ] },
     { v: '1.8', d: '2026-10-28', items: [
       'Mỗi theme có nhạc nền và âm báo riêng: Tím Kahoot giữ như cũ; Hành baro kiểu nhạc idol sôi động, tiếng lấp lánh; Thiên thần kiểu hộp nhạc, tiếng chuông và bong bóng dễ thương; Băng hoại kiểu synthwave, tiếng laser điện tử. Đổi theme giữa chừng là nhạc đổi theo.',
       'Bấm 🎵 ở góc trái dưới màn chiếu để mở bảng âm thanh: bật/tắt và kéo chỉnh âm lượng nhạc nền, âm báo riêng từng cái. Kéo thanh âm báo sẽ phát thử một tiếng. Máy nhớ mức âm lượng cho lần sau.',

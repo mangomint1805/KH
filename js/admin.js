@@ -1,5 +1,5 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=5';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=6';
 
 const QP = window.QP;
 const LIB = {

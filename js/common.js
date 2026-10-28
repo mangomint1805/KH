@@ -207,7 +207,7 @@ export const Sound = (() => {
   const arp = (fs, ty, vol, gap, dur) => fs.forEach((f, i) => tone(f, dur || 0.22, ty, vol, later(i * gap)));
   const SFX = {
     kahoot: {
-      answer(n) { const f = 520 + Math.min(n, 24) * 28; tone(f, 0.07, 'sine', 0.16); tone(f * 1.5, 0.06, 'triangle', 0.06, later(0.04)); },
+      answer(n) { const f = 700 + Math.min(n, 24) * 30; tone(f, 0.11, 'triangle', 0.34); tone(f * 1.5, 0.1, 'sine', 0.2, later(0.05)); },
       tick() { tone(1320, 0.05, 'square', 0.06); },
       join() { tone(523, 0.08, 'sine', 0.14); tone(784, 0.1, 'sine', 0.14, later(0.07)); tone(1047, 0.12, 'sine', 0.1, later(0.14)); },
       go() { arp([392, 523, 659, 784, 1047], 'triangle', 0.16, 0.08); },
@@ -220,7 +220,7 @@ export const Sound = (() => {
     },
     // Hành baro: lấp lánh, kiểu sân khấu idol
     idol: {
-      answer(n) { const f = 660 + Math.min(n, 24) * 30; tone(f, 0.06, 'square', 0.05); tone(f * 2, 0.12, 'sine', 0.08, later(0.03)); },
+      answer(n) { const f = 760 + Math.min(n, 24) * 30; tone(f, 0.08, 'square', 0.12); tone(f * 2, 0.16, 'sine', 0.22, later(0.04)); },
       tick() { tone(1568, 0.05, 'sine', 0.08); },
       join() { arp([1175, 1480, 1760, 2349], 'sine', 0.09, 0.05, 0.16); },
       go() { arp([587, 740, 880, 1175, 1480, 1760], 'square', 0.06, 0.07, 0.18); noise(0.3, 0.05, later(0.42), 4000); },
@@ -233,7 +233,7 @@ export const Sound = (() => {
     },
     // Thiên thần: tiếng chuông, bong bóng, dễ thương
     y2k: {
-      answer(n) { const f = 440 + Math.min(n, 24) * 25; tone(f, 0.12, 'sine', 0.14, null, null, f * 2); },
+      answer(n) { const f = 600 + Math.min(n, 24) * 28; tone(f, 0.14, 'sine', 0.36, null, null, f * 2); tone(f * 3, 0.1, 'sine', 0.06, later(0.08)); },
       tick() { tone(2093, 0.06, 'sine', 0.07); },
       join() { tone(698, 0.18, 'sine', 0.12, null, null, 1397); tone(2093, 0.3, 'sine', 0.05, later(0.12)); },
       go() { arp([698, 880, 1047, 1397, 1760], 'sine', 0.12, 0.09, 0.35); },
@@ -246,7 +246,7 @@ export const Sound = (() => {
     },
     // Băng hoại: tiếng điện tử, laser, máy móc
     scifi: {
-      answer(n) { const f = 330 + Math.min(n, 24) * 22; tone(f, 0.08, 'square', 0.05, null, null, f * 2); },
+      answer(n) { const f = 500 + Math.min(n, 24) * 26; tone(f, 0.1, 'square', 0.12, null, null, f * 2); tone(f * 2, 0.08, 'sine', 0.18, later(0.06)); },
       tick() { tone(1760, 0.04, 'square', 0.05); tone(880, 0.04, 'square', 0.03, later(0.05)); },
       join() { tone(1760, 0.18, 'sawtooth', 0.05, null, null, 440); tone(880, 0.08, 'square', 0.04, later(0.15)); },
       go() { tone(110, 0.6, 'sawtooth', 0.08, null, null, 880); arp([440, 659, 880, 1319], 'square', 0.05, 0.08, 0.12); },
@@ -259,6 +259,8 @@ export const Sound = (() => {
     },
   };
   const fx = () => SFX[theme] || SFX.kahoot;
+  // nhạc nền nhỏ lại một chút trong 0.25 giây cho tiếng báo trả lời nghe rõ
+  function duck() { if (!musicBus || !musicOn) return; const t = ctx.currentTime, g = musicBus.gain; g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(mGain() * 0.45, t + 0.02); g.linearRampToValueAtTime(mGain(), t + 0.28); }
   return {
     get music() { return musicOn; }, get sfx() { return sfxOn; },
     get musicVol() { return mVol; }, get sfxVol() { return sVol; },
@@ -275,7 +277,7 @@ export const Sound = (() => {
     hurry(v) { fast = !!v; },
     pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
     // có bạn vừa chọn đáp án: tiếng nhỏ, cao dần theo số người đã trả lời
-    answer(n) { if (sfxOn) fx().answer(n); },
+    answer(n) { if (!sfxOn || !ac()) return; duck(); fx().answer(n); },
     tick() { if (sfxOn) fx().tick(); },
     join() { if (sfxOn) fx().join(); },
     go() { if (sfxOn) fx().go(); },
