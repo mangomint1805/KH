@@ -2,6 +2,40 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.6', d: '2026-10-28', items: [
+      'Phòng chờ: mã QR to gần gấp đôi, PIN nằm bên trái, QR bên phải.',
+      'Màu xanh dương của ô đáp án đổi sang xanh trời, không còn lẫn với nền tím.',
+      'Bảng xếp hạng không còn nhạc nền.',
+      'Khi cả lớp đã trả lời, màn chiếu hiện "Everyone\'s locked in! ✅".'
+    ] },
+    { v: '1.5', d: '2026-10-27', items: [
+      'Bảng xếp hạng đẹp hơn: điểm đếm tăng ở chỗ cũ trước, rồi mới đổi chỗ.',
+      'Bạn từ ngoài top 5 lội ngược dòng: bay từ dưới lên, nhãn "🚀 Lội ngược dòng ▲n", viền sáng vàng và tiếng vút lên.',
+      'Bạn bị đẩy khỏi top 5 trượt xuống mờ dần; mũi tên tụt hạng màu cam cho dễ phân biệt.',
+      'Bạn ngoài top 5 mà vượt từ 3 bậc trở lên được nhắc tên dưới bảng để cổ vũ.'
+    ] },
+    { v: '1.4', d: '2026-10-27', items: [
+      'Hình cho câu hỏi (ví dụ Part 1 tả tranh): trong trang soạn, bấm "🖼 Thêm hình" ở từng câu. Hình chỉ hiện trên màn chiếu, máy tự thu nhỏ cho nhẹ.',
+      'Nút ⏸ Tạm dừng giữa câu (hoặc phím P): đồng hồ đứng yên, điện thoại học sinh báo "Thầy tạm dừng xíu nha" và chưa bấm được. Thời gian dừng không bị tính vào điểm tốc độ.',
+      'Lớp đông bấm cùng lúc thì tiếng "bụp" không còn dồn dập loạn xạ.'
+    ] },
+    { v: '1.3', d: '2026-10-27', items: [
+      'Phòng chờ: mã QR to hơn, nằm ngay đầu màn chiếu.',
+      'Đang chơi: thanh "Tham gia tại … · PIN" trên cùng màn chiếu như Kahoot, bạn vào trễ vẫn thấy chỗ vào. Bấm biểu tượng QR để phóng to mã QR.',
+      'Mỗi lần có bạn chọn đáp án, máy thầy kêu một tiếng "bụp" nhỏ, càng nhiều bạn trả lời tiếng càng cao.'
+    ] },
+    { v: '1.2', d: '2026-10-26', items: [
+      'Lịch sử kết quả: chơi xong mỗi ván, bảng điểm tự lưu lại. Mở từ nút "📒 Lịch sử kết quả" trên trang bộ câu hỏi để xem lại từng buổi, tải CSV hoặc xoá buổi.',
+      'Cộng dồn điểm nhiều buổi theo tên học sinh: chọn các buổi muốn cộng, xem tổng điểm, số lần top 1, top 3, số câu đúng. Tên gõ khác dấu hay chữ hoa vẫn được gộp; bạn nào gõ khác hẳn thì tick rồi bấm Gộp.',
+      'Chống gian lận: điện thoại không khai được giờ bấm sớm hơn lúc mở câu để lấy đủ điểm tốc độ.'
+    ] },
+    { v: '1.1', d: '2026-10-26', items: [
+      'Giao diện giống Kahoot hơn: nền tím có hình trôi, đếm ngược 3–2–1 trước câu đầu, chữ "Hết giờ!", ô đáp án đúng nhấp nháy, cột biểu đồ mọc lên.',
+      'Nhạc mới: nhạc phòng chờ vui hơn, nhạc lúc trả lời dồn dập và nhanh dần ở 5 giây cuối, trống dồn trước bục vinh danh.',
+      'Bảng xếp hạng có hiệu ứng đổi chỗ, điểm đếm tăng dần, mũi tên cho bạn vừa lên hạng.',
+      'Điện thoại học sinh: lời khen, lời an ủi kiểu thầy kèm emoji (cả lúc gỡ lại sau câu sai, đứt chuỗi, lên hay tụt hạng, câu cuối), nền xanh khi đúng, đỏ khi sai, hiện "kém bạn phía trên bao nhiêu điểm", pháo giấy khi lên bục.',
+      'Mạng yếu: điện thoại báo "Đang gửi…" và tự gửi lại khi chập chờn, điểm tốc độ tính theo lúc bấm nên mạng chậm vài giây không bị trừ điểm, tự vẽ lại màn hình khi có mạng hay mở lại màn hình; máy thầy mất mạng thì hiện thanh đỏ và tạm dừng.'
+    ] },
     { v: '1.0', d: '2026-10-26', items: [
       'Ra mắt Minto Quiz: trò chơi trắc nghiệm trực tiếp trên lớp kiểu Kahoot, miễn phí.',
       'Tạo bộ câu hỏi bằng file Excel mẫu Kahoot, CSV, Word, PDF hoặc dán văn bản đề.',

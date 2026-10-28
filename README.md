@@ -5,8 +5,9 @@ Trò chơi trắc nghiệm trực tiếp trên lớp, kiểu Kahoot, cho Minto E
 - **Học sinh:** `https://mangomint1805.github.io/KH/` (hoặc quét QR trên màn chiếu). Nhập PIN và tên, không cần đăng nhập.
 - **Giáo viên, soạn bộ câu hỏi:** `https://mangomint1805.github.io/KH/admin.html`
 - **Giáo viên, màn chiếu:** `https://mangomint1805.github.io/KH/host.html`
+- **Giáo viên, lịch sử kết quả:** `https://mangomint1805.github.io/KH/ket-qua.html`
 
-Hai trang giáo viên cần đăng nhập Google bằng tài khoản giáo viên (dùng chung đăng nhập với các web khác dưới `mangomint1805.github.io`).
+Ba trang giáo viên cần đăng nhập Google bằng tài khoản giáo viên (dùng chung đăng nhập với các web khác dưới `mangomint1805.github.io`).
 
 Cài đặt Firebase lần đầu: xem [FIREBASE.md](FIREBASE.md).
 
@@ -19,8 +20,9 @@ Cài đặt Firebase lần đầu: xem [FIREBASE.md](FIREBASE.md).
 
    File chỉ được đọc trên máy của thầy, không gửi lên đâu. Sau khi đọc, sửa trực tiếp trong bảng: nội dung, đáp án đúng, thời gian (5–240 giây), điểm (thường / gấp đôi / không tính). Câu lỗi được tô đỏ, sửa xong mới lưu được. Có thể thêm, xoá, đổi thứ tự, nhân đôi câu, nhân bản cả bộ, xuất ngược ra Excel mẫu Kahoot.
 2. **Tạo phòng** (`host.html`): chọn bộ, bấm **Tạo phòng**. Màn hình hiện PIN 6 số và QR.
-3. **Chơi:** bấm **Bắt đầu**. Mỗi câu: hiện câu hỏi 3 giây, mở 4 ô màu kèm đồng hồ. Hết giờ, cả lớp đã trả lời, hoặc bấm **Bỏ qua** thì khoá và công bố đáp án kèm biểu đồ. Sau đó là bảng xếp hạng top 5.
-4. **Cuối game:** bục top 3, nút **Tải kết quả CSV** (tên, điểm từng câu, đúng/sai, thời gian trả lời).
+3. **Chơi:** bấm **Bắt đầu**. Mỗi câu: hiện câu hỏi 3 giây, mở 2–4 ô màu (theo số đáp án của câu) kèm đồng hồ. Hết giờ, cả lớp đã trả lời, hoặc bấm **Bỏ qua** thì khoá và công bố đáp án kèm biểu đồ. Sau đó là bảng xếp hạng top 5.
+4. **Cuối game:** bục top 3, nút **Tải kết quả CSV** (tên, điểm từng câu, đúng/sai, thời gian trả lời). Bảng điểm (tên, điểm, hạng, số câu đúng) tự lưu vào **Lịch sử kết quả**.
+5. **Lịch sử kết quả** (`ket-qua.html`): xem lại từng buổi, tải CSV, xoá buổi. Thẻ **Cộng dồn** cộng điểm nhiều buổi theo tên học sinh (tổng điểm, trung bình, số lần top 1 / top 3, số câu đúng). Tên khác dấu hoặc chữ hoa tự gộp; tên gõ khác hẳn thì tick rồi bấm **Gộp**.
 
 Phím tắt trên màn host: **Space / Enter** sang bước tiếp, **F** toàn màn hình. Góc trái dưới có nút bật/tắt nhạc nền và âm báo (âm thanh tự tạo bằng WebAudio).
 
@@ -28,12 +30,13 @@ Phím tắt trên màn host: **Space / Enter** sang bước tiếp, **F** toàn 
 
 - Đúng: `round(1000 × (1 − (thời gian trả lời / thời gian giới hạn) / 2))`, tức 500–1000 điểm. Câu gấp đôi nhân 2, câu không tính điểm được 0.
 - Thưởng chuỗi đúng liên tiếp: +100 mỗi câu từ câu thứ 2, tối đa +500 (tắt được khi tạo phòng).
-- Thời gian trả lời tính theo giờ máy chủ Firebase, không theo đồng hồ điện thoại.
+- Thời gian trả lời tính theo lúc học sinh bấm (giờ máy chủ Firebase đã hiệu chỉnh), nên mạng chậm vài giây không bị trừ điểm. Luật Firebase chỉ nhận giờ bấm trong vòng 5 giây trước lúc gửi và không sớm hơn lúc mở câu; máy thầy bỏ qua câu trả lời khai giờ sai.
 
 ## Tình huống đặc biệt
 
 - Học sinh tải lại trang hoặc rớt mạng: tự vào lại đúng phòng, giữ nguyên điểm.
 - Thầy tải lại màn host: tự mở lại phòng đang chơi.
+- Mạng yếu: điện thoại báo "Đang gửi…" và tự gửi lại; máy thầy mất mạng thì hiện thanh đỏ và tạm dừng. Thử bằng cách thêm `?sim=weak` vào địa chỉ.
 - Vào trễ giữa game: vẫn vào được, các câu đã qua tính 0 điểm.
 - Trùng tên: tự thêm số phía sau (`An 2`).
 - Dữ liệu phòng tự xoá sau 24 giờ (khi thầy mở lại trang host), hoặc bấm **Đóng phòng** cuối game.
@@ -45,6 +48,7 @@ index.html          → chuyển tới play.html
 play.html           màn học sinh        js/play.js
 host.html           màn chiếu           js/host.js
 admin.html          soạn bộ câu hỏi     js/admin.js
+ket-qua.html        lịch sử kết quả     js/ket-qua.js
 js/parse.js         đọc Excel / CSV / văn bản đề
 js/common.js        Firebase, đồng hồ máy chủ, âm thanh, tính điểm
 cap-nhat.js         mục "Có gì mới"
@@ -52,7 +56,7 @@ firebase/           luật Realtime Database và Firestore để dán vào Conso
 test/               kiểm thử (bộ đọc câu hỏi, chơi thử cả trận trên Firebase Emulator)
 ```
 
-Dữ liệu Realtime Database, nhánh `quiz/{pin}/`: `meta`, `state`, `qpub/{câu}` (câu hỏi, không có đáp án), `key/{câu}` (đáp án, chỉ ghi khi công bố), `players/{uid}`, `answers/{câu}/{uid}`, `scores/{uid}`, `kick/{uid}`. Bộ câu hỏi lưu ở Firestore `quizzes/{id}`.
+Dữ liệu Realtime Database, nhánh `quiz/{pin}/`: `meta`, `state`, `qpub/{câu}` (câu hỏi, không có đáp án), `key/{câu}` (đáp án, chỉ ghi khi công bố), `players/{uid}`, `answers/{câu}/{uid}`, `scores/{uid}`, `kick/{uid}`. Bộ câu hỏi lưu ở Firestore `quizzes/{id}`, bảng điểm từng ván ở `quizResults/{ngày-PIN}` (tên gộp lưu ở `quizResults/_gop`). Cả hai chỉ tài khoản giáo viên đọc/ghi.
 
 Thư viện tải từ CDN, có ghi phiên bản: Firebase 10.12.2, SheetJS 0.18.5, mammoth 1.6.0, pdf.js 3.11.174, qrcode-generator 1.4.4.
 
@@ -63,8 +67,7 @@ node test/parse.test.js                       # bộ đọc câu hỏi
 node test/build-rules.js                      # ghép luật cho Emulator
 cd test/emu && npx firebase-tools emulators:start --project minto-english
 node test/server.js                           # cửa sổ khác: http://127.0.0.1:8000/KH/
-node test/e2e.js "Kahoot - ….xlsx"            # chơi thử cả trận: 1 host + 4 người chơi
-node test/e2e-beta.js "Kahoot - ….xlsx"       # như trên cho bản beta/ (thêm hình, tạm dừng, thanh tham gia)
+node test/e2e.js "Kahoot - ….xlsx"            # chơi thử cả trận: 1 host + 4 người chơi (hình, tạm dừng, thanh tham gia…)
 node test/e2e-board.js "Kahoot - ….xlsx"      # 7 người, xem hiệu ứng bảng xếp hạng (lội ngược dòng)
 ```
 

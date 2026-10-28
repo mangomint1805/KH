@@ -1,5 +1,5 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=1';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=3';
 
 const QP = window.QP;
 const LIB = {
@@ -50,7 +50,7 @@ async function showList() {
   const by = (id) => list.find((x) => x.id === id);
   app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, qs: JSON.parse(JSON.stringify(q.qs || [])) }); }; });
   app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', qs: q.qs || [] }).catch(err); showList(); }; });
-  app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)).catch(err); showList(); }; });
+  app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)).catch(err); await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
 }
 function err(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }
 
@@ -137,6 +137,7 @@ function renderQs() {
   box.innerHTML = cur.qs.map((q, i) => qHtml(q, i)).join('') || '<div class="card muted">Chưa có câu nào. Tải file lên hoặc bấm + Thêm câu.</div>';
   box.querySelectorAll('.qe').forEach((el) => bindQ(el, +el.dataset.i));
   summary();
+  loadThumbs();
 }
 function qHtml(q, i) {
   const ck = QP.check(q);
@@ -147,6 +148,8 @@ function qHtml(q, i) {
     '<button class="btn sm" data-a="up" title="Lên"' + (i ? '' : ' disabled') + '>↑</button><button class="btn sm" data-a="dn" title="Xuống"' + (i < cur.qs.length - 1 ? '' : ' disabled') + '>↓</button>' +
     '<button class="btn sm" data-a="dup" title="Nhân đôi câu này">⧉</button><button class="btn sm danger" data-a="del" title="Xoá câu">🗑</button></div>' +
     '<textarea data-f="t" rows="2" placeholder="Nội dung câu hỏi"' + (q.t.length > QP.MAXQ ? ' class="long"' : '') + '>' + esc(q.t) + '</textarea>' +
+    '<div class="imgrow">' + (q.img ? '<img class="qthumb" data-img="' + esc(q.img) + '" alt="Hình câu ' + (i + 1) + '"' + (IMGS[q.img] ? ' src="' + IMGS[q.img] + '"' : '') + '><button class="btn sm danger" data-a="noimg">Bỏ hình</button><label class="btn sm">Đổi hình<input type="file" accept="image/*" data-f="img" hidden></label>'
+      : '<label class="btn sm">🖼 Thêm hình (ví dụ Part 1)<input type="file" accept="image/*" data-f="img" hidden></label>') + '<span class="muted imgst"></span></div>' +
     '<div class="opts">' + [0, 1, 2, 3].map((k) => '<div class="opt k' + k + '"><span class="shape">' + SHAPES[k] + '</span><input type="text" data-o="' + k + '" value="' + esc(q.o[k] || '') + '" placeholder="Đáp án ' + LETTERS[k] + (k > 1 ? ' (không bắt buộc)' : '') + '"' + ((q.o[k] || '').length > QP.MAXA ? ' class="long"' : '') + '><label><input type="checkbox" data-c="' + k + '"' + (q.c.includes(k) ? ' checked' : '') + '>Đúng</label></div>').join('') + '</div>' +
     '<div class="msg">' + ck.err.map((e) => '<div class="err">⚠ ' + esc(e) + '</div>').join('') + ck.warn.map((e) => '<div style="color:var(--brand-ink)">• ' + esc(e) + '</div>').join('') + '</div></div>';
 }
@@ -157,6 +160,13 @@ function bindQ(el, i) {
   el.querySelector('[data-f=time]').onchange = (e) => { q.time = +e.target.value; dirty = true; };
   el.querySelector('[data-f=pts]').onchange = (e) => { q.pts = +e.target.value; dirty = true; };
   el.querySelectorAll('[data-o]').forEach((inp) => { inp.oninput = () => { q.o[+inp.dataset.o] = inp.value; inp.classList.toggle('long', QP.str(inp.value).length > QP.MAXA); refresh(); }; });
+  const fi = el.querySelector('[data-f=img]');
+  if (fi) fi.onchange = async (e) => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    const st = el.querySelector('.imgst'); st.textContent = 'Đang tải hình lên…';
+    try { q.img = await uploadImg(f); dirty = true; renderQs(); toast('✓ Đã thêm hình cho câu ' + (i + 1) + '. Nhớ bấm Lưu.'); }
+    catch (x) { console.error(x); st.textContent = '⚠ ' + (x.ui ? x.message : 'Chưa tải được hình (' + (x.code || x.message || 'lỗi') + ')'); }
+  };
   el.querySelectorAll('[data-c]').forEach((cb) => { cb.onchange = () => { const k = +cb.dataset.c; q.c = q.c.filter((x) => x !== k); if (cb.checked) q.c.push(k); q.c.sort(); refresh(); }; });
   el.querySelectorAll('[data-a]').forEach((b) => {
     b.onclick = () => {
@@ -165,9 +175,49 @@ function bindQ(el, i) {
       if (a === 'dn' && i < L.length - 1) [L[i + 1], L[i]] = [L[i], L[i + 1]];
       if (a === 'dup') L.splice(i + 1, 0, JSON.parse(JSON.stringify(q)));
       if (a === 'del') { if (!confirm('Xoá câu ' + (i + 1) + '?')) return; L.splice(i, 1); }
+      if (a === 'noimg') delete q.img;
       dirty = true; renderQs();
     };
   });
+}
+// ---------- hình cho câu hỏi: thu nhỏ trên máy rồi lưu Firestore quizImg/{id} (chỉ thầy đọc được), chỉ hiện trên màn chiếu ----------
+const IMGS = {};
+function loadThumbs() {
+  document.querySelectorAll('img[data-img]:not([src])').forEach(async (im) => {
+    const id = im.dataset.img;
+    try {
+      if (!IMGS[id]) { const d = await FX.F.getDoc(FX.F.doc(FX.db, 'quizImg', id)); if (d.exists()) IMGS[id] = d.data().d; }
+      if (IMGS[id]) im.src = IMGS[id]; else im.alt = '(không tìm thấy hình)';
+    } catch (e) { im.alt = '(không tải được hình)'; }
+  });
+}
+function shrink(file, max, q) {
+  return new Promise((ok, no) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+      c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); ok(c.toDataURL('image/jpeg', q));
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); const e = new Error('File này không phải hình đọc được (dùng .jpg, .png).'); e.ui = 1; no(e); };
+    im.src = url;
+  });
+}
+async function uploadImg(file) {
+  let d = '';
+  for (const [max, q] of [[1600, 0.85], [1280, 0.8], [1024, 0.72], [800, 0.65]]) { d = await shrink(file, max, q); if (d.length < 700000) break; }
+  if (d.length >= 900000) { const e = new Error('Hình quá lớn, thầy cắt bớt rồi thử lại nha.'); e.ui = 1; throw e; }
+  const F = FX.F, ref = F.doc(F.collection(FX.db, 'quizImg'));
+  await F.setDoc(ref, { d, at: Date.now() });
+  IMGS[ref.id] = d;
+  return ref.id;
+}
+// xoá hình của bộ vừa xoá, trừ hình bộ khác còn dùng (bộ nhân bản dùng chung hình)
+async function dropImgs(q, others) {
+  const used = new Set(); others.forEach((x) => (x.qs || []).forEach((y) => { if (y.img) used.add(y.img); }));
+  const ids = [...new Set((q.qs || []).map((y) => y.img).filter((x) => x && !used.has(x)))];
+  await Promise.all(ids.map((id) => FX.F.deleteDoc(FX.F.doc(FX.db, 'quizImg', id)).catch(() => {})));
 }
 function summary() {
   const bad = [], warn = [];
@@ -175,7 +225,7 @@ function summary() {
   $('sum').innerHTML = !cur.qs.length ? '' : (bad.length ? '<div class="card" style="border-color:var(--red);background:var(--red-soft)"><b class="err">' + bad.length + ' câu cần sửa trước khi lưu:</b> câu ' + bad.join(', ') + '</div>' : '<div class="card" style="background:var(--ok-soft);border-color:#bfe0b2">✓ ' + cur.qs.length + ' câu hợp lệ' + (warn.length ? ' · câu ' + warn.join(', ') + ' dài hơn giới hạn của Kahoot (vẫn chơi được ở đây)' : '') + '</div>');
 }
 
-function clean(qs) { return qs.map((q) => ({ t: QP.str(q.t), o: q.o.map((x) => QP.str(x)), c: q.c.slice(), time: q.time, pts: q.pts })); }
+function clean(qs) { return qs.map((q) => Object.assign({ t: QP.str(q.t), o: q.o.map((x) => QP.str(x)), c: q.c.slice(), time: q.time, pts: q.pts }, q.img ? { img: q.img } : {})); }
 async function save(q) {
   const F = FX.F, ref = q.id ? F.doc(FX.db, 'quizzes', q.id) : F.doc(F.collection(FX.db, 'quizzes'));
   await F.setDoc(ref, { title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', qs: clean(q.qs), upd: Date.now(), at: F.serverTimestamp() });

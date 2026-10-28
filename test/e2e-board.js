@@ -1,7 +1,7 @@
-// Thử hiệu ứng bảng xếp hạng bản beta với 7 người: có bạn từ ngoài top 5 lội ngược dòng vào, có bạn bị đẩy ra.
+// Thử hiệu ứng bảng xếp hạng với 7 người: có bạn từ ngoài top 5 lội ngược dòng vào, có bạn bị đẩy ra.
 // Cần server + Emulator như e2e.js.  node test/e2e-board.js <file-excel-mẫu.xlsx>   (SHOTS=<thư mục> để lưu ảnh)
 const { chromium } = require('playwright');
-const BASE = process.env.BASE || 'http://127.0.0.1:8000/KH/beta/';
+const BASE = process.env.BASE || 'http://127.0.0.1:8000/KH/';
 const KEY = [1, 0];
 const SHOT = (n) => (process.env.SHOTS ? { path: process.env.SHOTS + '/' + n } : {});
 let fails = 0;
