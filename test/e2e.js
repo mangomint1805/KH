@@ -108,7 +108,7 @@ function check(ok, msg) { console.log(ok ? '  ✔' : '  ✘', msg); if (!ok) fai
 
   // ---------- gian lận ----------
   const cheat = (p, fn, arg) => p.evaluate(async ([src, arg]) => {
-    const m = await import(new URL('js/common.js?v=13', location.href).href); const P = await m.player();
+    const m = await import(new URL('js/common.js?v=14', location.href).href); const P = await m.player();
     const fn = new Function('P', 'arg', 'return (async()=>{' + src + '})()');
     try { return await fn(P, arg); } catch (e) { return 'ERR ' + (e.code || e.message); }
   }, [fn, arg]);

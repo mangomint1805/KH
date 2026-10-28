@@ -1,6 +1,6 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme } from './common.js?v=13';
+import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack } from './common.js?v=14';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
@@ -46,7 +46,7 @@ function bigQr() {
 let THEME = applyTheme(savedTheme()); Sound.setTheme(THEME);
 function paintThemes() { document.querySelectorAll('.thm').forEach((b) => b.classList.toggle('on', b.dataset.t === THEME)); }
 function setTheme(id) {
-  THEME = applyTheme(id); Sound.setTheme(THEME); paintThemes();
+  THEME = applyTheme(id); Sound.setTheme(THEME); paintThemes(); loadTrack(THEME);
   try { localStorage.setItem('qz.theme', THEME); } catch (e) {}
   if (PIN && meta) { meta.theme = THEME; D.update(r('meta'), { theme: THEME }).catch((e) => console.warn('theme', e)); }
 }
@@ -71,6 +71,7 @@ async function boot() {
     return;
   }
   now = serverClock(D, B.db);
+  loadTrack(THEME);
   watchNet(); simWeak(D, B.db, 'host');
   $('ctrl').hidden = false;
   cleanup();
@@ -153,7 +154,7 @@ async function resume(pin) {
   const s = await D.get(r()); const room = s.val();
   if (!room || !room.meta) { try { localStorage.removeItem(LS_KEY); } catch (e) {} return false; }
   meta = room.meta;
-  if (meta.theme) { THEME = applyTheme(meta.theme); Sound.setTheme(THEME); }
+  if (meta.theme) { THEME = applyTheme(meta.theme); Sound.setTheme(THEME); loadTrack(THEME); }
   const x = await window.MACC.fs();
   const d = await x.F.getDoc(x.F.doc(x.db, 'quizzes', meta.qz));
   if (!d.exists()) return false;

@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.13', d: '2026-10-29', items: [
+      'Nhạc theme không còn để công khai trên GitHub: thầy tải file nhạc lên ở mục "🎵 Nhạc theme" cuối trang Bộ câu hỏi, nhạc lưu trên Firebase và chỉ tài khoản giáo viên nghe được.',
+      'Mỗi theme Hành baro / Thiên thần / Băng hoại có nút Tải nhạc lên, Nghe thử, Đổi bài, Xoá. Âm lượng bài mới tự đo và chỉnh cho đều tai với các theme khác.',
+      'Theme chưa có nhạc (hoặc mạng chậm chưa tải xong) thì màn chiếu dùng nhạc tự tạo, tải xong tự chuyển sang bài thật.'
+    ] },
     { v: '1.12', d: '2026-10-29', items: [
       'Màn chiếu: bấm Space/Enter dồn hay giữ phím không còn làm game nhảy câu; bấm lúc đang hiện "Hết giờ!" không còn kẹt ở câu cuối.',
       'Câu hỏi dài quá 1000 ký tự (hoặc đáp án quá 500) bị chặn lúc lưu thay vì làm kẹt game giữa chừng. Đoạn văn dài nên chụp thành hình.',

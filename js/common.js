@@ -111,8 +111,9 @@ export const Sound = (() => {
   let ctx = null, master = null, musicBus = null, sfxBus = null, synBus = null, fxTheme = null, noiseBuf = null;
   let musicOn = false, sfxOn = true, mode = 'lobby', paused = true, loop = 0, step = 0, nextT = 0, fast = false;
   let theme = 'kahoot', mVol = 70, sVol = 70;
-  // theme dùng bài nhạc thật (file mp3 trong thư mục audio/) thay cho nhạc tự tạo; g = mức chỉnh cho đều tai giữa các bài
-  const TRACKS = { idol: { src: 'audio/hanh-baro.mp3', g: 0.275 }, scifi: { src: 'audio/bang-hoai.mp3?v=2', g: 0.216 }, y2k: { src: 'audio/thien-than.mp3', g: 0.089 } };
+  // theme có thể dùng bài nhạc thật thay cho nhạc tự tạo. File nhạc lưu ở Firestore quizMusic (chỉ thầy đọc được, xem loadTrack),
+  // tải xong mới có src. g = mức chỉnh cho đều tai giữa các bài (tính lúc thầy tải nhạc lên)
+  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089 } };
   let trk = null, trkSrc = null, trkGain = null, trkOn = false, trkTok = 0;
   function track() {
     const T = TRACKS[theme]; if (!T || !ac()) return null;
@@ -228,7 +229,7 @@ export const Sound = (() => {
   }
   function startLoop() {
     if (loop || trkOn || !musicOn || paused) return; if (!ac()) return;
-    if (TRACKS[theme] && !TRACKS[theme].bad) {
+    if (TRACKS[theme] && TRACKS[theme].src && !TRACKS[theme].bad) {
       const a = track();
       if (a) {
         trkOn = true; const tok = ++trkTok; a.playbackRate = fast ? 1.06 : 1;
@@ -318,6 +319,13 @@ export const Sound = (() => {
       // đổi theme khi nhạc đang bật: dừng bài cũ, phát bài của theme mới (không dựa vào trạng thái lúc bài cũ còn đang tải)
       const on = musicOn && !paused; stopLoop(); theme = id; step = 0; levels(); if (on) startLoop();
     },
+    // bài nhạc của theme vừa tải xong (đường dẫn blob:). Đang phát nhạc tự tạo của theme đó thì chuyển sang bài thật luôn
+    setTrack(id, url, g) {
+      const T = TRACKS[id]; if (!T || T.src === url) return;
+      T.src = url; T.bad = false; if (g > 0) T.g = g;
+      if (id === theme && musicOn && !paused) { stopLoop(); startLoop(); }
+    },
+    hasTrack(id) { return !!TRACKS[id]; },
     unlock() { const ua = navigator.userActivation; if (!ua || ua.hasBeenActive) unlocked = true; ac(); },
     // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
     mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; levels(); paused = false; startLoop(); },
@@ -364,6 +372,31 @@ function fxPaint(d) {
   }
   d.innerHTML = h;
 }
+// ---------- nhạc theme: lưu ở Firestore quizMusic, chỉ tài khoản thầy đọc được (không để file nhạc công khai trên GitHub) ----------
+// quizMusic/{theme} = { n, at, type, g, size, name }; phần nhạc (base64) ở quizMusic/{theme}_{at}_{i}, mỗi phần < 1MB
+export const MUSIC_THEMES = ['idol', 'y2k', 'scifi'];
+export const MUSIC_PART = 900000;
+export const musicPartId = (id, at, i) => id + '_' + at + '_' + i;
+export async function fetchTrack(id) {
+  const x = await window.MACC.fs(), F = x.F;
+  const m = await F.getDoc(F.doc(x.db, 'quizMusic', id)); if (!m.exists()) return null;
+  const M = m.data(), n = M.n | 0; if (!n || n > 20) return null;
+  const parts = await Promise.all(Array.from({ length: n }, (_, i) => F.getDoc(F.doc(x.db, 'quizMusic', musicPartId(id, M.at, i)))));
+  if (parts.some((p) => !p.exists() || typeof p.data().d !== 'string')) throw new Error('thiếu phần nhạc');
+  const bytes = parts.map((p) => { const b = atob(p.data().d), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; });
+  return { url: URL.createObjectURL(new Blob(bytes, { type: M.type || 'audio/mpeg' })), g: +M.g || 0, at: M.at };
+}
+// màn host: tải nhạc của theme (mỗi theme một lần). Chưa có hoặc lỗi thì vẫn dùng nhạc tự tạo
+const trackP = {};
+export function loadTrack(id) {
+  if (!Sound.hasTrack(id) || !window.MACC) return Promise.resolve(false);
+  if (!trackP[id]) {
+    trackP[id] = fetchTrack(id).then((t) => { if (!t) return false; Sound.setTrack(id, t.url, t.g); return true; })
+      .catch((e) => { console.warn('Không tải được nhạc theme', id, e); delete trackP[id]; return false; });
+  }
+  return trackP[id];
+}
+
 export function bgfx(n) {
   if (n) fxN = n;
   let d = document.querySelector('.bgfx');

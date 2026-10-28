@@ -1,5 +1,5 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=13';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack } from './common.js?v=14';
 
 const QP = window.QP;
 const LIB = {
@@ -39,6 +39,7 @@ async function showList() {
   cur = null; tpl('tList');
   $('bNew').onclick = () => edit({ id: null, title: '', qs: [] });
   $('list').innerHTML = '<div class="muted">Đang tải…</div>';
+  showMusic();
   try {
     const F = FX.F, s = await F.getDocs(F.collection(FX.db, 'quizzes'));
     list = []; s.forEach((d) => list.push({ id: d.id, ...d.data() }));
@@ -52,6 +53,95 @@ async function showList() {
   app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, qs: JSON.parse(JSON.stringify(q.qs || [])) }); }; });
   app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', qs: q.qs || [] }).catch(err); showList(); }; });
   app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; try { await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)); } catch (e) { return err(e); } await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
+}
+// ---------- nhạc theme: thầy tải file nhạc lên Firestore quizMusic (chỉ tài khoản thầy đọc được), màn host tự tải về để phát ----------
+let mPlay = null, mBusy = false;
+const mName = (id) => (THEMES.find((t) => t.id === id) || {}).n || id;
+const uiErr = (t) => { const e = new Error(t); e.ui = 1; return e; };
+async function showMusic() {
+  const box = $('music'); if (!box) return;
+  if (mPlay) { mPlay.a.pause(); URL.revokeObjectURL(mPlay.url); mPlay = null; }
+  const F = FX.F, info = {};
+  try { await Promise.all(MUSIC_THEMES.map(async (id) => { const d = await F.getDoc(F.doc(FX.db, 'quizMusic', id)); info[id] = d.exists() ? d.data() : null; })); }
+  catch (e) { if ($('music')) box.innerHTML = '<div class="err">Không đọc được nhạc theme (' + esc(e.code || e.message) + '). Thầy đã dán luật Firestore cho quizMusic chưa?</div>'; return; }
+  if (!$('music')) return;
+  mBusy = false;
+  box.innerHTML = MUSIC_THEMES.map((id) => { const m = info[id];
+    return '<div class="qrow"><div class="t"><b>' + esc(mName(id)) + '</b><span class="muted">' + (m ? '🎵 ' + esc(m.name || 'đã có nhạc') + ' · ' + (m.size / 1048576).toFixed(1) + ' MB' : 'Chưa có nhạc — đang dùng nhạc tự tạo') + '</span></div>' +
+      (m ? '<button class="btn sm" data-mp="' + id + '">▶ Nghe thử</button>' : '') +
+      '<label class="btn sm' + (m ? '' : ' pri') + '" style="cursor:pointer">' + (m ? 'Đổi bài' : 'Tải nhạc lên') + '<input type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav" data-mu="' + id + '" hidden></label>' +
+      (m ? '<button class="btn sm danger" data-mx="' + id + '">Xoá</button>' : '') + '</div>'; }).join('') +
+    '<div id="mMsg" class="muted" role="status" style="margin-top:6px"></div>';
+  const msg = (t) => { if ($('mMsg')) $('mMsg').textContent = t; };
+  const lock = (on) => { mBusy = on; box.querySelectorAll('button,input').forEach((b) => { b.disabled = on; }); };
+  box.querySelectorAll('[data-mu]').forEach((inp) => { inp.onchange = async () => {
+    const f = inp.files[0]; inp.value = ''; if (!f || mBusy) return;
+    lock(true);
+    try { await uploadMusic(inp.dataset.mu, f, msg); toast('Đã lưu nhạc cho theme ' + mName(inp.dataset.mu) + ' ✓'); showMusic(); }
+    catch (e) { lock(false); msg(''); if (e.ui) toast(e.message); else err(e); }
+  }; });
+  box.querySelectorAll('[data-mx]').forEach((b) => { b.onclick = async () => {
+    const id = b.dataset.mx; if (mBusy || !confirm('Xoá nhạc của theme ' + mName(id) + '? Theme này sẽ quay về nhạc tự tạo.')) return;
+    lock(true);
+    try { await dropMusic(id); showMusic(); } catch (e) { lock(false); err(e); }
+  }; });
+  box.querySelectorAll('[data-mp]').forEach((b) => { b.onclick = async () => {
+    const id = b.dataset.mp, was = mPlay && mPlay.id;
+    if (mPlay) { mPlay.a.pause(); URL.revokeObjectURL(mPlay.url); mPlay = null; box.querySelectorAll('[data-mp]').forEach((x) => { x.textContent = '▶ Nghe thử'; }); }
+    if (was === id) return;
+    b.textContent = 'Đang tải…';
+    try {
+      const t = await fetchTrack(id); if (!t) throw uiErr('Không tìm thấy nhạc.');
+      if (!$('music') || mPlay) { URL.revokeObjectURL(t.url); return; }
+      const a = new Audio(t.url); a.volume = Math.min(1, (t.g || 0.2) * 3); mPlay = { id, a, url: t.url };
+      await a.play(); b.textContent = '⏸ Dừng';
+    } catch (e) { b.textContent = '▶ Nghe thử'; if (e.ui) toast(e.message); else err(e); }
+  }; });
+}
+// đo độ to của bài (giống cách đã cân 3 bài cũ) để các theme nghe đều tai
+async function loudness(buf) {
+  const C = window.AudioContext || window.webkitAudioContext; if (!C) return 0;
+  const c = new C();
+  try {
+    const ab = await new Promise((ok, no) => { const p = c.decodeAudioData(buf, ok, no); if (p && p.then) p.then(ok, no); });
+    let sum = 0, n = 0;
+    for (let ch = 0; ch < ab.numberOfChannels; ch++) { const d = ab.getChannelData(ch); for (let i = 0; i < d.length; i += 3) { sum += d[i] * d[i]; n++; } }
+    const rms = Math.sqrt(sum / Math.max(1, n));
+    return rms > 0 ? Math.min(1, Math.max(0.02, 0.0318 / rms)) : 0;
+  } finally { if (c.close) c.close().catch(() => {}); }
+}
+async function uploadMusic(id, file, msg) {
+  if (file.size > 8 * 1048576) throw uiErr('File nhạc lớn quá (tối đa 8 MB). Thầy cắt ngắn hoặc nén lại rồi thử nha.');
+  if (file.size < 1000) throw uiErr('File này không phải nhạc đọc được.');
+  msg('Đang đọc file nhạc…');
+  const buf = await file.arrayBuffer();
+  let g = 0;
+  try { g = await loudness(buf.slice(0)); } catch (e) { throw uiErr('File này không phải nhạc trình duyệt phát được (dùng .mp3 hoặc .m4a).'); }
+  const u8 = new Uint8Array(buf); let bin = '';
+  for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  const b64 = btoa(bin), parts = [];
+  for (let i = 0; i < b64.length; i += MUSIC_PART) parts.push(b64.slice(i, i + MUSIC_PART));
+  const F = FX.F, at = Date.now(), meta = F.doc(FX.db, 'quizMusic', id);
+  const old = await F.getDoc(meta);
+  let done = 0;
+  try {
+    for (let i = 0; i < parts.length; i++) { msg('Đang tải nhạc lên… ' + Math.round(i / parts.length * 100) + '%'); await F.setDoc(F.doc(FX.db, 'quizMusic', musicPartId(id, at, i)), { d: parts[i] }); done++; }
+    await F.setDoc(meta, { n: parts.length, at, type: file.type || 'audio/mpeg', g: g || 0.2, size: file.size, name: file.name.slice(0, 120) });
+  } catch (e) {
+    await Promise.all(Array.from({ length: done }, (_, i) => F.deleteDoc(F.doc(FX.db, 'quizMusic', musicPartId(id, at, i))).catch(() => {})));
+    throw e;
+  }
+  if (old.exists()) await dropParts(id, old.data());
+  msg('');
+}
+function dropParts(id, m) {
+  const F = FX.F;
+  return Promise.all(Array.from({ length: Math.min(20, m.n | 0) }, (_, i) => F.deleteDoc(F.doc(FX.db, 'quizMusic', musicPartId(id, m.at, i))).catch(() => {})));
+}
+async function dropMusic(id) {
+  const F = FX.F, meta = F.doc(FX.db, 'quizMusic', id), d = await F.getDoc(meta);
+  if (!d.exists()) return;
+  await F.deleteDoc(meta); await dropParts(id, d.data());
 }
 function err(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }
 

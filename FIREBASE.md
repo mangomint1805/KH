@@ -24,16 +24,18 @@ Luật này làm gì:
 
 > **Cập nhật 28/10 (theme):** luật Realtime Database có thêm dòng `"theme"` trong phần `meta`. Thầy dán lại đoạn `"quiz"` mới từ file `firebase/dan-vao-rtdb.txt` (thay đoạn cũ). Chưa dán thì vẫn chơi được, chỉ là điện thoại học sinh giữ màu tím mặc định.
 
-## 3. Thêm luật Firestore cho bộ câu hỏi, lịch sử kết quả và hình
+## 3. Thêm luật Firestore cho bộ câu hỏi, lịch sử kết quả, hình và nhạc theme
 
 1. Mở **Firestore Database** → thẻ **Rules**.
 2. Tìm dòng `match /databases/{database}/documents {`.
 3. Dán nội dung file [`firebase/firestore.rules.quiz.txt`](firebase/firestore.rules.quiz.txt) ngay **sau** dòng đó (bên trong cặp ngoặc). Giữ nguyên các `match` đang có.
 4. Bấm **Publish**.
 
-Chỉ tài khoản của thầy đọc và ghi được bộ câu hỏi (`quizzes`), lịch sử kết quả (`quizResults`) và hình của câu hỏi (`quizImg`). Nội dung câu hỏi và tên học sinh không nằm trong repo.
+Chỉ tài khoản của thầy đọc và ghi được bộ câu hỏi (`quizzes`), lịch sử kết quả (`quizResults`) hình của câu hỏi (`quizImg`) và nhạc theme (`quizMusic`). Nội dung câu hỏi và tên học sinh không nằm trong repo.
 
-Nếu trước đây thầy đã dán phần `quizzes` rồi thì chỉ cần dán thêm các khối còn thiếu (`match /quizResults/{id}`, `match /quizImg/{id}`) ở cuối file. Chưa dán `quizImg` thì thêm hình sẽ báo lỗi quyền, các phần khác vẫn chạy.
+Nếu trước đây thầy đã dán phần `quizzes` rồi thì chỉ cần dán thêm các khối còn thiếu (`match /quizResults/{id}`, `match /quizImg/{id}`, `match /quizMusic/{id}`) ở cuối file. Chưa dán `quizImg` thì thêm hình sẽ báo lỗi quyền; chưa dán `quizMusic` thì mục Nhạc theme báo lỗi quyền và màn chiếu dùng nhạc tự tạo, các phần khác vẫn chạy.
+
+Sau khi dán `quizMusic`: mở trang **Bộ câu hỏi**, kéo xuống mục **🎵 Nhạc theme**, bấm **Tải nhạc lên** cho từng theme (file .mp3 hoặc .m4a, tối đa 8 MB).
 
 ## 4. Bật GitHub Pages cho repo KH
 

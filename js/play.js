@@ -1,5 +1,5 @@
 /* Minto Quiz — màn học sinh */
-import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=13';
+import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=14';
 
 const SS = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { sessionStorage.removeItem(k); } catch (e) {} } };
 const LSget = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
