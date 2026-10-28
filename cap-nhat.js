@@ -2,6 +2,10 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.10.1', d: '2026-10-28', items: [
+      'Theme Hành baro dùng bài nhạc nền "Melt" (bản hộp nhạc). Giờ cả Hành baro, Thiên thần và Băng hoại đều có nhạc thật; Tím Kahoot giữ nhạc tự tạo.',
+      'Âm lượng bài mới đã đo và chỉnh cho bằng các theme khác.'
+    ] },
     { v: '1.10', d: '2026-10-28', items: [
       'Theme Băng hoại đổi sang nhạc nền "Home Box" (Honkai Impact 3rd).',
       'Mỗi theme có hiệu ứng nền chuyển động riêng: Hành baro có sao, nốt nhạc lấp lánh và 2 luồng đèn sân khấu quét qua lại; Thiên thần có tim, hoa, bong bóng bay lên đung đưa và quầng sáng hồng – tím; Băng hoại có hình neon chớp tắt, lưới chạy và vạch quét ngang. Điện thoại học sinh cũng có hiệu ứng theo theme.',

@@ -1,7 +1,7 @@
 /* Minto Quiz — Lịch sử kết quả (chỉ giáo viên).
    Mỗi ván chơi xong, màn host lưu một bản tổng kết vào Firestore: quizResults/{ngày-PIN}.
    Trang này xem lại từng buổi và cộng dồn điểm theo tên học sinh. */
-import { $, esc, isTeacher } from './common.js?v=9';
+import { $, esc, isTeacher } from './common.js?v=10';
 
 const COL = 'quizResults', GOP = '_gop';
 let FX = null, all = [], gop = {}, tab = 'buoi', pick = null, q = '', open = {};

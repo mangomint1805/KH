@@ -112,7 +112,7 @@ export const Sound = (() => {
   let musicOn = false, sfxOn = true, mode = 'lobby', paused = true, loop = 0, step = 0, nextT = 0, fast = false;
   let theme = 'kahoot', mVol = 70, sVol = 70;
   // theme dùng bài nhạc thật (file mp3 trong thư mục audio/) thay cho nhạc tự tạo; g = mức chỉnh cho đều tai giữa các bài
-  const TRACKS = { scifi: { src: 'audio/bang-hoai.mp3?v=2', g: 0.234 }, y2k: { src: 'audio/thien-than.mp3', g: 0.117 } };
+  const TRACKS = { idol: { src: 'audio/hanh-baro.mp3', g: 0.32 }, scifi: { src: 'audio/bang-hoai.mp3?v=2', g: 0.234 }, y2k: { src: 'audio/thien-than.mp3', g: 0.117 } };
   let trk = null, trkSrc = null, trkGain = null, trkOn = false;
   function track() {
     const T = TRACKS[theme]; if (!T || !ac()) return null;
