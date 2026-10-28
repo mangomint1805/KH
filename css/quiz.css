@@ -369,3 +369,19 @@ html[data-qz=idol] .btn.pri { background: #d63c80; border-color: #d63c80; }
 html[data-qz=idol] .btn.pri:hover { background: #b92e6c; }
 html[data-qz=y2k] .btn.pri { background: #9b2c66; border-color: #9b2c66; }
 html[data-qz=y2k] .btn.pri:hover { background: #83235a; }
+
+/* ---- 1.8: bảng âm lượng (màn chiếu) ---- */
+.volpop { position: fixed; left: 12px; bottom: 62px; z-index: 60; background: #fff; color: var(--ink); border-radius: 14px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.28); display: grid; gap: 10px; width: 330px; animation: drop .25s ease both; }
+.volpop .vh { font-weight: 700; font-size: 15px; }
+.volpop .vh small { font-weight: 500; color: var(--dim); }
+.volpop .vr { display: grid; gap: 4px; }
+.volpop .vr label { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.volpop .vr input[type=checkbox] { width: 18px; height: 18px; margin: 0; }
+.volpop .vs { display: flex; align-items: center; gap: 10px; }
+.volpop .vs input[type=range] { flex: 1; accent-color: var(--bg1); }
+.volpop .vs b { width: 2.2em; text-align: right; font-size: 14px; color: var(--dim); font-variant-numeric: tabular-nums; }
+html[data-qz=scifi] .volpop .vr input[type=range] { accent-color: #4ad7ff; }
+/* ---- 1.8: câu hỏi trên điện thoại to hơn ---- */
+.play .pq { font-size: clamp(21px, 6vw, 28px); line-height: 1.35; padding: 14px 16px; text-align: center; }
+.play .pbtn .tx { font-size: clamp(18px, 5vw, 22px); }
+.blank { white-space: nowrap; }

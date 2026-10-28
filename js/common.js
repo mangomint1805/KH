@@ -30,6 +30,8 @@ export function savedTheme() {
 }
 
 export const $ = (id) => document.getElementById(id);
+// câu hỏi có chỗ trống ------- : giữ chỗ trống trên một dòng, không bị ngắt giữa chừng
+export function qtHtml(t) { return esc(t).replace(/[-_…]{3,}/g, (m) => '<span class="blank">' + m + '</span>'); }
 export function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 export function show(id) { document.querySelectorAll('[data-screen]').forEach((el) => { el.hidden = el.id !== id; }); }
 
@@ -103,14 +105,18 @@ export function streakBonus(streak) { return streak >= 2 ? Math.min(500, 100 * (
 
 // ---------- âm thanh tự tạo (WebAudio), không dùng nhạc của Kahoot ----------
 // Nhạc nền có 2 kiểu: 'lobby' (phòng chờ, vui) và 'q' (lúc trả lời, dồn dập hơn). Lịch nốt chạy trước ~0.2 giây để không giật.
+// Mỗi theme có bộ nhạc nền và âm báo riêng (PACKS). Âm lượng nhạc nền và âm báo chỉnh riêng (0–100).
 export const Sound = (() => {
-  let ctx = null, master = null, musicBus = null, noiseBuf = null;
+  let ctx = null, master = null, musicBus = null, sfxBus = null, noiseBuf = null;
   let musicOn = false, sfxOn = true, mode = 'lobby', paused = true, loop = 0, step = 0, nextT = 0, fast = false;
+  let theme = 'kahoot', mVol = 70, sVol = 70;
+  const mGain = () => 1.3 * mVol / 100, sGain = () => 1.43 * sVol / 100;
   function ac() {
     if (!ctx) {
       const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
       ctx = new C(); master = ctx.createGain(); master.gain.value = 0.55; master.connect(ctx.destination);
-      musicBus = ctx.createGain(); musicBus.gain.value = 0.9; musicBus.connect(master);
+      musicBus = ctx.createGain(); musicBus.gain.value = mGain(); musicBus.connect(master);
+      sfxBus = ctx.createGain(); sfxBus.gain.value = sGain(); sfxBus.connect(master);
       noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
       const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     }
@@ -123,67 +129,167 @@ export const Sound = (() => {
     o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
     if (glide) o.frequency.exponentialRampToValueAtTime(glide, t + dur);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(bus || master); o.start(t); o.stop(t + dur + 0.05);
+    o.connect(g); g.connect(bus || sfxBus); o.start(t); o.stop(t + dur + 0.05);
   }
   function noise(dur, vol, when, hp, bus) {
     const c = ac(); if (!c) return;
     const t = Math.max(c.currentTime, when == null ? c.currentTime : when), s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
     s.buffer = noiseBuf; f.type = 'highpass'; f.frequency.value = hp || 6000;
     g.gain.setValueAtTime(vol || 0.1, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    s.connect(f); f.connect(g); g.connect(bus || master); s.start(t); s.stop(t + dur + 0.02);
+    s.connect(f); f.connect(g); g.connect(bus || sfxBus); s.start(t); s.stop(t + dur + 0.02);
   }
   const later = (s) => (ctx ? ctx.currentTime + s : 0);
-  // ---- nhạc phòng chờ: C – G – Am – F, nhịp 112 ----
-  const LOBBY = { bpm: 112, ch: [[262, 330, 392], [196, 247, 294], [220, 262, 330], [175, 220, 262]], bass: [131, 98, 110, 87] };
-  // ---- nhạc trả lời: Am – Am – F – E, nhịp 132, ostinato + hi-hat ----
-  const QUEST = { bpm: 132, ch: [[220, 262, 330], [220, 262, 330], [175, 220, 262], [165, 208, 247]], bass: [110, 110, 87, 82] };
-  function schedule(t) {
-    const L = mode === 'q' ? QUEST : LOBBY, bar = Math.floor(step / 8) % 4, n = step % 8, ch = L.ch[bar];
-    if (mode === 'q') {
-      tone(ch[[0, 2, 1, 2][n % 4]] * 2, 0.12, 'square', fast ? 0.045 : 0.032, t, musicBus);
-      if (n % 2 === 0) tone(L.bass[bar], 0.2, 'triangle', 0.16, t, musicBus);
-      noise(0.03, fast ? 0.06 : 0.035, t, 8000, musicBus);
-      if (n === 4) noise(0.08, 0.05, t, 1800, musicBus);
-    } else {
-      const arp = [0, 1, 2, 1, 0, 2, 1, 2][n];
-      tone(ch[arp] * 2, 0.22, 'triangle', 0.05, t, musicBus);
-      if (n % 4 === 0) tone(L.bass[bar], 0.38, 'sine', 0.14, t, musicBus);
-      if (n === 2 || n === 6) noise(0.06, 0.03, t, 2500, musicBus);
-      if (n === 0 && bar % 2 === 0) tone(ch[2] * 4, 0.18, 'sine', 0.03, t + 0.01, musicBus);
-    }
-    step++;
-  }
+  const M = (f, d, ty, v, t, gl) => tone(f, d, ty, v, t, musicBus, gl);
+  const N = (d, v, t, hp) => noise(d, v, t, hp, musicBus);
+
+  // ===== bộ nhạc nền theo theme. Mỗi kiểu: bpm, hợp âm (4 ô nhịp), bass, và hàm chơi 1 nốt móc (8 nốt / ô nhịp) =====
+  const PACKS = {
+    // Tím Kahoot: C – G – Am – F (phòng chờ), Am – Am – F – E (trả lời)
+    kahoot: {
+      lobby: { bpm: 112, ch: [[262, 330, 392], [196, 247, 294], [220, 262, 330], [175, 220, 262]], bass: [131, 98, 110, 87],
+        play(t, n, bar, ch, L) { M(ch[[0, 1, 2, 1, 0, 2, 1, 2][n]] * 2, 0.22, 'triangle', 0.05, t); if (n % 4 === 0) M(L.bass[bar], 0.38, 'sine', 0.14, t); if (n === 2 || n === 6) N(0.06, 0.03, t, 2500); if (n === 0 && bar % 2 === 0) M(ch[2] * 4, 0.18, 'sine', 0.03, t + 0.01); } },
+      q: { bpm: 132, ch: [[220, 262, 330], [220, 262, 330], [175, 220, 262], [165, 208, 247]], bass: [110, 110, 87, 82],
+        play(t, n, bar, ch, L) { M(ch[[0, 2, 1, 2][n % 4]] * 2, 0.12, 'square', fast ? 0.045 : 0.032, t); if (n % 2 === 0) M(L.bass[bar], 0.2, 'triangle', 0.16, t); N(0.03, fast ? 0.06 : 0.035, t, 8000); if (n === 4) N(0.08, 0.05, t, 1800); } },
+    },
+    // Hành baro (idol pop): D – A – Bm – G, tiếng pluck sáng, vỗ tay nhịp 2 và 4
+    idol: {
+      lobby: { bpm: 124, ch: [[294, 370, 440], [220, 277, 330], [247, 294, 370], [196, 247, 294]], bass: [147, 110, 123, 98],
+        play(t, n, bar, ch, L) {
+          M(ch[[0, 2, 1, 2, 0, 2, 1, 2][n]] * 2, 0.14, 'square', 0.028, t); if (n % 2 === 1) M(ch[2] * 4, 0.08, 'sine', 0.02, t);
+          if (n % 2 === 0) M(L.bass[bar], 0.18, 'triangle', 0.15, t); if (n === 2 || n === 6) N(0.09, 0.05, t, 1500);
+          if (n === 0 && bar === 3) [1, 1.26, 1.5, 2].forEach((m, i) => M(ch[0] * 4 * m, 0.12, 'sine', 0.025, t + i * 0.06));
+        } },
+      q: { bpm: 140, ch: [[247, 294, 370], [196, 247, 294], [294, 370, 440], [220, 277, 330]], bass: [123, 98, 147, 110],
+        play(t, n, bar, ch, L) {
+          M(ch[[0, 1, 2, 1][n % 4]] * 2, 0.1, 'square', fast ? 0.04 : 0.03, t); M(L.bass[bar], 0.12, 'sawtooth', 0.05, t);
+          N(0.025, fast ? 0.05 : 0.03, t, 9000); if (n === 2 || n === 6) N(0.09, 0.06, t, 1500);
+        } },
+    },
+    // Thiên thần (dễ thương, hộp nhạc): F – C – Dm – Bb, chuông cao, nhịp chậm
+    y2k: {
+      lobby: { bpm: 96, ch: [[349, 440, 523], [262, 330, 392], [294, 349, 440], [233, 294, 349]], bass: [175, 131, 147, 117],
+        play(t, n, bar, ch, L) {
+          const f = ch[[0, 1, 2, 1, 2, 1, 0, 1][n]] * 2; M(f, 0.5, 'sine', 0.05, t); M(f * 3, 0.25, 'sine', 0.008, t);
+          if (n % 4 === 0) M(L.bass[bar], 0.6, 'triangle', 0.1, t); if (n === 4) N(0.04, 0.02, t, 7000);
+        } },
+      q: { bpm: 120, ch: [[294, 349, 440], [233, 294, 349], [262, 330, 392], [262, 330, 392]], bass: [147, 117, 131, 131],
+        play(t, n, bar, ch, L) {
+          const f = ch[[0, 2, 1, 2][n % 4]] * 4; M(f, 0.16, 'triangle', fast ? 0.045 : 0.032, t); M(f * 2, 0.1, 'sine', 0.008, t);
+          if (n % 2 === 0) M(L.bass[bar], 0.22, 'sine', 0.13, t); if (n % 2 === 1) N(0.02, fast ? 0.04 : 0.02, t, 9000);
+        } },
+    },
+    // Băng hoại (synthwave neon): Dm – Bb – F – C, bass răng cưa, trống điện tử
+    scifi: {
+      lobby: { bpm: 104, ch: [[294, 349, 440], [233, 294, 349], [175, 220, 262], [262, 330, 392]], bass: [73, 58, 87, 65],
+        play(t, n, bar, ch, L) {
+          M(L.bass[bar], 0.2, 'sawtooth', 0.06, t); if (n % 2 === 0) M(ch[[0, 1, 2, 1][(n / 2) % 4]] * 2, 0.3, 'triangle', 0.035, t);
+          if (n === 0 || n === 4) M(110, 0.18, 'sine', 0.22, t, 45); if (n === 4) N(0.12, 0.05, t, 1200); if (n % 2 === 1) N(0.02, 0.02, t, 9000);
+        } },
+      q: { bpm: 128, ch: [[330, 392, 494], [262, 330, 392], [294, 349, 440], [247, 311, 370]], bass: [82, 65, 73, 62],
+        play(t, n, bar, ch, L) {
+          M(L.bass[bar] * (n % 2 ? 2 : 1), 0.12, 'sawtooth', 0.07, t); M(ch[[0, 1, 2, 1][n % 4]] * 4, 0.08, 'square', fast ? 0.03 : 0.02, t);
+          if (n % 4 === 0) M(110, 0.16, 'sine', 0.24, t, 45); if (n === 4) N(0.1, 0.06, t, 1200); N(0.02, fast ? 0.05 : 0.025, t, 9000);
+        } },
+    },
+  };
+  const pack = () => (PACKS[theme] || PACKS.kahoot)[mode === 'q' ? 'q' : 'lobby'];
+  function schedule(t) { const L = pack(), bar = Math.floor(step / 8) % 4, n = step % 8; L.play(t, n, bar, L.ch[bar], L); step++; }
   function pump() {
     if (!ctx) return;
-    const L = mode === 'q' ? QUEST : LOBBY, dt = 60 / (fast ? L.bpm * 1.25 : L.bpm) / 2;
+    const L = pack(), dt = 60 / (fast ? L.bpm * 1.25 : L.bpm) / 2;
     if (nextT < ctx.currentTime) nextT = ctx.currentTime + 0.05;
     while (nextT < ctx.currentTime + 0.2) { schedule(nextT); nextT += dt; }
   }
   function startLoop() { if (loop || !musicOn || paused) return; if (!ac()) return; nextT = 0; loop = setInterval(pump, 50); pump(); }
   function stopLoop() { clearInterval(loop); loop = 0; }
+
+  // ===== âm báo theo theme =====
+  const arp = (fs, ty, vol, gap, dur) => fs.forEach((f, i) => tone(f, dur || 0.22, ty, vol, later(i * gap)));
+  const SFX = {
+    kahoot: {
+      answer(n) { const f = 520 + Math.min(n, 24) * 28; tone(f, 0.07, 'sine', 0.16); tone(f * 1.5, 0.06, 'triangle', 0.06, later(0.04)); },
+      tick() { tone(1320, 0.05, 'square', 0.06); },
+      join() { tone(523, 0.08, 'sine', 0.14); tone(784, 0.1, 'sine', 0.14, later(0.07)); tone(1047, 0.12, 'sine', 0.1, later(0.14)); },
+      go() { arp([392, 523, 659, 784, 1047], 'triangle', 0.16, 0.08); },
+      count(n) { tone(n ? 660 : 990, n ? 0.18 : 0.4, 'triangle', 0.2); },
+      whoosh() { noise(0.35, 0.08, null, 900); tone(300, 0.35, 'sine', 0.05, null, null, 900); },
+      timeup() { tone(196, 0.9, 'sawtooth', 0.07); tone(147, 1.1, 'sine', 0.2, later(0.02)); noise(0.5, 0.06, null, 300); },
+      reveal() { arp([784, 988, 1175, 1568], 'sine', 0.12, 0.07, 0.3); },
+      climb() { tone(330, 0.5, 'sawtooth', 0.05, null, null, 1320); [1047, 1319, 1568, 2093].forEach((f, i) => tone(f, 0.22, 'sine', 0.1, later(0.45 + i * 0.07))); },
+      win() { [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i === 6 ? 0.8 : 0.28, 'triangle', 0.15, later(i * 0.14))); },
+    },
+    // Hành baro: lấp lánh, kiểu sân khấu idol
+    idol: {
+      answer(n) { const f = 660 + Math.min(n, 24) * 30; tone(f, 0.06, 'square', 0.05); tone(f * 2, 0.12, 'sine', 0.08, later(0.03)); },
+      tick() { tone(1568, 0.05, 'sine', 0.08); },
+      join() { arp([1175, 1480, 1760, 2349], 'sine', 0.09, 0.05, 0.16); },
+      go() { arp([587, 740, 880, 1175, 1480, 1760], 'square', 0.06, 0.07, 0.18); noise(0.3, 0.05, later(0.42), 4000); },
+      count(n) { tone(n ? 880 : 1175, n ? 0.16 : 0.45, 'square', 0.08); tone(n ? 1760 : 2349, 0.12, 'sine', 0.05); },
+      whoosh() { noise(0.3, 0.06, null, 3000); arp([1760, 2093, 2637], 'sine', 0.04, 0.05, 0.12); },
+      timeup() { arp([880, 740, 587, 440], 'square', 0.07, 0.09, 0.2); noise(0.4, 0.08, later(0.3), 1500); },
+      reveal() { arp([1175, 1480, 1760, 2349, 2960], 'sine', 0.1, 0.06, 0.32); },
+      climb() { tone(440, 0.45, 'square', 0.04, null, null, 1760); arp([1760, 2217, 2637, 3520], 'sine', 0.08, 0.06, 0.2); },
+      win() { [587, 740, 880, 1175, 880, 1175, 1480].forEach((f, i) => { tone(f, i === 6 ? 0.8 : 0.26, 'square', 0.06, later(i * 0.13)); tone(f * 2, 0.2, 'sine', 0.04, later(i * 0.13)); }); },
+    },
+    // Thiên thần: tiếng chuông, bong bóng, dễ thương
+    y2k: {
+      answer(n) { const f = 440 + Math.min(n, 24) * 25; tone(f, 0.12, 'sine', 0.14, null, null, f * 2); },
+      tick() { tone(2093, 0.06, 'sine', 0.07); },
+      join() { tone(698, 0.18, 'sine', 0.12, null, null, 1397); tone(2093, 0.3, 'sine', 0.05, later(0.12)); },
+      go() { arp([698, 880, 1047, 1397, 1760], 'sine', 0.12, 0.09, 0.35); },
+      count(n) { tone(n ? 1047 : 1397, n ? 0.3 : 0.6, 'sine', 0.16); tone((n ? 1047 : 1397) * 3, 0.2, 'sine', 0.02); },
+      whoosh() { tone(400, 0.4, 'sine', 0.08, null, null, 1600); },
+      timeup() { tone(880, 0.6, 'sine', 0.12, null, null, 330); tone(1319, 0.5, 'triangle', 0.04, later(0.05), null, 494); },
+      reveal() { arp([1047, 1319, 1568, 2093], 'sine', 0.13, 0.08, 0.5); arp([3136, 4186], 'sine', 0.02, 0.08, 0.3); },
+      climb() { tone(523, 0.5, 'sine', 0.1, null, null, 2093); arp([2093, 2637, 3136], 'sine', 0.06, 0.07, 0.3); },
+      win() { [698, 880, 1047, 1397, 1047, 1397, 1760].forEach((f, i) => tone(f, i === 6 ? 1 : 0.4, 'sine', 0.13, later(i * 0.15))); },
+    },
+    // Băng hoại: tiếng điện tử, laser, máy móc
+    scifi: {
+      answer(n) { const f = 330 + Math.min(n, 24) * 22; tone(f, 0.08, 'square', 0.05, null, null, f * 2); },
+      tick() { tone(1760, 0.04, 'square', 0.05); tone(880, 0.04, 'square', 0.03, later(0.05)); },
+      join() { tone(1760, 0.18, 'sawtooth', 0.05, null, null, 440); tone(880, 0.08, 'square', 0.04, later(0.15)); },
+      go() { tone(110, 0.6, 'sawtooth', 0.08, null, null, 880); arp([440, 659, 880, 1319], 'square', 0.05, 0.08, 0.12); },
+      count(n) { tone(n ? 440 : 880, n ? 0.14 : 0.5, 'square', 0.07); tone(n ? 55 : 110, 0.25, 'sine', 0.25, null, null, 40); },
+      whoosh() { noise(0.4, 0.07, null, 600); tone(1200, 0.4, 'sawtooth', 0.04, null, null, 150); },
+      timeup() { tone(440, 1, 'sawtooth', 0.08, null, null, 55); tone(110, 0.8, 'square', 0.05, later(0.1), null, 40); },
+      reveal() { arp([659, 880, 1319, 1760], 'square', 0.06, 0.06, 0.18); tone(110, 0.3, 'sine', 0.2, null, null, 50); },
+      climb() { tone(220, 0.5, 'sawtooth', 0.06, null, null, 1760); arp([1319, 1760, 2637], 'square', 0.05, 0.06, 0.15); },
+      win() { [440, 554, 659, 880, 659, 880, 1109].forEach((f, i) => { tone(f, i === 6 ? 0.8 : 0.24, 'sawtooth', 0.05, later(i * 0.13)); tone(f / 2, 0.24, 'square', 0.03, later(i * 0.13)); }); },
+    },
+  };
+  const fx = () => SFX[theme] || SFX.kahoot;
   return {
     get music() { return musicOn; }, get sfx() { return sfxOn; },
+    get musicVol() { return mVol; }, get sfxVol() { return sVol; },
     setMusic(v) { musicOn = v; if (v) startLoop(); else stopLoop(); },
     setSfx(v) { sfxOn = v; },
+    // âm lượng 0–100
+    setMusicVol(v) { mVol = Math.max(0, Math.min(100, +v || 0)); if (musicBus) musicBus.gain.setTargetAtTime(mGain(), ctx.currentTime, 0.05); },
+    setSfxVol(v) { sVol = Math.max(0, Math.min(100, +v || 0)); if (sfxBus) sfxBus.gain.setTargetAtTime(sGain(), ctx.currentTime, 0.05); },
+    // đổi bộ nhạc / âm báo theo theme (đang phát thì đổi luôn từ đầu ô nhịp)
+    setTheme(id) { if (id === theme) return; theme = PACKS[id] ? id : 'kahoot'; step = 0; },
     unlock() { ac(); },
     // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
     mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; paused = false; startLoop(); },
     hurry(v) { fast = !!v; },
     pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
-    // có bạn vừa chọn đáp án: tiếng 'bụp' nhỏ, cao dần theo số người đã trả lời
-    answer(n) { if (sfxOn) { const f = 520 + Math.min(n, 24) * 28; tone(f, 0.07, 'sine', 0.16); tone(f * 1.5, 0.06, 'triangle', 0.06, later(0.04)); } },
-    tick() { if (sfxOn) { tone(1320, 0.05, 'square', 0.06); } },
-    join() { if (sfxOn) { tone(523, 0.08, 'sine', 0.14); tone(784, 0.1, 'sine', 0.14, later(0.07)); tone(1047, 0.12, 'sine', 0.1, later(0.14)); } },
-    go() { if (sfxOn) [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.22, 'triangle', 0.16, later(i * 0.08))); },
-    count(n) { if (sfxOn) tone(n ? 660 : 990, n ? 0.18 : 0.4, 'triangle', 0.2); },
-    whoosh() { if (sfxOn) { noise(0.35, 0.08, null, 900); tone(300, 0.35, 'sine', 0.05, null, null, 900); } },
-    timeup() { if (sfxOn) { tone(196, 0.9, 'sawtooth', 0.07); tone(147, 1.1, 'sine', 0.2, later(0.02)); noise(0.5, 0.06, null, 300); } },
+    // có bạn vừa chọn đáp án: tiếng nhỏ, cao dần theo số người đã trả lời
+    answer(n) { if (sfxOn) fx().answer(n); },
+    tick() { if (sfxOn) fx().tick(); },
+    join() { if (sfxOn) fx().join(); },
+    go() { if (sfxOn) fx().go(); },
+    count(n) { if (sfxOn) fx().count(n); },
+    whoosh() { if (sfxOn) fx().whoosh(); },
+    timeup() { if (sfxOn) fx().timeup(); },
     end() { this.timeup(); },
-    reveal() { if (sfxOn) [784, 988, 1175, 1568].forEach((f, i) => tone(f, 0.3, 'sine', 0.12, later(i * 0.07))); },
+    reveal() { if (sfxOn) fx().reveal(); },
     drum(sec) { if (!sfxOn || !ac()) return; const n = Math.round((sec || 2) * 16); for (let i = 0; i < n; i++) noise(0.05, 0.03 + 0.07 * i / n, later(i / 16), 1500); tone(98, 0.6, 'sine', 0.25, later(sec || 2)); noise(0.6, 0.12, later(sec || 2), 3000); },
     // bạn lội ngược dòng vào top 5: tiếng vút lên + leng keng
-    climb() { if (sfxOn) { tone(330, 0.5, 'sawtooth', 0.05, null, null, 1320); [1047, 1319, 1568, 2093].forEach((f, i) => tone(f, 0.22, 'sine', 0.1, later(0.45 + i * 0.07))); } },
-    win() { if (sfxOn) [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i === 6 ? 0.8 : 0.28, 'triangle', 0.15, later(i * 0.14))); },
+    climb() { if (sfxOn) fx().climb(); },
+    win() { if (sfxOn) fx().win(); },
+    // nghe thử âm báo (khi kéo thanh âm lượng)
+    preview() { if (sfxOn) fx().reveal(); },
   };
 })();
 

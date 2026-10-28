@@ -1,5 +1,5 @@
 /* Minto Quiz — màn học sinh */
-import { $, esc, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=4';
+import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=5';
 
 const SS = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { sessionStorage.removeItem(k); } catch (e) {} } };
 const LSget = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
@@ -32,7 +32,7 @@ const L = {
 };
 function msg(ic, t, s, q) {
   bg(''); show('sMsg'); $('sMsg').querySelectorAll('.x').forEach((e) => e.remove()); $('mIc').textContent = ic || ''; $('mT').textContent = t || ''; $('mS').textContent = s || '';
-  $('mQ').hidden = !q; $('mQ').textContent = q || '';
+  $('mQ').hidden = !q; $('mQ').innerHTML = qtHtml(q || '');
 }
 function r(p) { return P.D.ref(P.db, 'quiz/' + PIN + (p ? '/' + p : '')); }
 
@@ -179,7 +179,7 @@ function sendSt(t) { const el = $('sendst'); if (el) el.textContent = t; }
 function answerScreen(q, Q, st) {
   show('sAns');
   $('aNum').textContent = 'Câu ' + (q + 1) + '/' + meta.n;
-  $('aQ').textContent = Q.t;
+  $('aQ').innerHTML = qtHtml(Q.t);
   const g = $('aGrid'); g.innerHTML = '';
   Q.o.forEach((txt, i) => {
     if (!txt) return;

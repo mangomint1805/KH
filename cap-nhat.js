@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.8', d: '2026-10-28', items: [
+      'Mỗi theme có nhạc nền và âm báo riêng: Tím Kahoot giữ như cũ; Hành baro kiểu nhạc idol sôi động, tiếng lấp lánh; Thiên thần kiểu hộp nhạc, tiếng chuông và bong bóng dễ thương; Băng hoại kiểu synthwave, tiếng laser điện tử. Đổi theme giữa chừng là nhạc đổi theo.',
+      'Bấm 🎵 ở góc trái dưới màn chiếu để mở bảng âm thanh: bật/tắt và kéo chỉnh âm lượng nhạc nền, âm báo riêng từng cái. Kéo thanh âm báo sẽ phát thử một tiếng. Máy nhớ mức âm lượng cho lần sau.',
+      'Điện thoại học sinh: câu hỏi chữ to hơn, căn giữa; chữ trên ô đáp án cũng to hơn.',
+      'Chỗ trống ------- trong câu không còn bị ngắt làm hai dòng (cả màn chiếu và điện thoại).'
+    ] },
     { v: '1.7.1', d: '2026-10-28', items: [
       'Sửa lỗi: khi dùng theme Hành baro, Thiên thần hoặc Băng hoại, điện thoại học sinh không hiện nền xanh (đúng) / đỏ (sai). Giờ theme nào cũng hiện đúng màu.',
       'Theme Thiên thần: dải "Tham gia tại… PIN" phía trên đậm hơn, chữ trắng dễ đọc.',

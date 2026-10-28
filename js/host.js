@@ -1,6 +1,6 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme } from './common.js?v=4';
+import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme } from './common.js?v=5';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
@@ -43,10 +43,10 @@ function bigQr() {
   document.body.appendChild(ov);
 }
 // ---------- theme ----------
-let THEME = applyTheme(savedTheme());
+let THEME = applyTheme(savedTheme()); Sound.setTheme(THEME);
 function paintThemes() { document.querySelectorAll('.thm').forEach((b) => b.classList.toggle('on', b.dataset.t === THEME)); }
 function setTheme(id) {
-  THEME = applyTheme(id); paintThemes();
+  THEME = applyTheme(id); Sound.setTheme(THEME); paintThemes();
   try { localStorage.setItem('qz.theme', THEME); } catch (e) {}
   if (PIN && meta) { meta.theme = THEME; D.update(r('meta'), { theme: THEME }).catch((e) => console.warn('theme', e)); }
 }
@@ -153,7 +153,7 @@ async function resume(pin) {
   const s = await D.get(r()); const room = s.val();
   if (!room || !room.meta) { try { localStorage.removeItem(LS_KEY); } catch (e) {} return false; }
   meta = room.meta;
-  if (meta.theme) THEME = applyTheme(meta.theme);
+  if (meta.theme) { THEME = applyTheme(meta.theme); Sound.setTheme(THEME); }
   const x = await window.MACC.fs();
   const d = await x.F.getDoc(x.F.doc(x.db, 'quizzes', meta.qz));
   if (!d.exists()) return false;
@@ -254,7 +254,7 @@ async function goShow(q) {
   } catch (e) { return fail(e); }
   state = { phase: 'show', q };
   Sound.mode(null); Sound.whoosh();
-  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm">' + esc(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + esc(Q.t) + '</div>') +
+  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm">' + qtHtml(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + qtHtml(Q.t) + '</div>') +
     (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
     '<div class="prog"><i id="pg"></i></div>';
   requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
@@ -274,7 +274,7 @@ function answerView(q, still) {
   const Q = quiz.qs[q];
   if (!still) Sound.mode('q');
   const C = 2 * Math.PI * 58;
-  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + '">' + esc(Q.t) + '</div>' +
+  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + '">' + qtHtml(Q.t) + '</div>' +
     '<div class="mid"><div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + Q.time + '</div></div><div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
@@ -388,7 +388,7 @@ function revealView(q) {
   Object.keys(a).forEach((k) => { if (players[k] && a[k] && cnt[a[k].a] != null) cnt[a[k].a]++; });
   const mx = Math.max(1, ...cnt), tot = cnt.reduce((x, y) => x + y, 0), right = Q.c.reduce((x, i) => x + (cnt[i] || 0), 0);
   const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
-  main.innerHTML = qHead(q) + '<div class="qtext">' + esc(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
+  main.innerHTML = qHead(q) + '<div class="qtext">' + qtHtml(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' +
     '<div style="text-align:right"><button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
@@ -572,12 +572,30 @@ $('bFull').onclick = full;
 $('bTheme').onclick = nextTheme;
 const pref = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : v === '1'; } catch (e) { return d; } };
 const setPref = (k, v) => { try { localStorage.setItem(k, v ? '1' : '0'); } catch (e) {} };
-function paintCtl() { $('bMusic').style.opacity = Sound.music ? 1 : 0.4; $('bSfx').style.opacity = Sound.sfx ? 1 : 0.4; }
+function paintCtl() { $('bMusic').style.opacity = Sound.music && Sound.musicVol > 0 ? 1 : 0.4; $('bSfx').style.opacity = Sound.sfx ? 1 : 0.4; }
 Sound.setSfx(pref('qz.sfx', true));
 const musicWanted = pref('qz.music', true);
 function musicFor() { const p = state.phase; Sound.mode(p === 'lobby' ? 'lobby' : p === 'answer' ? 'q' : null); }
-$('bMusic').onclick = () => { Sound.setMusic(!Sound.music); if (Sound.music) musicFor(); setPref('qz.music', Sound.music); paintCtl(); };
-$('bSfx').onclick = () => { Sound.setSfx(!Sound.sfx); setPref('qz.sfx', Sound.sfx); paintCtl(); };
+function setMusicOn(v) { Sound.setMusic(v); if (v) musicFor(); setPref('qz.music', v); paintCtl(); }
+// bảng âm lượng: bấm 🎵 để mở / đóng
+const numPref = (k, d) => { try { const v = localStorage.getItem(k); return v == null || isNaN(+v) ? d : +v; } catch (e) { return d; } };
+Sound.setMusicVol(numPref('qz.mvol', 70)); Sound.setSfxVol(numPref('qz.svol', 70));
+const vp = document.createElement('div'); vp.className = 'volpop'; vp.hidden = true;
+vp.innerHTML = '<div class="vh">Âm thanh <small>· mỗi theme có nhạc riêng</small></div>' +
+  '<div class="vr"><label><input type="checkbox" id="vMusic"> 🎵 Nhạc nền</label><div class="vs"><input type="range" id="vMVol" min="0" max="100" step="5" aria-label="Âm lượng nhạc nền"><b id="vMN"></b></div></div>' +
+  '<div class="vr"><label><input type="checkbox" id="vSfx"> 🔔 Âm báo</label><div class="vs"><input type="range" id="vSVol" min="0" max="100" step="5" aria-label="Âm lượng âm báo"><b id="vSN"></b></div></div>';
+document.body.appendChild(vp);
+function paintVol() { $('vMusic').checked = Sound.music; $('vSfx').checked = Sound.sfx; $('vMVol').value = Sound.musicVol; $('vSVol').value = Sound.sfxVol; $('vMN').textContent = Sound.musicVol; $('vSN').textContent = Sound.sfxVol; }
+$('vMusic').onchange = (e) => setMusicOn(e.target.checked);
+$('vSfx').onchange = (e) => { Sound.setSfx(e.target.checked); setPref('qz.sfx', Sound.sfx); paintCtl(); };
+$('vMVol').oninput = (e) => { Sound.setMusicVol(e.target.value); $('vMN').textContent = Sound.musicVol; try { localStorage.setItem('qz.mvol', Sound.musicVol); } catch (x) {} if (!Sound.music && Sound.musicVol > 0) setMusicOn(true); paintVol(); };
+let pvT = 0;
+$('vSVol').oninput = (e) => { Sound.setSfxVol(e.target.value); $('vSN').textContent = Sound.sfxVol; try { localStorage.setItem('qz.svol', Sound.sfxVol); } catch (x) {} clearTimeout(pvT); pvT = setTimeout(() => Sound.preview(), 150); };
+$('bMusic').onclick = (e) => { e.stopPropagation(); vp.hidden = !vp.hidden; if (!vp.hidden) paintVol(); };
+vp.addEventListener('click', (e) => e.stopPropagation());
+document.addEventListener('click', () => { vp.hidden = true; if (vp.contains(document.activeElement)) document.activeElement.blur(); });
+['vMVol', 'vSVol', 'vMusic', 'vSfx'].forEach((id) => $(id).addEventListener('change', (e) => e.target.blur()));
+$('bSfx').onclick = () => { Sound.setSfx(!Sound.sfx); setPref('qz.sfx', Sound.sfx); paintCtl(); if (!vp.hidden) paintVol(); };
 // trình duyệt chỉ cho phát âm thanh sau khi người dùng bấm/chạm
 function firstGesture() { document.removeEventListener('pointerdown', firstGesture); document.removeEventListener('keydown', firstGesture); Sound.unlock(); if (musicWanted && !Sound.music) { Sound.setMusic(true); musicFor(); } paintCtl(); }
 document.addEventListener('pointerdown', firstGesture);
