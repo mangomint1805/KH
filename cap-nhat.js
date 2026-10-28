@@ -2,6 +2,10 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.11.1', d: '2026-10-29', items: [
+      'Sửa lỗi đổi theme mà nhạc nền không đổi theo (hay gặp khi bấm đổi theme nhanh liên tiếp). Giờ đổi lúc nào nhạc cũng đổi ngay sang bài của theme mới.',
+      'Hành baro: bỏ dải sóng âm chạy ngang phía sau ô đáp án cho đỡ rối mắt; vẫn giữ cột equalizer ở đáy màn hình.'
+    ] },
     { v: '1.11', d: '2026-10-28', items: [
       'Thanh trên cùng (logo Minto Quiz, tên bộ câu, PIN) đổi màu theo theme, cả màn chiếu lẫn điện thoại.',
       'Hành baro làm lại theo phong cách Miku: xanh ngọc – hồng, chữ tròn, viền thẻ xanh ngọc, cột equalizer nhảy ở đáy màn hình, sóng âm chạy ngang, đèn sân khấu xanh – hồng.',

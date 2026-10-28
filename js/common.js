@@ -113,7 +113,7 @@ export const Sound = (() => {
   let theme = 'kahoot', mVol = 70, sVol = 70;
   // theme dùng bài nhạc thật (file mp3 trong thư mục audio/) thay cho nhạc tự tạo; g = mức chỉnh cho đều tai giữa các bài
   const TRACKS = { idol: { src: 'audio/hanh-baro.mp3', g: 0.275 }, scifi: { src: 'audio/bang-hoai.mp3?v=2', g: 0.216 }, y2k: { src: 'audio/thien-than.mp3', g: 0.089 } };
-  let trk = null, trkSrc = null, trkGain = null, trkOn = false;
+  let trk = null, trkSrc = null, trkGain = null, trkOn = false, trkTok = 0;
   function track() {
     const T = TRACKS[theme]; if (!T || !ac()) return null;
     if (!trk) {
@@ -222,7 +222,7 @@ export const Sound = (() => {
   }
   function startLoop() {
     if (loop || trkOn || !musicOn || paused) return; if (!ac()) return;
-    if (TRACKS[theme]) { const a = track(); if (a) { trkOn = true; a.playbackRate = fast ? 1.06 : 1; a.play().catch(() => { trkOn = false; }); } return; }
+    if (TRACKS[theme]) { const a = track(); if (a) { trkOn = true; const tok = ++trkTok; a.playbackRate = fast ? 1.06 : 1; a.play().catch((e) => { if (tok === trkTok && e && e.name !== 'AbortError') trkOn = false; }); } return; }
     nextT = 0; loop = setInterval(pump, 50); pump();
   }
   function stopLoop() { clearInterval(loop); loop = 0; if (trk && trkOn) { trk.pause(); } trkOn = false; }
@@ -296,7 +296,8 @@ export const Sound = (() => {
     // đổi bộ nhạc / âm báo theo theme (đang phát thì đổi luôn từ đầu ô nhịp)
     setTheme(id) {
       id = PACKS[id] ? id : 'kahoot'; if (id === theme) return;
-      const on = !!(loop || trkOn); stopLoop(); theme = id; step = 0; levels(); if (on) startLoop();
+      // đổi theme khi nhạc đang bật: dừng bài cũ, phát bài của theme mới (không dựa vào trạng thái lúc bài cũ còn đang tải)
+      const on = musicOn && !paused; stopLoop(); theme = id; step = 0; levels(); if (on) startLoop();
     },
     unlock() { ac(); },
     // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
@@ -326,8 +327,8 @@ export const Sound = (() => {
 // Mỗi theme có hình trôi và hiệu ứng riêng; đổi theme là vẽ lại (applyTheme gọi).
 const FX = {
   kahoot: { g: ['▲', '◆', '●', '■'], c: ['#fff'] },
-  // Hành baro (Miku): nốt nhạc, sóng âm, cột equalizer nhảy theo nhạc, đèn sân khấu xanh ngọc
-  idol: { g: ['♪', '♫', '♬', '♪', '✦', '♫'], c: ['#86cecb', '#fff', '#ff8fc4', '#bdf3ee'], extra: '<div class="beam b1"></div><div class="beam b2"></div><div class="wave"></div><div class="eq">' + '<i></i>'.repeat(32) + '</div>' },
+  // Hành baro (Miku): nốt nhạc, cột equalizer nhảy theo nhạc, đèn sân khấu xanh ngọc
+  idol: { g: ['♪', '♫', '♬', '♪', '✦', '♫'], c: ['#86cecb', '#fff', '#ff8fc4', '#bdf3ee'], extra: '<div class="beam b1"></div><div class="beam b2"></div><div class="eq">' + '<i></i>'.repeat(32) + '</div>' },
   // Thiên thần (KAngel): tim pixel, lấp lánh, vầng hào quang, mây; quầng sáng hồng – tím
   y2k: { g: ['♡', '✧', '♥', '☆', '✧', '♡', '◌'], c: ['#fff', '#ffe1f0', '#ffd0ea', '#e9e0ff', '#fff6b0'], extra: '<div class="glow g1"></div><div class="glow g2"></div><div class="halo"></div>' },
   // Băng hoại (HI3): tinh thể Honkai đỏ – tím bay lên, lục giác vàng, vạch quét, lưới HUD
