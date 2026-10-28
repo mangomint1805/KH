@@ -1,6 +1,6 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme } from './common.js?v=12';
+import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme } from './common.js?v=13';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
@@ -235,7 +235,7 @@ function start() {
   const ov = document.createElement('div'); ov.className = 'overlay'; document.body.appendChild(ov);
   let n = 3;
   const step = () => {
-    if (n === 0) { ov.remove(); starting = false; goShow(0); return; }
+    if (n === 0) { ov.remove(); goShow(0).finally(() => { starting = false; }); return; }
     ov.innerHTML = '<div class="t">' + esc(meta.title) + '</div><div class="big" key="' + n + '">' + n + '</div><div class="t" style="font-size:26px">Chuẩn bị nhé!</div>';
     Sound.count(n); n--; setTimeout(step, 1000);
   };
@@ -249,11 +249,12 @@ async function goShow(q) {
   await Promise.race([imgP, new Promise((ok) => setTimeout(ok, 4000))]);
   try {
     await D.update(r(), {
-      ['qpub/' + q]: { t: Q.t, o: Q.o.map((x) => x || ''), time: Q.time, pts: Q.pts },
+      ['qpub/' + q]: { t: String(Q.t).slice(0, 1000), o: Q.o.map((x) => String(x || '').slice(0, 500)), time: Q.time, pts: Q.pts },
       state: { phase: 'show', q, qs: String(q) },
     });
   } catch (e) { return fail(e); }
-  state = { phase: 'show', q };
+  if (state.q !== q || state.phase !== 'show') state = { phase: 'show', q, qs: String(q) };
+  clearBoardT();
   Sound.mode(null); Sound.whoosh();
   main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext' + qlen(Q.t) + '" style="flex:1;display:flex;align-items:center;justify-content:center">' + qtHtml(Q.t) + '</div>') +
     (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
@@ -373,10 +374,10 @@ async function goReveal(q) {
     });
     await D.update(r(), up);
   } catch (e) { fail(e); }
-  revealing = -1;
   if (ov) { await new Promise((ok) => setTimeout(ok, Math.max(0, 1300 - (Date.now() - t0)))); ov.remove(); }
   Sound.reveal();
   revealView(q);
+  revealing = -1;
 }
 
 // Lời thầy trên màn chiếu (sửa được qua form lời nhắn)
@@ -404,7 +405,10 @@ async function goBoard(q) {
   state.phase = 'board';
   boardView(q);
 }
+let boardT = [];
+function clearBoardT() { boardT.forEach(clearTimeout); boardT = []; }
 function boardView(q) {
+  clearBoardT();
   Sound.mode(null); // bảng xếp hạng: không nhạc nền
   const res = compute(), H = 74, TOP = 5;
   // thứ hạng trước câu này (theo điểm trước câu) để biết ai lên, ai xuống
@@ -441,20 +445,20 @@ function boardView(q) {
   bd.querySelectorAll('.sc').forEach((el) => countUp(el, +el.dataset.from, +el.dataset.to, 1100));
   const cls = bd.querySelectorAll('.r.cl');
   if (!anim && lead && res.list.length > 1) { $('lead').textContent = '👑 ' + lead.name + ' đang top 1 nè'; $('lead').classList.add('on'); }
-  setTimeout(() => {
+  boardT.push(setTimeout(() => {
     bd.querySelectorAll('.r').forEach((el) => { el.style.top = el.dataset.to + 'px'; const rk = el.querySelector('.rk'); rk.textContent = rk.dataset.r; });
     bd.classList.add('done');
     if (cls.length) { Sound.climb(); cls.forEach((el) => el.classList.add('go')); }
-  }, 1200);
-  setTimeout(() => {
+  }, 1200));
+  boardT.push(setTimeout(() => {
     cls.forEach((el) => el.classList.add('glow'));
     const ld = $('lead'); if (ld && lead && res.list.length > 1) { ld.textContent = '👑 ' + lead.name + ' đang top 1' + (lead.k >= 2 ? ', chuỗi 🔥' + lead.k + ' nóng quá trời' : ' nè'); ld.classList.add('on'); }
     if (riser) { const el = $('riser'); if (el) { el.innerHTML = '📈 <b>' + esc(riser.x.name) + '</b> vượt ' + riser.up + ' bậc, lên hạng ' + riser.x.r + '. Cố lên nữa nha!'; el.classList.add('on'); } }
-  }, 2200);
+  }, 2200));
 }
 
 async function goEnd() {
-  clearInterval(timer); stopAns();
+  clearInterval(timer); stopAns(); clearBoardT();
   try { await D.update(r('state'), { phase: 'end' }); } catch (e) { return fail(e); }
   state.phase = 'end';
   endView(true);
@@ -477,7 +481,7 @@ async function saveResult() {
   saveMark('Đang lưu vào lịch sử…');
   try {
     const x = await window.MACC.fs(), F = x.F;
-    const nq = quiz.qs.filter((Q) => Q.pts).length;
+    const nq = quiz.qs.length;
     await F.setDoc(F.doc(x.db, 'quizResults', resultId()), {
       title: meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq, streak: !!meta.streak,
       players: res.list.map((p) => ({ name: String(p.name || '').slice(0, 40), s: p.s, r: p.r, ok: p.ok })),
@@ -506,7 +510,14 @@ function endView(anim) {
   if (anim) { Sound.drum(2.1); setTimeout(() => { Sound.win(); confetti($('fx'), 8000); }, 2300); }
 }
 
+let busy = false;
+// Space/Enter/nút ▶: chỉ chạy một bước một lần; đang đếm ngược hay đang công bố đáp án thì bỏ qua
 function next() {
+  if (busy || starting || revealing !== -1) return;
+  busy = true;
+  Promise.resolve(step1()).catch(fail).finally(() => { busy = false; });
+}
+function step1() {
   const p = state.phase, q = state.q;
   if (p === 'lobby') return start();
   if (p === 'show') return isPaused() ? unpause() : goAnswer(q);
@@ -550,7 +561,7 @@ function csv() {
     qs.forEach((Q, i) => { const it = x.q[i] || {}; row.push(it.a == null ? '' : LETTERS[it.a], it.a == null ? 'không trả lời' : it.ok ? 'đúng' : 'sai', it.pts || 0, it.ms == null ? '' : (Math.max(0, it.ms) / 1000).toFixed(2)); });
     rows.push(row);
   });
-  const txt = '﻿' + rows.map((r) => r.map((c) => { const s = String(c); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(',')).join('\r\n');
+  const txt = '﻿' + rows.map((r) => r.map((c) => { const s = String(c); const v = /^[=+\-@\t\r]/.test(s) && typeof c !== 'number' ? "'" + s : s; return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(',')).join('\r\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' }));
   const d = new Date(), pad = (n) => ('0' + n).slice(-2);
@@ -561,6 +572,7 @@ function csv() {
 // ---------- điều khiển ----------
 document.addEventListener('keydown', (e) => {
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
+  if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if ((e.key === ' ' || e.key === 'Enter') && PIN && state.phase && state.phase !== 'end') {
     e.preventDefault();
     if (state.phase === 'lobby' && !Object.keys(players).length) return;
@@ -568,7 +580,7 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === 'f' || e.key === 'F') full();
   if (e.key === 't' || e.key === 'T') nextTheme();
-  if ((e.key === 'p' || e.key === 'P') && PIN) { if (state.phase === 'answer') pause(); else if (isPaused()) unpause(); }
+  if ((e.key === 'p' || e.key === 'P') && PIN && !busy && revealing === -1) { if (state.phase === 'answer') pause(); else if (isPaused()) unpause(); }
 });
 function full() { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
 $('bFull').onclick = full;
@@ -578,7 +590,7 @@ const setPref = (k, v) => { try { localStorage.setItem(k, v ? '1' : '0'); } catc
 function paintCtl() { $('bMusic').style.opacity = Sound.music && Sound.musicVol > 0 ? 1 : 0.4; $('bSfx').style.opacity = Sound.sfx ? 1 : 0.4; }
 Sound.setSfx(pref('qz.sfx', true));
 const musicWanted = pref('qz.music', true);
-function musicFor() { const p = state.phase; Sound.mode(p === 'lobby' ? 'lobby' : p === 'answer' ? 'q' : null); }
+function musicFor() { const p = state.phase; Sound.mode(p === 'lobby' && !starting ? 'lobby' : p === 'answer' ? 'q' : null); }
 function setMusicOn(v) { Sound.setMusic(v); if (v) musicFor(); setPref('qz.music', v); paintCtl(); }
 // bảng âm lượng: bấm 🎵 để mở / đóng
 const numPref = (k, d) => { try { const v = localStorage.getItem(k); return v == null || isNaN(+v) ? d : +v; } catch (e) { return d; } };

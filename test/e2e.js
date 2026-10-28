@@ -108,7 +108,7 @@ function check(ok, msg) { console.log(ok ? '  ✔' : '  ✘', msg); if (!ok) fai
 
   // ---------- gian lận ----------
   const cheat = (p, fn, arg) => p.evaluate(async ([src, arg]) => {
-    const m = await import(new URL('js/common.js?v=4', location.href).href); const P = await m.player();
+    const m = await import(new URL('js/common.js?v=13', location.href).href); const P = await m.player();
     const fn = new Function('P', 'arg', 'return (async()=>{' + src + '})()');
     try { return await fn(P, arg); } catch (e) { return 'ERR ' + (e.code || e.message); }
   }, [fn, arg]);
@@ -181,7 +181,12 @@ function check(ok, msg) { console.log(ok ? '  ✔' : '  ✘', msg); if (!ok) fai
       check(/ERR/.test(peek), 'không xem được câu trả lời của bạn khác');
     }
     if (plan[q].includes(null)) await host.click('#bSkip');
+    if (q === 11) { // bấm Space lúc đang hiện "Hết giờ!" / "Everyone's locked in": phải bị bỏ qua, không kẹt
+      await host.waitForSelector('.timesup', { timeout: 10000 }).catch(() => {});
+      await host.keyboard.press('Space'); await host.keyboard.press('Space');
+    }
     await host.waitForSelector('#bNext', { timeout: 40000 });
+    if (q === 11) { await new Promise((r) => setTimeout(r, 800)); check(await host.$('.chart') !== null, 'Space lúc "Hết giờ!" ở câu cuối không làm kẹt, vẫn ở màn đáp án'); }
     await Promise.all(ps.map((p) => p.waitForSelector('#sRes:not([hidden])', { timeout: 15000 })));
     if (q === 0) { await host.screenshot(SHOT('host-reveal.png')); await P2.screenshot(SHOT('phone-result.png')); }
     const r1 = await P1.textContent('#rBox');
@@ -195,6 +200,13 @@ function check(ok, msg) { console.log(ok ? '  ✔' : '  ✘', msg); if (!ok) fai
     await host.keyboard.press('Space');
     if (q < 11) {
       await host.waitForSelector('.board2');
+      if (q === 2) { // bấm Space dồn 3 lần ở bảng xếp hạng: chỉ được sang đúng 1 câu
+        await host.keyboard.press('Space'); await host.keyboard.press('Space'); await host.keyboard.press('Space');
+        await new Promise((r) => setTimeout(r, 1500));
+        const st = await host.evaluate(() => document.querySelector('.qmeta') && document.querySelector('.qmeta').textContent);
+        check(/Câu 4\//.test(st || ''), 'bấm Space dồn chỉ sang đúng câu 4: ' + (st || '').trim().slice(0, 20));
+        continue;
+      }
       if (q === 5) { P4 = await join('Chi'); check(true, 'người vào trễ (câu 7) được'); }
       await host.keyboard.press('Space');
     }

@@ -7,15 +7,17 @@ const DIR = process.argv[2], BASE = 'http://127.0.0.1:8000/KH/';
   const proxy = process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: '127.0.0.1,localhost' } : undefined;
   const br = await chromium.launch({ proxy });
   const ctx = await br.newContext({ ignoreHTTPSErrors: true });
-  await ctx.addInitScript(() => { localStorage.setItem('mock.login', 'quangkhunpro@gmail.com'); localStorage.setItem('qz.news.seen', '1.0'); });
+  await ctx.addInitScript(() => { localStorage.setItem('mock.login', 'quangkhunpro@gmail.com'); });
   // tạo PDF từ văn bản đề bằng chính Chromium
   const mk = await ctx.newPage();
   await mk.setContent('<pre style="font:14px sans-serif">1. Emily introduced ____ before beginning the job interview.\n(A) she  (B) herself  (C) hers  (D) her\nAnswer: B\n\n2. Attendance at the festival increased by ____ 30 percent.\n(A) most (B) almost (C) mostly (D) the most\nAnswer: B</pre>');
   const pdfPath = path.join(DIR, 'de.pdf'); await mk.pdf({ path: pdfPath });
   const pg = await ctx.newPage();
   pg.on('pageerror', (e) => console.log('[pageerror]', e.message));
-  pg.on('dialog', (d) => d.dismiss()); // hỏi thêm/thay: chọn thay toàn bộ
-  await pg.goto(BASE + 'admin.html'); await pg.click('#bNew');
+  pg.on('dialog', (d) => (/TOÀN BỘ/.test(d.message()) ? d.accept() : d.dismiss())); // hỏi thêm vào cuối? Huỷ → thay toàn bộ? OK
+  await pg.goto(BASE + 'admin.html'); await pg.waitForSelector('#bNew');
+  const news = await pg.$('text=Đã hiểu'); if (news) await news.click();
+  await pg.click('#bNew');
   let fails = 0;
   for (const [f, n, key] of [['de.docx', 2, [1, 0]], ['de.pdf', 2, [1, 1]]]) {
     await pg.setInputFiles('#file', path.join(DIR, f));

@@ -2,6 +2,16 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.12', d: '2026-10-29', items: [
+      'Màn chiếu: bấm Space/Enter dồn hay giữ phím không còn làm game nhảy câu; bấm lúc đang hiện "Hết giờ!" không còn kẹt ở câu cuối.',
+      'Câu hỏi dài quá 1000 ký tự (hoặc đáp án quá 500) bị chặn lúc lưu thay vì làm kẹt game giữa chừng. Đoạn văn dài nên chụp thành hình.',
+      'Đọc đề nhiều phần (mỗi phần đánh số lại và có bảng đáp án riêng) lấy đúng đáp án; đoạn văn dẫn "Questions 3-4 refer to…" không còn dính vào đáp án D.',
+      'Nhập file vào bộ đã có câu: hỏi rõ "thêm vào cuối" hay "thay toàn bộ", bấm Huỷ là không nhập gì.',
+      'Bấm Lưu hai lần không còn tạo hai bộ trùng; bỏ hình khỏi câu rồi lưu thì hình cũ được xoá.',
+      'Tải lại màn chiếu không còn dồn một loạt tiếng "ting" khi bấm lần đầu; file nhạc theme lỗi thì tự chuyển sang nhạc tự tạo.',
+      'File CSV an toàn khi mở bằng Excel (tên bắt đầu bằng = + - @). Lịch sử không còn kiểu 5/4 câu đúng, không tự gộp "Thu" với "Thư".',
+      'Ctrl+P / Ctrl+F không còn làm tạm dừng hay bật toàn màn hình; tạm dừng đúng lúc học sinh vừa bấm không còn báo nhầm "gửi không kịp".'
+    ] },
     { v: '1.11.1', d: '2026-10-29', items: [
       'Sửa lỗi đổi theme mà nhạc nền không đổi theo (hay gặp khi bấm đổi theme nhanh liên tiếp). Giờ đổi lúc nào nhạc cũng đổi ngay sang bài của theme mới.',
       'Hành baro: bỏ dải sóng âm chạy ngang phía sau ô đáp án cho đỡ rối mắt; vẫn giữ cột equalizer ở đáy màn hình.'

@@ -118,12 +118,18 @@ export const Sound = (() => {
     const T = TRACKS[theme]; if (!T || !ac()) return null;
     if (!trk) {
       trk = new Audio(); trk.loop = true; trk.preload = 'auto';
+      trk.addEventListener('error', () => { const T2 = TRACKS[theme]; if (!T2 || trk.src !== new URL(T2.src, location.href).href) return; trackFailed(); });
       trkSrc = ctx.createMediaElementSource(trk); trkGain = ctx.createGain(); trkSrc.connect(trkGain); trkGain.connect(musicBus);
     }
     const url = new URL(T.src, location.href).href;
     if (trk.src !== url) { trk.src = url; trk.currentTime = 0; }
     trkGain.gain.value = T.g;
     return trk;
+  }
+  function trackFailed() {
+    const T = TRACKS[theme]; if (T) T.bad = true;
+    console.warn('Không phát được nhạc theme, chuyển sang nhạc tự tạo');
+    if (trkOn) { trkOn = false; if (musicOn && !paused && !loop) { nextT = 0; loop = setInterval(pump, 50); pump(); } }
   }
   const mGain = () => 1.3 * mVol / 100, sGain = () => 1.43 * sVol / 100;
   function ac() {
@@ -222,7 +228,18 @@ export const Sound = (() => {
   }
   function startLoop() {
     if (loop || trkOn || !musicOn || paused) return; if (!ac()) return;
-    if (TRACKS[theme]) { const a = track(); if (a) { trkOn = true; const tok = ++trkTok; a.playbackRate = fast ? 1.06 : 1; a.play().catch((e) => { if (tok === trkTok && e && e.name !== 'AbortError') trkOn = false; }); } return; }
+    if (TRACKS[theme] && !TRACKS[theme].bad) {
+      const a = track();
+      if (a) {
+        trkOn = true; const tok = ++trkTok; a.playbackRate = fast ? 1.06 : 1;
+        a.play().catch((e) => {
+          if (tok !== trkTok || !e || e.name === 'AbortError') return;
+          if (e.name === 'NotAllowedError') { trkOn = false; return; } // chưa bấm vào trang: lần bấm sau sẽ phát
+          trackFailed();
+        });
+      }
+      return;
+    }
     nextT = 0; loop = setInterval(pump, 50); pump();
   }
   function stopLoop() { clearInterval(loop); loop = 0; if (trk && trkOn) { trk.pause(); } trkOn = false; }
@@ -283,6 +300,8 @@ export const Sound = (() => {
     },
   };
   const fx = () => SFX[theme] || SFX.kahoot;
+  let unlocked = false; // thầy đã bấm/chạm vào trang: trình duyệt cho phát tiếng
+  const live = () => !!ctx && (ctx.state === 'running' || unlocked);
   // nhạc nền nhỏ lại một chút trong 0.25 giây cho tiếng báo trả lời nghe rõ
   function duck() { if (!musicBus || !musicOn) return; const t = ctx.currentTime, g = musicBus.gain; g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(mGain() * 0.45, t + 0.02); g.linearRampToValueAtTime(mGain(), t + 0.28); }
   return {
@@ -299,25 +318,25 @@ export const Sound = (() => {
       // đổi theme khi nhạc đang bật: dừng bài cũ, phát bài của theme mới (không dựa vào trạng thái lúc bài cũ còn đang tải)
       const on = musicOn && !paused; stopLoop(); theme = id; step = 0; levels(); if (on) startLoop();
     },
-    unlock() { ac(); },
+    unlock() { const ua = navigator.userActivation; if (!ua || ua.hasBeenActive) unlocked = true; ac(); },
     // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
     mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; levels(); paused = false; startLoop(); },
     hurry(v) { fast = !!v; if (trk && trkOn) trk.playbackRate = fast ? 1.06 : 1; },
     pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
     // có bạn vừa chọn đáp án: tiếng nhỏ, cao dần theo số người đã trả lời
-    answer(n) { if (!sfxOn || !ac()) return; duck(); fx().answer(n); },
-    tick() { if (sfxOn) fx().tick(); },
-    join() { if (sfxOn) fx().join(); },
-    go() { if (sfxOn) fx().go(); },
-    count(n) { if (sfxOn) fx().count(n); },
-    whoosh() { if (sfxOn) fx().whoosh(); },
-    timeup() { if (sfxOn) fx().timeup(); },
+    answer(n) { if (!sfxOn || !live()) return; duck(); fx().answer(n); },
+    tick() { if (sfxOn && live()) fx().tick(); },
+    join() { if (sfxOn && live()) fx().join(); },
+    go() { if (sfxOn && live()) fx().go(); },
+    count(n) { if (sfxOn && live()) fx().count(n); },
+    whoosh() { if (sfxOn && live()) fx().whoosh(); },
+    timeup() { if (sfxOn && live()) fx().timeup(); },
     end() { this.timeup(); },
-    reveal() { if (sfxOn) fx().reveal(); },
-    drum(sec) { if (!sfxOn || !ac()) return; const n = Math.round((sec || 2) * 16); for (let i = 0; i < n; i++) noise(0.05, 0.03 + 0.07 * i / n, later(i / 16), 1500); tone(98, 0.6, 'sine', 0.25, later(sec || 2)); noise(0.6, 0.12, later(sec || 2), 3000); },
+    reveal() { if (sfxOn && live()) fx().reveal(); },
+    drum(sec) { if (!sfxOn || !live()) return; const n = Math.round((sec || 2) * 16); for (let i = 0; i < n; i++) noise(0.05, 0.03 + 0.07 * i / n, later(i / 16), 1500); tone(98, 0.6, 'sine', 0.25, later(sec || 2)); noise(0.6, 0.12, later(sec || 2), 3000); },
     // bạn lội ngược dòng vào top 5: tiếng vút lên + leng keng
-    climb() { if (sfxOn) fx().climb(); },
-    win() { if (sfxOn) fx().win(); },
+    climb() { if (sfxOn && live()) fx().climb(); },
+    win() { if (sfxOn && live()) fx().win(); },
     // nghe thử âm báo (khi kéo thanh âm lượng)
     preview() { if (sfxOn) fx().reveal(); },
   };

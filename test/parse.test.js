@@ -49,6 +49,18 @@ assert.strictEqual(r.qs[2].t, 'Mr. A. Smith asked ____ to leave.');
 assert.deepStrictEqual(r.qs[1].o, ['exotic', 'cater', 'patron', 'culinary']);
 assert.strictEqual(QP.fromText('xin chao').qs.length, 0);
 
+// Đề nhiều phần, mỗi phần đánh số lại và có bảng đáp án riêng; đoạn văn dẫn không dính vào đáp án D
+r = QP.fromText('1. Q one\n(A) a (B) b (C) c (D) d\n2. Q two\n(A) a (B) b (C) c (D) d\nĐáp án\n1B 2C\n' +
+  '1. P2 one\n(A) w (B) x (C) y (D) z\nQuestions 2-3 refer to the following notice.\nThe store will be closed on Monday.\n' +
+  '2. P2 two\n(A) w (B) x (C) y (D) z\n3. A man is standing by the door.\n(A) w (B) x (C) y (D) z\nĐáp án\n1A 2D 3B\n');
+assert.deepStrictEqual(r.qs.map((q) => q.c[0]), [1, 2, 0, 3, 1]);
+assert.strictEqual(r.qs[2].o[3], 'z');
+assert.strictEqual(r.qs[4].t, 'A man is standing by the door.');
+assert.strictEqual(r.skipped, 1);
+// quá 1000 / 500 ký tự: chặn lưu (Firebase không nhận)
+assert.ok(QP.check({ t: 'x'.repeat(1001), o: ['a', 'b', '', ''], c: [0] }).err.length === 1);
+assert.ok(QP.check({ t: 'x', o: ['a'.repeat(501), 'b', '', ''], c: [1] }).err.length === 1);
+
 // Xuất lại mẫu Kahoot rồi đọc lại phải giống
 const back = QP.fromRows(QP.toRows('T', QP.fromRows(rows).qs.slice(0, 2)));
 assert.strictEqual(back.qs.length, 2); assert.deepStrictEqual(back.qs[1].c, [0, 2]); assert.strictEqual(back.title, 'T');

@@ -1,5 +1,5 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=12';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=13';
 
 const QP = window.QP;
 const LIB = {
@@ -50,14 +50,14 @@ async function showList() {
     : '<div class="card muted">Chưa có bộ câu hỏi nào. Bấm <b>+ Bộ mới</b> rồi tải file lên.</div>';
   const by = (id) => list.find((x) => x.id === id);
   app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, qs: JSON.parse(JSON.stringify(q.qs || [])) }); }; });
-  app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', qs: q.qs || [] }).catch(err); showList(); }; });
-  app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)).catch(err); await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
+  app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', qs: q.qs || [] }).catch(err); showList(); }; });
+  app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; try { await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)); } catch (e) { return err(e); } await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
 }
 function err(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }
 
 // ---------- soạn ----------
 function edit(q) {
-  cur = q; tpl('tEdit');
+  cur = q; cur.imgs0 = imgsOf(q.qs); tpl('tEdit');
   $('title').value = q.title || '';
   $('title').oninput = () => { cur.title = $('title').value; dirty = true; };
   $('bBack').onclick = () => { if (dirty && !confirm('Có thay đổi chưa lưu. Vẫn quay lại?')) return; dirty = false; showList(); };
@@ -123,13 +123,17 @@ async function importFile(f) {
 function addParsed(res, src) {
   if (!res.qs.length) { $('imp').innerHTML = '<span class="err">' + esc(res.errs.join(' ') || 'Không tìm thấy câu hỏi nào.') + '</span>'; return; }
   let mode = 'add';
-  if (cur.qs.length) mode = confirm('Bộ này đã có ' + cur.qs.length + ' câu.\nOK = thêm ' + res.qs.length + ' câu mới vào cuối\nHuỷ = thay toàn bộ bằng câu mới') ? 'add' : 'replace';
+  if (cur.qs.length) {
+    if (confirm('Bộ này đã có ' + cur.qs.length + ' câu.\nThêm ' + res.qs.length + ' câu mới vào CUỐI bộ?\n\n(Huỷ để chọn cách khác)')) mode = 'add';
+    else if (confirm('Thay TOÀN BỘ ' + cur.qs.length + ' câu cũ bằng ' + res.qs.length + ' câu mới?\nCâu cũ sẽ mất khi bấm Lưu.\n\n(Huỷ = không nhập gì)')) mode = 'replace';
+    else { $('imp').textContent = 'Đã huỷ, không nhập câu nào.'; return; }
+  }
   if (mode === 'replace') cur.qs = [];
   res.qs.forEach((q) => { q.src = q.row ? 'dòng ' + q.row + ' · ' + src : src; delete q.row; cur.qs.push(q); });
   if (!cur.title && res.title) { cur.title = res.title; $('title').value = cur.title; }
   if (!cur.title && /\.(xlsx|xls|csv|txt|docx|pdf)$/i.test(src)) { cur.title = src.replace(/\.[^.]+$/, '').replace(/^Kahoot\s*-\s*/i, ''); $('title').value = cur.title; }
   dirty = true;
-  $('imp').textContent = '✓ Đã đọc ' + res.qs.length + ' câu từ ' + src + '. Kiểm tra lại bên dưới rồi bấm Lưu.';
+  $('imp').textContent = '✓ Đã đọc ' + res.qs.length + ' câu từ ' + src + '.' + (res.skipped ? ' Đã bỏ qua ' + res.skipped + ' đoạn văn dẫn (đoạn văn dài nên chụp thành hình rồi thêm vào câu).' : '') + ' Kiểm tra lại bên dưới rồi bấm Lưu.';
   renderQs();
 }
 
@@ -232,15 +236,24 @@ async function save(q) {
   await F.setDoc(ref, { title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', qs: clean(q.qs), upd: Date.now(), at: F.serverTimestamp() });
   return ref.id;
 }
+const imgsOf = (qs) => new Set((qs || []).map((y) => y.img).filter(Boolean));
+let saving = false;
 async function doSave(play) {
+  if (saving) return;
   const bad = cur.qs.filter((q) => QP.check(q).err.length).length;
   if (!cur.qs.length) return toast('Chưa có câu hỏi nào.');
   if (bad) { toast('Còn ' + bad + ' câu lỗi, sửa xong rồi lưu nhé.'); const el = document.querySelector('.qe.bad'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  saving = true; ['bSave', 'bPlay'].forEach((id) => { if ($(id)) $(id).disabled = true; });
   try {
     cur.id = await save(cur); dirty = false;
+    // hình đã bỏ khỏi bộ này và không bộ nào khác dùng: xoá cho đỡ chật
+    const now = imgsOf(cur.qs), gone = [...(cur.imgs0 || [])].filter((id) => !now.has(id));
+    if (gone.length) await dropImgs({ qs: gone.map((img) => ({ img })) }, list.filter((x) => x.id !== cur.id));
+    cur.imgs0 = now;
     toast('✓ Đã lưu');
     if (play) location.href = 'host.html?quiz=' + encodeURIComponent(cur.id);
   } catch (e) { err(e); }
+  saving = false; ['bSave', 'bPlay'].forEach((id) => { if ($(id)) $(id).disabled = false; });
 }
 
 async function exportXlsx() {

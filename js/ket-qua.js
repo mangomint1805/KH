@@ -1,7 +1,7 @@
 /* Minto Quiz — Lịch sử kết quả (chỉ giáo viên).
    Mỗi ván chơi xong, màn host lưu một bản tổng kết vào Firestore: quizResults/{ngày-PIN}.
    Trang này xem lại từng buổi và cộng dồn điểm theo tên học sinh. */
-import { $, esc, isTeacher } from './common.js?v=12';
+import { $, esc, isTeacher } from './common.js?v=13';
 
 const COL = 'quizResults', GOP = '_gop';
 let FX = null, all = [], gop = {}, tab = 'buoi', pick = null, q = '', open = {};
@@ -13,6 +13,20 @@ function time(ms) { const d = new Date(ms); return pad(d.getHours()) + ':' + pad
 // Khoá tên: bỏ dấu, chữ thường, gộp khoảng trắng. "Ngọc  Anh" và "ngoc anh" là cùng một bạn.
 function key(name) { return String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/\s+/g, ' ').trim(); }
 function owner(k) { let x = k, n = 0; while (gop[x] && n++ < 20) x = gop[x]; return x; }
+// Khoá học sinh khi cộng dồn: giữ dấu ("Thu" và "Thư" là hai bạn), chỉ bỏ khác chữ hoa và khoảng trắng.
+// Khác dấu ("ngoc anh" và "Ngọc Anh") thì không tự gộp, vì "Thu" cũng có thể là tên thật: thầy dùng nút Gộp.
+const exact = (n) => String(n || '').normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim();
+function nameKeys(names) {
+  const acc = {};
+  names.forEach((n) => { const e = exact(n), b = key(n); if (e !== b) (acc[b] = acc[b] || new Set()).add(e); });
+  return (n) => {
+    const e = exact(n), b = key(n), v = acc[b];
+    const k = e;
+    // các lần gộp tay cũ lưu theo tên bỏ dấu: vẫn dùng được khi không có hai bạn trùng tên khác dấu
+    if (!gop[k] && gop[b] && (!v || v.size <= 1)) return owner(b);
+    return owner(k);
+  };
+}
 
 async function boot() {
   const M = await new Promise((ok) => { (function w() { window.MACC ? ok(window.MACC) : setTimeout(w, 100); })(); });
@@ -83,10 +97,11 @@ async function del(id) {
 // ---------- cộng dồn ----------
 function shown() { const t = key(q); return all.filter((x) => !t || key(x.title).includes(t)); }
 function sum() {
-  const by = {};
-  all.filter((x) => pick.has(x.id)).forEach((x) => {
+  const by = {}, ses = all.filter((x) => pick.has(x.id));
+  const nk = nameKeys(ses.flatMap((x) => (x.players || []).map((p) => p.name)));
+  ses.forEach((x) => {
     (x.players || []).forEach((p) => {
-      const k = owner(key(p.name)); if (!k) return;
+      const k = nk(p.name); if (!k) return;
       const o = by[k] || (by[k] = { k, names: {}, n: 0, s: 0, ok: 0, nq: 0, top: 0, win: 0 });
       o.names[p.name] = (o.names[p.name] || 0) + 1;
       o.n++; o.s += p.s || 0; o.ok += p.ok || 0; o.nq += x.nq || 0;

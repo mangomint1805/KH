@@ -1,5 +1,5 @@
 /* Minto Quiz — màn học sinh */
-import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=12';
+import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=13';
 
 const SS = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { sessionStorage.removeItem(k); } catch (e) {} } };
 const LSget = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
@@ -148,7 +148,7 @@ async function draw() {
   const Q = await getQ(q); if (my !== seq) return;
   if (!Q) return msg('⏳', 'Câu ' + (q + 1) + '/' + n, 'Đang tải câu hỏi…');
   if (st.phase === 'show' && st.endAt) { // thầy bấm tạm dừng giữa câu
-    const a = await getMine(q); if (my !== seq) return;
+    const a = sending ? null : await getMine(q); if (my !== seq) return; // đang gửi dở: chưa chắc đã lưu
     return msg('⏸', 'Thầy tạm dừng xíu nha', a != null ? 'Em chọn ' + LETTERS[a] + ' rồi, chờ thầy bấm tiếp tục nha.' : 'Đồng hồ đang dừng, chờ thầy bấm tiếp tục rồi chọn đáp án nha.', Q.t);
   }
   if (st.phase === 'show') {
@@ -214,7 +214,8 @@ async function pick(q, i) {
     // có thể đã gửi rồi (mạng chập chờn) — kiểm tra lại
     delete mine[q];
     const a = await getMine(q).catch(() => null);
-    if (a == null) msg('📶', 'Mạng lag quá, gửi không kịp 😭', 'Câu trả lời tới sau khi hết giờ mất rồi. Câu sau gỡ nha!');
+    // thầy vừa tạm dừng: chưa phải hết giờ, vẽ lại để em chọn lại sau khi tiếp tục
+    if (a == null) { if (state && state.phase === 'answer' && now() > state.endAt) msg('📶', 'Mạng lag quá, gửi không kịp 😭', 'Câu trả lời tới sau khi hết giờ mất rồi. Câu sau gỡ nha!'); else render(); }
   }
   clearTimeout(slow);
 }
@@ -233,7 +234,8 @@ function result(q, Q, a) {
   let h;
   if (a == null) h = '<div class="ic">⌛</div><h2>' + say(L.late, sd) + '</h2><div>Câu này em chưa chọn đáp án nè</div>';
   else if (ok) {
-    const t = pv && !pv.ok ? L.back : score.p >= 900 * (Q.pts || 1) ? L.fast : score.p && score.p < 600 * (Q.pts || 1) ? L.slow : L.ok;
+    const sp = (score.p || 0) - (score.b || 0); // điểm tốc độ, không tính thưởng chuỗi
+    const t = pv && !pv.ok ? L.back : sp >= 900 * (Q.pts || 1) ? L.fast : sp && sp < 600 * (Q.pts || 1) ? L.slow : L.ok;
     h = '<div class="ic">✔</div><h2>' + say(t, sd) + '</h2>' + (score.p ? '<div class="pts">+<span id="rp">' + score.p + '</span></div>' : '<div>Câu này hông tính điểm nha</div>');
   } else h = '<div class="ic">✘</div><h2>' + say(pv && pv.k >= 3 ? L.broken : L.no, sd) + '</h2><div>Đáp án đúng là <b>' + esc((score.c || []).map((x) => LETTERS[x]).join(', ')) + '</b> nè. ' + say(L.noSub, sd + 'n') + '</div>';
   if (score.k >= 2) h += '<div style="margin-top:10px;font-weight:600"><span class="flame">🔥</span> Chuỗi ' + score.k + ' câu đúng' + (score.b ? ' (+' + score.b + ')' : '') + ', ' + say(L.streak, sd + 'k') + '</div>';

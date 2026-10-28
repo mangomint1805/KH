@@ -115,20 +115,29 @@
     return out;
   }
 
+  // dòng bảng đáp án: chỉ gồm các cặp "số + chữ", ví dụ "1B 2A 3D", "1-B, 2-A", "4. C"
+  var RE_KEYLINE = /^\s*(\d{1,3}\s*[.\-:)]?\s*\(?[A-Da-d]\)?[\s,;.]*)+$/;
+  // mở đầu đoạn văn dẫn (Part 6/7): "Questions 3-4 refer to…", "Read the following…"
+  var RE_PASSAGE = /^\s*(questions?\s+\d{1,3}\s*(-|–|—|and|to|&)\s*\d{1,3}|read the following|refer to the following)/i;
   function fromText(text) {
     var lines = String(text || '').replace(/\r/g, '').replace(/ /g, ' ').split('\n');
-    var qs = [], cur = null, keyMode = false, keys = {}, errs = [];
+    var qs = [], cur = null, keyMode = false, keys = null, errs = [], sections = [], secFrom = 0, skip = false, skipped = 0;
     function push() { if (cur) qs.push(cur); cur = null; }
     function letterIdx(L) { return L.toUpperCase().charCodeAt(0) - 65; }
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
       if (!line.trim()) continue;
-      if (RE_KEYHEAD.test(line)) { push(); keyMode = true; continue; }
+      if (RE_KEYHEAD.test(line)) {
+        // bảng đáp án chỉ áp cho các câu từ bảng đáp án trước tới đây (đề nhiều phần, mỗi phần đánh số lại từ 1)
+        push(); keyMode = true; skip = false; keys = {}; sections.push({ from: secFrom, to: qs.length, keys: keys }); secFrom = qs.length;
+        continue;
+      }
       if (keyMode) {
-        // "1B 2A 3D", "1-B, 2-A", "1. B"
-        var km, re = /(\d{1,3})\s*[.\-:)]?\s*\(?([A-Da-d])\)?(?![a-z])/g, hit = false;
-        while ((km = re.exec(line))) { keys[+km[1]] = [letterIdx(km[2])]; hit = true; }
-        if (hit) continue;
+        if (RE_KEYLINE.test(line)) {
+          var km, re = /(\d{1,3})\s*[.\-:)]?\s*\(?([A-Da-d])\)?(?![a-z])/g;
+          while ((km = re.exec(line))) keys[+km[1]] = [letterIdx(km[2])];
+          continue;
+        }
         keyMode = false;
       }
       var am = RE_ANS.exec(line);
@@ -136,14 +145,15 @@
         cur.c = parseCorrect(am[1].replace(/[()]/g, ' ').replace(/và/g, ','));
         continue;
       }
+      if (RE_PASSAGE.test(line)) { push(); skip = true; skipped++; continue; } // đoạn văn dẫn: bỏ qua tới câu hỏi kế tiếp
       var qm = RE_Q.exec(line);
       if (qm) {
-        push();
+        push(); skip = false;
         cur = blank(); cur.num = +qm[1]; cur.row = i + 1; cur.optStarted = false;
         line = qm[2];
         if (!line.trim()) continue;
       }
-      if (!cur) continue;
+      if (!cur || skip) continue;
       var sp = splitOptions(line);
       // "Mr. A. Smith…": chỉ một nhãn đáp án, đứng giữa câu hỏi -> là chữ của câu hỏi
       if (sp && !cur.optStarted && sp.opts.length === 1 && sp.pre.trim()) sp = null;
@@ -158,13 +168,13 @@
       }
     }
     push();
+    sections.forEach(function (S) { for (var j = S.from; j < S.to; j++) if (!qs[j].c.length && S.keys[qs[j].num]) qs[j].c = S.keys[qs[j].num]; });
     qs.forEach(function (q) {
-      if (!q.c.length && keys[q.num]) q.c = keys[q.num];
       delete q.optStarted; delete q.last;
       q.time = 30;
     });
     if (!qs.length) errs.push('Không nhận ra câu hỏi nào. Mỗi câu cần bắt đầu bằng số thứ tự, ví dụ "1. …", rồi các đáp án (A) … (B) …');
-    return { qs: qs, errs: errs };
+    return { qs: qs, errs: errs, skipped: skipped };
   }
 
   // ---------- kiểm tra ----------
@@ -175,6 +185,8 @@
     if (filled < 2) err.push('Cần ít nhất 2 đáp án');
     if (!q.c.length) err.push('Chưa chọn đáp án đúng');
     q.c.forEach(function (i) { if (!str(q.o[i])) err.push('Đáp án đúng ' + 'ABCD'[i] + ' đang để trống'); });
+    if (str(q.t).length > 1000) err.push('Câu hỏi dài ' + str(q.t).length + ' ký tự, tối đa 1000 (đoạn văn dài thì chụp thành hình rồi thêm hình)');
+    q.o.forEach(function (x, i) { if (str(x).length > 500) err.push('Đáp án ' + 'ABCD'[i] + ' dài ' + str(x).length + ' ký tự, tối đa 500'); });
     if (str(q.t).length > MAXQ) warn.push('Câu hỏi dài ' + str(q.t).length + ' ký tự (Kahoot giới hạn ' + MAXQ + ')');
     q.o.forEach(function (x, i) { if (str(x).length > MAXA) warn.push('Đáp án ' + 'ABCD'[i] + ' dài ' + str(x).length + ' ký tự (giới hạn ' + MAXA + ')'); });
     return { err: err, warn: warn };
