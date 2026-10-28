@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.14', d: '2026-10-29', items: [
+      'Thanh trên cùng màn chiếu: tên bộ câu hỏi, mã PIN và số người chơi giờ là các thẻ riêng, đổi kiểu theo từng theme (Tím Kahoot, Hành baro, Thiên thần, Băng hoại). Mã PIN to và nổi hơn, số người chơi nảy lên mỗi khi có bạn vào.'
+    ] },
     { v: '1.13', d: '2026-10-29', items: [
       'Nhạc theme không còn để công khai trên GitHub: thầy tải file nhạc lên ở mục "🎵 Nhạc theme" cuối trang Bộ câu hỏi, nhạc lưu trên Firebase và chỉ tài khoản giáo viên nghe được.',
       'Mỗi theme Hành baro / Thiên thần / Băng hoại có nút Tải nhạc lên, Nghe thử, Đổi bài, Xoá. Âm lượng bài mới tự đo và chỉnh cho đều tai với các theme khác.',

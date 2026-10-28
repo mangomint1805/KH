@@ -51,7 +51,19 @@ function setTheme(id) {
   if (PIN && meta) { meta.theme = THEME; D.update(r('meta'), { theme: THEME }).catch((e) => console.warn('theme', e)); }
 }
 function nextTheme() { const i = THEMES.findIndex((t) => t.id === THEME); setTheme(THEMES[(i + 1) % THEMES.length].id); toast('Theme: ' + themeOf(THEME).n); }
-function stat(t) { $('stat').textContent = t || ''; }
+// thanh trên cùng: thẻ PIN + thẻ số người chơi (nảy lên khi số người đổi)
+function stat(pin, n) {
+  const el = $('stat'); if (!pin) { el.innerHTML = ''; delete el.dataset.pin; return; }
+  if (el.dataset.pin !== pin) {
+    el.dataset.pin = pin;
+    el.innerHTML = '<span class="chip cpin"><small>PIN</small><b>' + esc(pin) + '</b></span><span class="chip cppl"><i aria-hidden="true"></i><b class="pplv"></b><small>người chơi</small></span>';
+  }
+  const v = el.querySelector('.pplv'), t = String(n);
+  if (v.textContent !== t) {
+    const first = v.textContent === ''; v.textContent = t;
+    if (!first) { const c = el.querySelector('.cppl'); c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump'); }
+  }
+}
 function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 function fail(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }
 function playUrl(withPin) { return new URL('play.html' + (withPin ? '?pin=' + PIN : ''), location.href).href; }
@@ -196,7 +208,7 @@ function restore() {
 
 function onPlayers() {
   const n = Object.keys(players).length;
-  stat('PIN ' + PIN + ' · ' + n + ' người chơi');
+  stat(PIN, n);
   if (state.phase === 'lobby') lobbyNames();
   if (state.phase === 'answer') updAnswered();
 }

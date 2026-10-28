@@ -558,3 +558,54 @@ html[data-qz=y2k] .host .bar .logo, html[data-qz=y2k] .play .top .logo { color: 
 html[data-qz=scifi] .pbtn.chosen { outline: 0; box-shadow: inset 0 0 0 6px #fff, inset 0 0 0 9px #f2c14e; transform: scale(.97); }
 html[data-qz=scifi] .hopt.win { box-shadow: inset 0 0 0 5px #fff; }
 .bgfx .eq { opacity: .22; height: 18vh; }
+
+/* =====================================================================
+   1.14 — tên bộ câu hỏi, thẻ PIN và số người chơi trên thanh màn chiếu, riêng từng theme
+   ===================================================================== */
+.host .bar { gap: 14px; }
+.btitle { min-width: 0; max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; font-size: 17px; padding: 5px 14px; border-radius: 999px; }
+.bstat { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.bstat:empty { display: none; }
+.chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 14px; border-radius: 999px; line-height: 1.2; white-space: nowrap; }
+.chip small { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+.chip b { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.cpin b { letter-spacing: .12em; }
+.cppl small { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.cppl i { font-style: normal; align-self: center; }
+.cppl i::before { content: '👤'; font-size: 15px; }
+.cppl.bump { animation: chipbump .5s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes chipbump { 40% { transform: scale(1.18); } }
+@media (prefers-reduced-motion: reduce) { .cppl.bump { animation: none; } }
+@media (max-width: 760px) { .btitle { display: none; } .cppl small { display: none; } }
+
+/* Tím Kahoot: chữ tím, thẻ PIN tím đặc, thẻ người chơi tím nhạt */
+.btitle { color: #46178f; background: #f0e9fb; border-left: 4px solid #46178f; border-radius: 8px; }
+.cpin { background: #46178f; color: #fff; box-shadow: 0 3px 0 #2c0d5c; }
+.cppl { background: #f0e9fb; color: #46178f; box-shadow: inset 0 0 0 2px #d3c2f0; }
+
+/* Hành baro: chữ tròn, viên thuốc xanh ngọc – hồng, nốt nhạc */
+html[data-qz=idol] .btitle { font-family: "M PLUS Rounded 1c", "IBM Plex Sans", sans-serif; font-weight: 800; color: #bff3ee; background: rgba(57,197,187,.14); border: 0; border-radius: 999px; box-shadow: inset 0 0 0 1.5px rgba(57,197,187,.55); }
+html[data-qz=idol] .chip { font-family: "M PLUS Rounded 1c", "IBM Plex Sans", sans-serif; }
+html[data-qz=idol] .cpin { background: linear-gradient(90deg, #e12885, #ff6fae); color: #fff; box-shadow: 0 0 14px rgba(225,40,133,.55); }
+html[data-qz=idol] .cpin small::before { content: '♪ '; }
+html[data-qz=idol] .cppl { background: #39c5bb; color: #053332; box-shadow: 0 0 12px rgba(57,197,187,.5); }
+html[data-qz=idol] .cppl i::before { content: '♫'; font-size: 17px; }
+
+/* Thiên thần: chữ pixel, khung cửa sổ trắng viền tím, bóng cứng kiểu nút máy tính cũ */
+html[data-qz=y2k] .btitle { font-weight: 700; color: #5a2470; background: #fff; border: 2px solid #5a2470; border-radius: 0; box-shadow: 3px 3px 0 #b2408a; text-shadow: none; }
+html[data-qz=y2k] .btitle::before { content: '★ '; color: #ff5fa8; }
+html[data-qz=y2k] .chip { font-family: "DotGothic16", monospace; border-radius: 0; border: 2px solid #5a2470; text-shadow: none; }
+html[data-qz=y2k] .chip b { font-weight: 400; }
+/* chữ pixel không có dấu tiếng Việt: phần chữ thường dùng font thường */
+html[data-qz=y2k] .chip small { font-family: "IBM Plex Sans", system-ui, sans-serif; }
+html[data-qz=y2k] .cpin { background: #ff5fa8; color: #fff; box-shadow: 3px 3px 0 #5a2470; }
+html[data-qz=y2k] .cppl { background: #fff; color: #5a2470; box-shadow: 3px 3px 0 #5a2470; }
+html[data-qz=y2k] .cppl i::before { content: '♡'; color: #ff5fa8; font-size: 18px; }
+
+/* Băng hoại: chữ HUD in hoa, khung cắt góc, vàng – đỏ trên nền đêm */
+html[data-qz=scifi] .btitle { font-family: "Rajdhani", "IBM Plex Sans", sans-serif; font-size: 19px; letter-spacing: .06em; text-transform: uppercase; color: #e8ecff; background: linear-gradient(90deg, rgba(242,193,78,.16), transparent); border: 0; border-left: 3px solid #f2c14e; border-radius: 0; padding-left: 12px; }
+html[data-qz=scifi] .chip { font-family: "Rajdhani", "IBM Plex Sans", sans-serif; border-radius: 0; clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); padding: 5px 20px; }
+html[data-qz=scifi] .chip b { font-weight: 700; font-size: 22px; }
+html[data-qz=scifi] .cpin { background: #f2c14e; color: #10162e; }
+html[data-qz=scifi] .cppl { background: rgba(224,71,95,.9); color: #fff; }
+html[data-qz=scifi] .cppl i::before { content: '◆'; font-size: 13px; }
