@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.9', d: '2026-10-28', items: [
+      'Theme Băng hoại dùng bài nhạc nền "Gion", theme Thiên thần dùng bài "Approval desire" (thay cho nhạc tự tạo). Hai theme còn lại giữ nhạc cũ.',
+      'Bài nhạc chạy liền mạch từ phòng chờ sang lúc trả lời, không bị phát lại từ đầu mỗi câu; 5 giây cuối nhạc nhanh lên một chút. Bảng xếp hạng vẫn tạm tắt nhạc như cũ.',
+      'Thanh âm lượng nhạc nền và nút tắt nhạc dùng được cho cả hai bài này.'
+    ] },
     { v: '1.8.1', d: '2026-10-28', items: [
       'Tiếng báo khi có bạn chọn đáp án to và rõ hơn hẳn (trước bị nhạc nền che mất). Mỗi lần có bạn trả lời, nhạc nền tự nhỏ lại một chút cho tiếng báo nghe rõ.'
     ] },

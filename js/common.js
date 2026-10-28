@@ -110,6 +110,20 @@ export const Sound = (() => {
   let ctx = null, master = null, musicBus = null, sfxBus = null, noiseBuf = null;
   let musicOn = false, sfxOn = true, mode = 'lobby', paused = true, loop = 0, step = 0, nextT = 0, fast = false;
   let theme = 'kahoot', mVol = 70, sVol = 70;
+  // theme dùng bài nhạc thật (file mp3 trong thư mục audio/) thay cho nhạc tự tạo; g = mức chỉnh cho đều tai giữa các bài
+  const TRACKS = { scifi: { src: 'audio/bang-hoai.mp3', g: 0.5 }, y2k: { src: 'audio/thien-than.mp3', g: 0.22 } };
+  let trk = null, trkSrc = null, trkGain = null, trkOn = false;
+  function track() {
+    const T = TRACKS[theme]; if (!T || !ac()) return null;
+    if (!trk) {
+      trk = new Audio(); trk.loop = true; trk.preload = 'auto';
+      trkSrc = ctx.createMediaElementSource(trk); trkGain = ctx.createGain(); trkSrc.connect(trkGain); trkGain.connect(musicBus);
+    }
+    const url = new URL(T.src, location.href).href;
+    if (trk.src !== url) { trk.src = url; trk.currentTime = 0; }
+    trkGain.gain.value = T.g;
+    return trk;
+  }
   const mGain = () => 1.3 * mVol / 100, sGain = () => 1.43 * sVol / 100;
   function ac() {
     if (!ctx) {
@@ -200,8 +214,12 @@ export const Sound = (() => {
     if (nextT < ctx.currentTime) nextT = ctx.currentTime + 0.05;
     while (nextT < ctx.currentTime + 0.2) { schedule(nextT); nextT += dt; }
   }
-  function startLoop() { if (loop || !musicOn || paused) return; if (!ac()) return; nextT = 0; loop = setInterval(pump, 50); pump(); }
-  function stopLoop() { clearInterval(loop); loop = 0; }
+  function startLoop() {
+    if (loop || trkOn || !musicOn || paused) return; if (!ac()) return;
+    if (TRACKS[theme]) { const a = track(); if (a) { trkOn = true; a.playbackRate = fast ? 1.06 : 1; a.play().catch(() => { trkOn = false; }); } return; }
+    nextT = 0; loop = setInterval(pump, 50); pump();
+  }
+  function stopLoop() { clearInterval(loop); loop = 0; if (trk && trkOn) { trk.pause(); } trkOn = false; }
 
   // ===== âm báo theo theme =====
   const arp = (fs, ty, vol, gap, dur) => fs.forEach((f, i) => tone(f, dur || 0.22, ty, vol, later(i * gap)));
@@ -270,11 +288,14 @@ export const Sound = (() => {
     setMusicVol(v) { mVol = Math.max(0, Math.min(100, +v || 0)); if (musicBus) musicBus.gain.setTargetAtTime(mGain(), ctx.currentTime, 0.05); },
     setSfxVol(v) { sVol = Math.max(0, Math.min(100, +v || 0)); if (sfxBus) sfxBus.gain.setTargetAtTime(sGain(), ctx.currentTime, 0.05); },
     // đổi bộ nhạc / âm báo theo theme (đang phát thì đổi luôn từ đầu ô nhịp)
-    setTheme(id) { if (id === theme) return; theme = PACKS[id] ? id : 'kahoot'; step = 0; },
+    setTheme(id) {
+      id = PACKS[id] ? id : 'kahoot'; if (id === theme) return;
+      const on = !!(loop || trkOn); stopLoop(); theme = id; step = 0; if (on) startLoop();
+    },
     unlock() { ac(); },
     // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
     mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; paused = false; startLoop(); },
-    hurry(v) { fast = !!v; },
+    hurry(v) { fast = !!v; if (trk && trkOn) trk.playbackRate = fast ? 1.06 : 1; },
     pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
     // có bạn vừa chọn đáp án: tiếng nhỏ, cao dần theo số người đã trả lời
     answer(n) { if (!sfxOn || !ac()) return; duck(); fx().answer(n); },
