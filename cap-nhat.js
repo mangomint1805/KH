@@ -2,6 +2,13 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.11', d: '2026-10-28', items: [
+      'Thanh trên cùng (logo Minto Quiz, tên bộ câu, PIN) đổi màu theo theme, cả màn chiếu lẫn điện thoại.',
+      'Hành baro làm lại theo phong cách Miku: xanh ngọc – hồng, chữ tròn, viền thẻ xanh ngọc, cột equalizer nhảy ở đáy màn hình, sóng âm chạy ngang, đèn sân khấu xanh – hồng.',
+      'Thiên thần làm lại theo phong cách KAngel: nền hồng – tím – xanh trời ô caro, chữ pixel, thẻ câu hỏi thành "cửa sổ máy tính" có thanh tiêu đề minto_quiz.exe, vầng hào quang lơ lửng, tim pixel.',
+      'Băng hoại làm lại theo phong cách Honkai Impact 3rd: xanh đêm – vàng, khung cắt góc viền vàng, chữ kiểu HUD, tinh thể đỏ – tím bay lên, lưới lục giác, khung ngắm ở góc màn hình.',
+      'Âm lượng đo lại theo độ to tai người nghe (chuẩn LUFS, đo cả bài nhạc): nhạc nền và âm báo 4 theme giờ chênh nhau không quá khoảng 1 đơn vị, gần như không nhận ra.'
+    ] },
     { v: '1.10.1', d: '2026-10-28', items: [
       'Theme Hành baro dùng bài nhạc nền "Melt" (bản hộp nhạc). Giờ cả Hành baro, Thiên thần và Băng hoại đều có nhạc thật; Tím Kahoot giữ nhạc tự tạo.',
       'Âm lượng bài mới đã đo và chỉnh cho bằng các theme khác.'

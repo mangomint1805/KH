@@ -9,9 +9,9 @@ export const LETTERS = ['A', 'B', 'C', 'D'];
 // Theme màn chơi: tím Kahoot + 3 theme của web Minto English (Hành baro, Thiên thần, Băng hoại)
 export const THEMES = [
   { id: 'kahoot', n: 'Tím Kahoot', c: '#46178f', sw: 'linear-gradient(135deg,#46178f,#6a2ecf)' },
-  { id: 'idol', n: 'Hành baro', c: '#0a6766', sw: 'linear-gradient(135deg,#0a6766,#12a4a3 60%,#ff5fa2)' },
-  { id: 'y2k', n: 'Thiên thần', c: '#9b2c66', sw: 'linear-gradient(135deg,#e0559a,#8b5cf6)' },
-  { id: 'scifi', n: 'Băng hoại', c: '#0a1024', sw: 'linear-gradient(135deg,#0a1024,#4ad7ff 55%,#b04cff)' },
+  { id: 'idol', n: 'Hành baro', c: '#0b3d3e', sw: 'linear-gradient(135deg,#0b4f4f,#39c5bb 60%,#e12885)' },
+  { id: 'y2k', n: 'Thiên thần', c: '#c94b93', sw: 'linear-gradient(135deg,#ffb7d5,#c9a7ff 55%,#9ad8ff)' },
+  { id: 'scifi', n: 'Băng hoại', c: '#070d1f', sw: 'linear-gradient(135deg,#070d1f,#1d2a5c 55%,#f2c14e)' },
 ];
 export function themeOf(id) { return THEMES.find((t) => t.id === id) || THEMES[0]; }
 export function applyTheme(id) {
@@ -112,7 +112,7 @@ export const Sound = (() => {
   let musicOn = false, sfxOn = true, mode = 'lobby', paused = true, loop = 0, step = 0, nextT = 0, fast = false;
   let theme = 'kahoot', mVol = 70, sVol = 70;
   // theme dùng bài nhạc thật (file mp3 trong thư mục audio/) thay cho nhạc tự tạo; g = mức chỉnh cho đều tai giữa các bài
-  const TRACKS = { idol: { src: 'audio/hanh-baro.mp3', g: 0.32 }, scifi: { src: 'audio/bang-hoai.mp3?v=2', g: 0.234 }, y2k: { src: 'audio/thien-than.mp3', g: 0.117 } };
+  const TRACKS = { idol: { src: 'audio/hanh-baro.mp3', g: 0.275 }, scifi: { src: 'audio/bang-hoai.mp3?v=2', g: 0.216 }, y2k: { src: 'audio/thien-than.mp3', g: 0.089 } };
   let trk = null, trkSrc = null, trkGain = null, trkOn = false;
   function track() {
     const T = TRACKS[theme]; if (!T || !ac()) return null;
@@ -159,7 +159,7 @@ export const Sound = (() => {
   const M = (f, d, ty, v, t, gl) => tone(f, d, ty, v, t, synBus, gl);
   const N = (d, v, t, hp) => noise(d, v, t, hp, synBus);
   // mức chỉnh cho đều tai (đo bằng máy): nhạc tự tạo theo theme, âm báo theo theme
-  const LV = { syn: { kahoot: [2.1, 2.1], idol: [2.29, 3.3] }, fx: { kahoot: 1, idol: 1.38, y2k: 1.05, scifi: 1.78 } };
+  const LV = { syn: { kahoot: [2.1, 2.1], idol: [2.29, 3.3] }, fx: { kahoot: 1, idol: 1.21, y2k: 0.86, scifi: 1.78 } };
   function levels() { if (synBus) synBus.gain.value = (LV.syn[theme] || [1, 1])[mode === 'q' ? 1 : 0]; if (fxTheme) fxTheme.gain.value = LV.fx[theme] || 1; }
 
   // ===== bộ nhạc nền theo theme. Mỗi kiểu: bpm, hợp âm (4 ô nhịp), bass, và hàm chơi 1 nốt móc (8 nốt / ô nhịp) =====
@@ -326,9 +326,12 @@ export const Sound = (() => {
 // Mỗi theme có hình trôi và hiệu ứng riêng; đổi theme là vẽ lại (applyTheme gọi).
 const FX = {
   kahoot: { g: ['▲', '◆', '●', '■'], c: ['#fff'] },
-  idol: { g: ['★', '✦', '♪', '♫', '★', '♬'], c: ['#fff', '#ffc2dd', '#ff7fb6', '#fff6a8'], extra: '<div class="beam b1"></div><div class="beam b2"></div>' },
-  y2k: { g: ['♡', '✧', '♥', '○', '✿', '♡'], c: ['#fff', '#ffd6ec', '#e8dcff', '#ffb3d9'], extra: '<div class="glow g1"></div><div class="glow g2"></div>' },
-  scifi: { g: ['◇', '◆', '⬡', '✕', '◇'], c: ['#4ad7ff', '#b04cff', '#7ff0ff'], extra: '<div class="scan"></div><div class="grid"></div>' },
+  // Hành baro (Miku): nốt nhạc, sóng âm, cột equalizer nhảy theo nhạc, đèn sân khấu xanh ngọc
+  idol: { g: ['♪', '♫', '♬', '♪', '✦', '♫'], c: ['#86cecb', '#fff', '#ff8fc4', '#bdf3ee'], extra: '<div class="beam b1"></div><div class="beam b2"></div><div class="wave"></div><div class="eq">' + '<i></i>'.repeat(32) + '</div>' },
+  // Thiên thần (KAngel): tim pixel, lấp lánh, vầng hào quang, mây; quầng sáng hồng – tím
+  y2k: { g: ['♡', '✧', '♥', '☆', '✧', '♡', '◌'], c: ['#fff', '#ffe1f0', '#ffd0ea', '#e9e0ff', '#fff6b0'], extra: '<div class="glow g1"></div><div class="glow g2"></div><div class="halo"></div>' },
+  // Băng hoại (HI3): tinh thể Honkai đỏ – tím bay lên, lục giác vàng, vạch quét, lưới HUD
+  scifi: { g: ['◆', '⬡', '◆', '◇', '⬢', '◆'], c: ['#e0475f', '#f2c14e', '#9b5cff', '#ff6b81', '#ffd978'], extra: '<div class="grid"></div><div class="scan"></div><div class="hud h1"></div><div class="hud h2"></div>' },
 };
 let fxN = 14;
 function fxPaint(d) {
