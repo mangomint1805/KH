@@ -6,6 +6,29 @@ export const COLORS = ['#e21b3c', '#0891d1', '#d89e00', '#26890c'];
 export const SHAPES = ['▲', '◆', '●', '■'];
 export const LETTERS = ['A', 'B', 'C', 'D'];
 
+// Theme màn chơi: tím Kahoot + 3 theme của web Minto English (Hành baro, Thiên thần, Băng hoại)
+export const THEMES = [
+  { id: 'kahoot', n: 'Tím Kahoot', c: '#46178f', sw: 'linear-gradient(135deg,#46178f,#6a2ecf)' },
+  { id: 'idol', n: 'Hành baro', c: '#0a6766', sw: 'linear-gradient(135deg,#0a6766,#12a4a3 60%,#ff5fa2)' },
+  { id: 'y2k', n: 'Thiên thần', c: '#9b2c66', sw: 'linear-gradient(135deg,#e0559a,#8b5cf6)' },
+  { id: 'scifi', n: 'Băng hoại', c: '#0a1024', sw: 'linear-gradient(135deg,#0a1024,#4ad7ff 55%,#b04cff)' },
+];
+export function themeOf(id) { return THEMES.find((t) => t.id === id) || THEMES[0]; }
+export function applyTheme(id) {
+  const t = themeOf(id), r = document.documentElement;
+  if (t.id === 'kahoot') r.removeAttribute('data-qz'); else r.setAttribute('data-qz', t.id);
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', t.c);
+  return t.id;
+}
+// theme mặc định của máy thầy: lần chọn trước, nếu chưa có thì theo theme đang dùng trên web Minto English
+export function savedTheme() {
+  try {
+    const v = localStorage.getItem('qz.theme'); if (v) return themeOf(v).id;
+    let s = localStorage.getItem('mt.skin') || ''; try { s = JSON.parse(s); } catch (e) {}
+    return themeOf(s).id;
+  } catch (e) { return 'kahoot'; }
+}
+
 export const $ = (id) => document.getElementById(id);
 export function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 export function show(id) { document.querySelectorAll('[data-screen]').forEach((el) => { el.hidden = el.id !== id; }); }

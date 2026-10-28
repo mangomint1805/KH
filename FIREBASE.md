@@ -22,6 +22,8 @@ Luật này làm gì:
 - Học sinh không đọc được câu trả lời của bạn khác. Đáp án đúng chỉ được ghi lên khi thầy công bố.
 - Phòng quá 6 giờ thì không vào mới được nữa.
 
+> **Cập nhật 28/10 (theme):** luật Realtime Database có thêm dòng `"theme"` trong phần `meta`. Thầy dán lại đoạn `"quiz"` mới từ file `firebase/dan-vao-rtdb.txt` (thay đoạn cũ). Chưa dán thì vẫn chơi được, chỉ là điện thoại học sinh giữ màu tím mặc định.
+
 ## 3. Thêm luật Firestore cho bộ câu hỏi, lịch sử kết quả và hình
 
 1. Mở **Firestore Database** → thẻ **Rules**.

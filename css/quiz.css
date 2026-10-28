@@ -324,3 +324,32 @@ body.play.st-no { background: linear-gradient(160deg, #a11a1a, #d13b3b); }
 .lead { opacity: 0; transform: translateY(-6px); transition: opacity .5s, transform .5s; }
 .lead.on { opacity: 1; transform: none; }
 .joinbar .jl { text-align: left; }
+
+/* ---- theme (giống 3 bộ giao diện của web Minto English) ---- */
+.themes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+.thm { display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 14px 6px 6px; font: 600 15px/1 "IBM Plex Sans", sans-serif; cursor: pointer; color: var(--ink); }
+.thm i { width: 26px; height: 26px; border-radius: 50%; display: block; }
+.thm.on { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(0,0,0,.12); }
+body.host, body.play { background-attachment: fixed; }
+/* Hành baro: xanh ngọc, điểm hồng, họa tiết sao + nốt nhạc */
+html[data-qz=idol] { --bg1: #075a59; --bg2: #12a4a3; --accent: #ff5fa2; }
+html[data-qz=idol] body.host, html[data-qz=idol] body.play {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M15 8l2 5 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z' fill='%23fff' opacity='.16'/%3E%3Cpath d='M45 38v-10l8-2v10M45 38a3 3 0 1 1-1-1M53 36a3 3 0 1 1-1-1' stroke='%23ff9cc8' stroke-width='1.8' fill='none' opacity='.45'/%3E%3C/svg%3E") 0 0/60px 60px, linear-gradient(160deg, var(--bg1), var(--bg2)); background-attachment: fixed; }
+html[data-qz=idol] .jstrip { background: rgba(4,40,40,.55); box-shadow: inset 0 -2px 0 #ff9cc8; }
+/* Thiên thần: hồng – lavender, ô caro, viền nổi */
+html[data-qz=y2k] { --bg1: #b03a7a; --bg2: #7c4ddb; --accent: #ffd6ec; }
+html[data-qz=y2k] body.host, html[data-qz=y2k] body.play {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='16' height='16' fill='%23fff' opacity='.06'/%3E%3Crect x='16' y='16' width='16' height='16' fill='%23fff' opacity='.06'/%3E%3Cpath d='M22 6h2v1h1v-1h2v1h1v3h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1h-1v-3h1z' fill='%23ffd6ec' opacity='.4'/%3E%3C/svg%3E") 0 0/32px 32px, linear-gradient(160deg, var(--bg1), var(--bg2)); background-attachment: fixed; }
+html[data-qz=y2k] :is(.qtext, .joinbar, .board2 .r, .pq, .card) { box-shadow: 4px 4px 0 #c7a6f0 !important; border: 2px solid #d9a6e6; }
+html[data-qz=y2k] .jstrip { background: linear-gradient(90deg, rgba(255,214,236,.28), rgba(232,220,255,.28)); }
+/* Băng hoại: xanh đêm, neon xanh – tím, nút vàng */
+html[data-qz=scifi] { --bg1: #0a1024; --bg2: #1a1140; --accent: #4ad7ff; }
+html[data-qz=scifi] body.host, html[data-qz=scifi] body.play {
+  background: radial-gradient(1200px 600px at 85% -10%, rgba(176,76,255,.28), transparent 60%), radial-gradient(900px 500px at -10% 10%, rgba(74,215,255,.20), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M44 0H0v44' fill='none' stroke='%234ad7ff' stroke-width='.6' opacity='.3'/%3E%3Cpath d='M22 18l4 4-4 4-4-4z' fill='%23b04cff' opacity='.35'/%3E%3C/svg%3E") 0 0/44px 44px, linear-gradient(160deg, var(--bg1), var(--bg2)); background-attachment: fixed; }
+html[data-qz=scifi] .ring .timer, html[data-qz=scifi] .board2 .r .rk, html[data-qz=scifi] .play .join h1 { color: #1a1140; }
+html[data-qz=scifi] :is(.qtext, .joinbar, .board2 .r, .pq) { box-shadow: 0 0 0 1px rgba(74,215,255,.5), 0 0 22px rgba(74,215,255,.25) !important; }
+html[data-qz=scifi] .btn.pri { color: #1a1140; background: linear-gradient(180deg, #ffe36b, #ffc21a); border-color: #ffc21a; box-shadow: 0 0 14px rgba(255,210,63,.4); }
+html[data-qz=scifi] .jstrip { background: rgba(5,8,20,.75); box-shadow: inset 0 -1px 0 rgba(74,215,255,.5); }
+html[data-qz=scifi] :is(h1, .brand) { text-shadow: 0 0 18px rgba(74,215,255,.45); }
+html[data-qz=scifi] .bgfx span { color: #4ad7ff; opacity: .1; }

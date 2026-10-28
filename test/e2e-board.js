@@ -13,7 +13,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const mk = async (login, vp) => {
     const ctx = await br.newContext({ ignoreHTTPSErrors: true, viewport: vp || { width: 420, height: 800 } });
     await ctx.addInitScript((e) => { if (e) localStorage.setItem('mock.login', e); }, login || '');
-    const p = await ctx.newPage(); p.on('pageerror', (e) => console.log('   [pageerror]', e.message)); return p;
+    const p = await ctx.newPage(); p.on('pageerror', (e) => console.log('   [pageerror]', p.url(), e.message, (e.stack || '').split('\n').slice(1, 3).join(' '))); return p;
   };
   const host = await mk('quangkhunpro@gmail.com', { width: 1366, height: 800 });
   await host.goto(BASE + 'admin.html'); await host.waitForSelector('#bNew');
@@ -27,12 +27,19 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const ps = [];
   for (const n of names) { const p = await mk(); await p.goto(BASE + 'play.html?pin=' + PIN); await p.fill('#name', n); await p.click('#go'); await p.waitForSelector('#sMsg:not([hidden])'); ps.push(p); }
   await host.waitForFunction(() => document.querySelectorAll('#names .nm').length === 7);
+  // đổi theme ở phòng chờ (phím T): điện thoại đổi theo
+  for (const t of ['idol', 'y2k', 'scifi']) {
+    await host.keyboard.press('t');
+    await ps[0].waitForFunction((t) => document.documentElement.getAttribute('data-qz') === t, t, { timeout: 8000 }).then(() => check(true, 'theme ' + t + ': điện thoại đổi theo'), () => check(false, 'theme ' + t + ': điện thoại chưa đổi'));
+    await host.screenshot(SHOT('theme-' + t + '-lobby.png'));
+  }
   await host.click('#bStart');
   // câu 1: An…Em đúng, Phúc và Giang sai  → Giang hạng 6-7
   // câu 2: chỉ Giang và Phúc đúng, Giang bấm nhanh nhất → Giang vào top 5
   const plan = [[1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 1]];
   for (let q = 0; q < 2; q++) {
     await Promise.all(ps.map((p) => p.waitForSelector('#sAns:not([hidden]) .pbtn', { timeout: 20000 })));
+    if (q === 0) { await host.screenshot(SHOT('theme-scifi-q.png')); await ps[0].screenshot(SHOT('theme-scifi-phone.png')); }
     const order = q === 1 ? [6, 5, 0, 1, 2, 3, 4] : [0, 1, 2, 3, 4, 5, 6];
     for (const i of order) { await ps[i].click('.pbtn.k' + (plan[q][i] ? KEY[q] : (KEY[q] + 1) % 4)); await sleep(150); }
     await host.waitForSelector('#bNext', { timeout: 30000 });

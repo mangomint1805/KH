@@ -20,6 +20,9 @@
           "streak": {
             ".validate": "newData.isBoolean()"
           },
+          "theme": {
+            ".validate": "newData.isString() && newData.val().matches(/^(kahoot|idol|y2k|scifi)$/)"
+          },
           "$other": {
             ".validate": false
           }

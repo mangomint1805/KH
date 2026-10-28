@@ -1,6 +1,6 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS } from './common.js?v=3';
+import { $, esc, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme } from './common.js?v=4';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
@@ -42,6 +42,15 @@ function bigQr() {
   ov.onclick = () => ov.remove();
   document.body.appendChild(ov);
 }
+// ---------- theme ----------
+let THEME = applyTheme(savedTheme());
+function paintThemes() { document.querySelectorAll('.thm').forEach((b) => b.classList.toggle('on', b.dataset.t === THEME)); }
+function setTheme(id) {
+  THEME = applyTheme(id); paintThemes();
+  try { localStorage.setItem('qz.theme', THEME); } catch (e) {}
+  if (PIN && meta) { meta.theme = THEME; D.update(r('meta'), { theme: THEME }).catch((e) => console.warn('theme', e)); }
+}
+function nextTheme() { const i = THEMES.findIndex((t) => t.id === THEME); setTheme(THEMES[(i + 1) % THEMES.length].id); toast('Theme: ' + themeOf(THEME).n); }
 function stat(t) { $('stat').textContent = t || ''; }
 function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 function fail(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }
@@ -99,7 +108,10 @@ async function cleanup() {
 async function pick(want) {
   main.innerHTML = '<div class="wrap" style="width:100%"><h1>Chọn bộ câu hỏi</h1><div id="qs" class="qlist"><div class="muted">Đang tải…</div></div>' +
     '<label style="display:flex;gap:8px;align-items:center;margin-top:18px"><input type="checkbox" id="optStreak" checked> Thưởng chuỗi trả lời đúng liên tiếp (+100 mỗi câu, tối đa +500)</label>' +
+    '<div class="themes" id="themes"><b>Theme:</b>' + THEMES.map((t) => '<button type="button" class="thm" data-t="' + t.id + '"><i style="background:' + t.sw + '"></i>' + esc(t.n) + '</button>').join('') + '</div>' +
     '<p class="muted" style="margin-top:18px">Chưa có bộ câu hỏi? <a href="admin.html">Tạo hoặc nhập từ file</a>.</p></div>';
+  paintThemes();
+  $('themes').querySelectorAll('[data-t]').forEach((b) => { b.onclick = () => setTheme(b.dataset.t); });
   try {
     const x = await window.MACC.fs();
     const qs = await x.F.getDocs(x.F.collection(x.db, 'quizzes'));
@@ -121,9 +133,15 @@ async function create(q) {
     if (!(await D.get(D.ref(B.db, 'quiz/' + p + '/meta'))).exists()) pin = p;
   }
   PIN = pin;
-  meta = { title: String(q.title || 'Minto Quiz').slice(0, 120), n: q.qs.length, qz: q.id, streak: $('optStreak').checked, at: D.serverTimestamp() };
+  meta = { title: String(q.title || 'Minto Quiz').slice(0, 120), n: q.qs.length, qz: q.id, streak: $('optStreak').checked, theme: THEME, at: D.serverTimestamp() };
   imgP = loadImgs(); pzLoad();
-  try { await D.set(r(), { meta, state: { phase: 'lobby', q: -1, qs: '-1' } }); } catch (e) { return fail(e); }
+  try { await D.set(r(), { meta, state: { phase: 'lobby', q: -1, qs: '-1' } }); }
+  catch (e) {
+    // luật Realtime Database cũ chưa có trường theme: tạo phòng không kèm theme (điện thoại dùng màu tím mặc định)
+    delete meta.theme;
+    try { await D.set(r(), { meta, state: { phase: 'lobby', q: -1, qs: '-1' } }); console.warn('Luật RTDB chưa có meta/theme, xem FIREBASE.md'); }
+    catch (e2) { return fail(e2); }
+  }
   meta.at = Date.now();
   try { localStorage.setItem(LS_KEY, PIN); } catch (e) {}
   history.replaceState(null, '', location.pathname);
@@ -135,6 +153,7 @@ async function resume(pin) {
   const s = await D.get(r()); const room = s.val();
   if (!room || !room.meta) { try { localStorage.removeItem(LS_KEY); } catch (e) {} return false; }
   meta = room.meta;
+  if (meta.theme) THEME = applyTheme(meta.theme);
   const x = await window.MACC.fs();
   const d = await x.F.getDoc(x.F.doc(x.db, 'quizzes', meta.qz));
   if (!d.exists()) return false;
@@ -545,10 +564,12 @@ document.addEventListener('keydown', (e) => {
     next();
   }
   if (e.key === 'f' || e.key === 'F') full();
+  if (e.key === 't' || e.key === 'T') nextTheme();
   if ((e.key === 'p' || e.key === 'P') && PIN) { if (state.phase === 'answer') pause(); else if (isPaused()) unpause(); }
 });
 function full() { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
 $('bFull').onclick = full;
+$('bTheme').onclick = nextTheme;
 const pref = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : v === '1'; } catch (e) { return d; } };
 const setPref = (k, v) => { try { localStorage.setItem(k, v ? '1' : '0'); } catch (e) {} };
 function paintCtl() { $('bMusic').style.opacity = Sound.music ? 1 : 0.4; $('bSfx').style.opacity = Sound.sfx ? 1 : 0.4; }

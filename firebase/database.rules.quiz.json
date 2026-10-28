@@ -11,6 +11,7 @@
         "at": { ".validate": "newData.isNumber()" },
         "qz": { ".validate": "newData.isString() && newData.val().length <= 64" },
         "streak": { ".validate": "newData.isBoolean()" },
+        "theme": { ".validate": "newData.isString() && newData.val().matches(/^(kahoot|idol|y2k|scifi)$/)" },
         "$other": { ".validate": false }
       },
       "state": {

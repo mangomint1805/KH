@@ -1,5 +1,5 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=3';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS } from './common.js?v=4';
 
 const QP = window.QP;
 const LIB = {
@@ -43,7 +43,8 @@ async function showList() {
     const F = FX.F, s = await F.getDocs(F.collection(FX.db, 'quizzes'));
     list = []; s.forEach((d) => list.push({ id: d.id, ...d.data() }));
     list.sort((a, b) => (b.upd || 0) - (a.upd || 0));
-  } catch (e) { $('list').innerHTML = '<div class="err">Không đọc được (' + esc(e.code || e.message) + '). Thầy đã dán luật Firestore cho quizzes chưa?</div>'; return; }
+  } catch (e) { if (!$('list')) return; $('list').innerHTML = '<div class="err">Không đọc được (' + esc(e.code || e.message) + '). Thầy đã dán luật Firestore cho quizzes chưa?</div>'; return; }
+  if (!$('list')) return; // thầy đã bấm sang trang khác trong lúc đang tải
   $('list').innerHTML = list.length ? list.map((q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu' + (q.upd ? ' · sửa ' + new Date(q.upd).toLocaleString('vi-VN') : '') + '</span></div>' +
     '<a class="btn sm pri" href="host.html?quiz=' + encodeURIComponent(q.id) + '">Tạo phòng</a><button class="btn sm" data-e="' + esc(q.id) + '">Sửa</button><button class="btn sm" data-d="' + esc(q.id) + '">Nhân bản</button><button class="btn sm danger" data-x="' + esc(q.id) + '">Xoá</button></div>').join('')
     : '<div class="card muted">Chưa có bộ câu hỏi nào. Bấm <b>+ Bộ mới</b> rồi tải file lên.</div>';

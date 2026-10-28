@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.7', d: '2026-10-28', items: [
+      'Thêm 3 theme giống web Minto English: Hành baro (xanh ngọc), Thiên thần (hồng – lavender), Băng hoại (xanh đêm neon). Chọn lúc tạo phòng, hoặc bấm 🎨 / phím T để đổi giữa chừng.',
+      'Điện thoại học sinh tự đổi màu theo theme của màn chiếu.',
+      'Máy thầy nhớ theme lần trước; lần đầu thì lấy theo theme thầy đang dùng trên web Minto English.',
+      'Đăng nhập Google trên iPhone (Safari, Zalo) dùng bản sửa lỗi mới của web chính.'
+    ] },
     { v: '1.6', d: '2026-10-28', items: [
       'Phòng chờ: mã QR to gần gấp đôi, PIN nằm bên trái, QR bên phải.',
       'Màu xanh dương của ô đáp án đổi sang xanh trời, không còn lẫn với nền tím.',

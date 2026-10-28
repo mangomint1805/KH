@@ -1,5 +1,5 @@
 /* Minto Quiz — màn học sinh */
-import { $, esc, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS } from './common.js?v=3';
+import { $, esc, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=4';
 
 const SS = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { sessionStorage.removeItem(k); } catch (e) {} } };
 const LSget = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
@@ -71,6 +71,7 @@ async function join(pin, name, resume) {
   const [mS, sS, meS] = await Promise.all([P.D.get(r('meta')), P.D.get(r('state')), P.D.get(r('players/' + P.uid))]);
   if (!mS.exists()) throw uiErr('Không tìm thấy phòng ' + pin + '. Kiểm tra lại mã PIN.');
   meta = mS.val(); const st = sS.val() || {};
+  applyTheme(meta.theme);
   if (!meS.exists()) {
     if (resume) throw uiErr('');
     if (st.phase === 'end') throw uiErr('Trò chơi đã kết thúc.');
@@ -112,6 +113,7 @@ function listen() {
   }));
   offs.push(P.D.onValue(r('scores/' + P.uid), (s) => { score = s.val(); render(); }));
   offs.push(P.D.onValue(r('meta'), (s) => {
+    if (s.exists()) { const t = (s.val() || {}).theme; if (t !== (meta && meta.theme)) meta = Object.assign({}, meta, { theme: t }); applyTheme(t); }
     if (!s.exists() && joined) { joined = false; SS.del('qz.pin'); stopAll(); msg('👋', 'Phòng đóng rồi nè', 'Cảm ơn em đã chơi nha 💖'); }
   }));
 }
