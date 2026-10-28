@@ -352,7 +352,6 @@ html[data-qz=scifi] :is(.qtext, .joinbar, .board2 .r, .pq) { box-shadow: 0 0 0 1
 html[data-qz=scifi] .btn.pri { color: #1a1140; background: linear-gradient(180deg, #ffe36b, #ffc21a); border-color: #ffc21a; box-shadow: 0 0 14px rgba(255,210,63,.4); }
 html[data-qz=scifi] .jstrip { background: rgba(5,8,20,.75); box-shadow: inset 0 -1px 0 rgba(74,215,255,.5); }
 html[data-qz=scifi] :is(h1, .brand) { text-shadow: 0 0 18px rgba(74,215,255,.45); }
-html[data-qz=scifi] .bgfx span { color: #4ad7ff; opacity: .1; }
 
 /* ---- 1.7.1: sửa màu theme ---- */
 /* màn đúng / sai trên điện thoại: theme không được che nền xanh – đỏ */
@@ -413,3 +412,32 @@ html[data-qz=scifi] .volpop .vr input[type=range] { accent-color: #4ad7ff; }
 .lobby2:has(.names.many) .joinbar .pin { font-size: clamp(56px, 7vw, 110px); }
 .play .pq.long { font-size: clamp(18px, 4.8vw, 22px); }
 @media (max-height: 700px) { .pbtn { min-height: 84px; } .play main { gap: 10px; padding: 12px; } .play .pq { padding: 10px 12px; } }
+
+/* ---- 1.10: hiệu ứng nền riêng từng theme ---- */
+.bgfx span { animation: drift var(--d, 30s) linear var(--dl, 0s) infinite; }
+.bgfx span i { display: block; font-style: normal; }
+/* Hành baro: sao + nốt nhạc lấp lánh, 2 luồng đèn sân khấu quét qua lại */
+.bgfx.t-idol span { opacity: .3; }
+.bgfx.t-idol span i { animation: twinkle var(--s, 2.4s) ease-in-out infinite; text-shadow: 0 0 12px rgba(255,255,255,.7); }
+@keyframes twinkle { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35) rotate(12deg); opacity: .35; } }
+.bgfx .beam { position: absolute; top: -20vh; width: 34vw; height: 150vh; background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 75%); clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%); transform-origin: 50% 0; mix-blend-mode: screen; }
+.bgfx .beam.b1 { left: 8vw; animation: sweep 7s ease-in-out infinite alternate; }
+.bgfx .beam.b2 { right: 8vw; background: linear-gradient(180deg, rgba(255,120,190,.25), rgba(255,120,190,0) 75%); animation: sweep 9s ease-in-out -3s infinite alternate-reverse; }
+@keyframes sweep { from { transform: rotate(-22deg); } to { transform: rotate(22deg); } }
+/* Thiên thần: tim, lấp lánh, bong bóng bay lên đung đưa; quầng sáng hồng – tím thở chậm */
+.bgfx.t-y2k span { opacity: .32; }
+.bgfx.t-y2k span i { animation: sway var(--s, 3s) ease-in-out infinite alternate; }
+@keyframes sway { from { transform: translateX(-26px) rotate(-14deg); } to { transform: translateX(26px) rotate(14deg); } }
+.bgfx .glow { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(60px); opacity: .35; animation: breathe 9s ease-in-out infinite alternate; }
+.bgfx .glow.g1 { left: -20vmax; top: -20vmax; background: #ff9fd0; }
+.bgfx .glow.g2 { right: -20vmax; bottom: -25vmax; background: #b9a2ff; animation-delay: -4s; }
+@keyframes breathe { from { transform: scale(.85); opacity: .22; } to { transform: scale(1.1); opacity: .42; } }
+/* Băng hoại: hình neon bay lên chớp tắt, lưới chạy, vạch quét ngang */
+.bgfx.t-scifi span { opacity: .22; }
+.bgfx.t-scifi span i { animation: flicker var(--s, 2s) steps(1, end) infinite; text-shadow: 0 0 10px currentColor, 0 0 22px currentColor; }
+@keyframes flicker { 0%, 100% { opacity: 1; } 47% { opacity: 1; } 50% { opacity: .25; } 53% { opacity: 1; } 76% { opacity: .6; } 78% { opacity: 1; } }
+.bgfx .grid { position: absolute; left: 0; right: 0; top: -88px; bottom: 0; background: linear-gradient(rgba(74,215,255,.13) 1px, transparent 1px) 0 0/88px 88px, linear-gradient(90deg, rgba(74,215,255,.08) 1px, transparent 1px) 0 0/88px 88px; animation: gridrun 6s linear infinite; }
+@keyframes gridrun { to { transform: translateY(88px); } }
+.bgfx .scan { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, transparent, #4ad7ff 30%, #b04cff 70%, transparent); box-shadow: 0 0 18px 4px rgba(74,215,255,.45); opacity: .55; animation: scan 5.5s linear infinite; }
+@keyframes scan { from { transform: translateY(-10px); } to { transform: translateY(100vh); } }
+@media (prefers-reduced-motion: reduce) { .bgfx span, .bgfx span i, .bgfx .beam, .bgfx .glow, .bgfx .grid, .bgfx .scan { animation: none !important; } }

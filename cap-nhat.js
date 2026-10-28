@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.10', d: '2026-10-28', items: [
+      'Theme Băng hoại đổi sang nhạc nền "Home Box" (Honkai Impact 3rd).',
+      'Mỗi theme có hiệu ứng nền chuyển động riêng: Hành baro có sao, nốt nhạc lấp lánh và 2 luồng đèn sân khấu quét qua lại; Thiên thần có tim, hoa, bong bóng bay lên đung đưa và quầng sáng hồng – tím; Băng hoại có hình neon chớp tắt, lưới chạy và vạch quét ngang. Điện thoại học sinh cũng có hiệu ứng theo theme.',
+      'Âm lượng giữa các theme đã được đo và chỉnh cho đều nhau: đổi theme giữa chừng nhạc nền và âm báo không còn lúc to lúc nhỏ.'
+    ] },
     { v: '1.9.1', d: '2026-10-28', items: [
       'Màn chiếu thấp (1024×768, 1366×768 — loại máy chiếu hay gặp ở lớp): câu hỏi dài không còn đẩy 4 ô đáp án tràn xuống dưới. Chữ câu hỏi, ô đáp án, đồng hồ và biểu đồ kết quả tự co theo chiều cao màn hình.',
       'Câu hỏi dài (trên 100 ký tự) tự dùng cỡ chữ nhỏ hơn một chút, cả màn chiếu và điện thoại.',

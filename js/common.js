@@ -18,6 +18,7 @@ export function applyTheme(id) {
   const t = themeOf(id), r = document.documentElement;
   if (t.id === 'kahoot') r.removeAttribute('data-qz'); else r.setAttribute('data-qz', t.id);
   const m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', t.c);
+  const d = document.querySelector('.bgfx'); if (d && d.className !== 'bgfx t-' + t.id) fxPaint(d);
   return t.id;
 }
 // theme mặc định của máy thầy: lần chọn trước, nếu chưa có thì theo theme đang dùng trên web Minto English
@@ -107,11 +108,11 @@ export function streakBonus(streak) { return streak >= 2 ? Math.min(500, 100 * (
 // Nhạc nền có 2 kiểu: 'lobby' (phòng chờ, vui) và 'q' (lúc trả lời, dồn dập hơn). Lịch nốt chạy trước ~0.2 giây để không giật.
 // Mỗi theme có bộ nhạc nền và âm báo riêng (PACKS). Âm lượng nhạc nền và âm báo chỉnh riêng (0–100).
 export const Sound = (() => {
-  let ctx = null, master = null, musicBus = null, sfxBus = null, noiseBuf = null;
+  let ctx = null, master = null, musicBus = null, sfxBus = null, synBus = null, fxTheme = null, noiseBuf = null;
   let musicOn = false, sfxOn = true, mode = 'lobby', paused = true, loop = 0, step = 0, nextT = 0, fast = false;
   let theme = 'kahoot', mVol = 70, sVol = 70;
   // theme dùng bài nhạc thật (file mp3 trong thư mục audio/) thay cho nhạc tự tạo; g = mức chỉnh cho đều tai giữa các bài
-  const TRACKS = { scifi: { src: 'audio/bang-hoai.mp3', g: 0.5 }, y2k: { src: 'audio/thien-than.mp3', g: 0.22 } };
+  const TRACKS = { scifi: { src: 'audio/bang-hoai.mp3', g: 0.234 }, y2k: { src: 'audio/thien-than.mp3', g: 0.117 } };
   let trk = null, trkSrc = null, trkGain = null, trkOn = false;
   function track() {
     const T = TRACKS[theme]; if (!T || !ac()) return null;
@@ -131,6 +132,8 @@ export const Sound = (() => {
       ctx = new C(); master = ctx.createGain(); master.gain.value = 0.55; master.connect(ctx.destination);
       musicBus = ctx.createGain(); musicBus.gain.value = mGain(); musicBus.connect(master);
       sfxBus = ctx.createGain(); sfxBus.gain.value = sGain(); sfxBus.connect(master);
+      // mức riêng từng theme cho nhạc tự tạo (synBus) và âm báo (fxTheme), để đổi theme không bị to nhỏ khác nhau
+      synBus = ctx.createGain(); synBus.connect(musicBus); fxTheme = ctx.createGain(); fxTheme.connect(sfxBus); levels();
       noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
       const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     }
@@ -143,18 +146,21 @@ export const Sound = (() => {
     o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
     if (glide) o.frequency.exponentialRampToValueAtTime(glide, t + dur);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(bus || sfxBus); o.start(t); o.stop(t + dur + 0.05);
+    o.connect(g); g.connect(bus || fxTheme); o.start(t); o.stop(t + dur + 0.05);
   }
   function noise(dur, vol, when, hp, bus) {
     const c = ac(); if (!c) return;
     const t = Math.max(c.currentTime, when == null ? c.currentTime : when), s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
     s.buffer = noiseBuf; f.type = 'highpass'; f.frequency.value = hp || 6000;
     g.gain.setValueAtTime(vol || 0.1, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    s.connect(f); f.connect(g); g.connect(bus || sfxBus); s.start(t); s.stop(t + dur + 0.02);
+    s.connect(f); f.connect(g); g.connect(bus || fxTheme); s.start(t); s.stop(t + dur + 0.02);
   }
   const later = (s) => (ctx ? ctx.currentTime + s : 0);
-  const M = (f, d, ty, v, t, gl) => tone(f, d, ty, v, t, musicBus, gl);
-  const N = (d, v, t, hp) => noise(d, v, t, hp, musicBus);
+  const M = (f, d, ty, v, t, gl) => tone(f, d, ty, v, t, synBus, gl);
+  const N = (d, v, t, hp) => noise(d, v, t, hp, synBus);
+  // mức chỉnh cho đều tai (đo bằng máy): nhạc tự tạo theo theme, âm báo theo theme
+  const LV = { syn: { kahoot: [2.1, 2.1], idol: [2.29, 3.3] }, fx: { kahoot: 1, idol: 1.38, y2k: 1.05, scifi: 1.78 } };
+  function levels() { if (synBus) synBus.gain.value = (LV.syn[theme] || [1, 1])[mode === 'q' ? 1 : 0]; if (fxTheme) fxTheme.gain.value = LV.fx[theme] || 1; }
 
   // ===== bộ nhạc nền theo theme. Mỗi kiểu: bpm, hợp âm (4 ô nhịp), bass, và hàm chơi 1 nốt móc (8 nốt / ô nhịp) =====
   const PACKS = {
@@ -290,11 +296,11 @@ export const Sound = (() => {
     // đổi bộ nhạc / âm báo theo theme (đang phát thì đổi luôn từ đầu ô nhịp)
     setTheme(id) {
       id = PACKS[id] ? id : 'kahoot'; if (id === theme) return;
-      const on = !!(loop || trkOn); stopLoop(); theme = id; step = 0; if (on) startLoop();
+      const on = !!(loop || trkOn); stopLoop(); theme = id; step = 0; levels(); if (on) startLoop();
     },
     unlock() { ac(); },
     // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
-    mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; paused = false; startLoop(); },
+    mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; levels(); paused = false; startLoop(); },
     hurry(v) { fast = !!v; if (trk && trkOn) trk.playbackRate = fast ? 1.06 : 1; },
     pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
     // có bạn vừa chọn đáp án: tiếng nhỏ, cao dần theo số người đã trả lời
@@ -317,16 +323,29 @@ export const Sound = (() => {
 })();
 
 // Nền chuyển động: các hình ▲ ◆ ● ■ trôi chầm chậm (CSS transform, nhẹ cho máy chiếu cũ)
-export function bgfx(n) {
-  if (document.querySelector('.bgfx')) return;
-  const d = document.createElement('div'); d.className = 'bgfx'; d.setAttribute('aria-hidden', 'true');
-  const shapes = ['▲', '◆', '●', '■'];
-  let h = '';
-  for (let i = 0; i < (n || 14); i++) {
-    const sz = 40 + Math.round(Math.random() * 120), x = Math.round(Math.random() * 100), dur = 18 + Math.round(Math.random() * 22), del = -Math.round(Math.random() * dur);
-    h += '<span style="left:' + x + '%;font-size:' + sz + 'px;animation-duration:' + dur + 's;animation-delay:' + del + 's">' + shapes[i % 4] + '</span>';
+// Mỗi theme có hình trôi và hiệu ứng riêng; đổi theme là vẽ lại (applyTheme gọi).
+const FX = {
+  kahoot: { g: ['▲', '◆', '●', '■'], c: ['#fff'] },
+  idol: { g: ['★', '✦', '♪', '♫', '★', '♬'], c: ['#fff', '#ffc2dd', '#ff7fb6', '#fff6a8'], extra: '<div class="beam b1"></div><div class="beam b2"></div>' },
+  y2k: { g: ['♡', '✧', '♥', '○', '✿', '♡'], c: ['#fff', '#ffd6ec', '#e8dcff', '#ffb3d9'], extra: '<div class="glow g1"></div><div class="glow g2"></div>' },
+  scifi: { g: ['◇', '◆', '⬡', '✕', '◇'], c: ['#4ad7ff', '#b04cff', '#7ff0ff'], extra: '<div class="scan"></div><div class="grid"></div>' },
+};
+let fxN = 14;
+function fxPaint(d) {
+  const id = document.documentElement.getAttribute('data-qz') || 'kahoot', T = FX[id] || FX.kahoot;
+  d.className = 'bgfx t-' + id;
+  let h = T.extra || '';
+  for (let i = 0; i < fxN; i++) {
+    const sz = (id === 'kahoot' ? 40 : 26) + Math.round(Math.random() * (id === 'kahoot' ? 120 : 80)), x = Math.round(Math.random() * 100), dur = (id === 'scifi' ? 12 : id === 'y2k' ? 24 : 18) + Math.round(Math.random() * 22), del = -Math.round(Math.random() * dur), sub = (1.6 + Math.random() * 2.4).toFixed(1);
+    h += '<span style="left:' + x + '%;font-size:' + sz + 'px;--d:' + dur + 's;--dl:' + del + 's;--s:' + sub + 's;color:' + T.c[i % T.c.length] + '"><i>' + T.g[i % T.g.length] + '</i></span>';
   }
-  d.innerHTML = h; document.body.prepend(d);
+  d.innerHTML = h;
+}
+export function bgfx(n) {
+  if (n) fxN = n;
+  let d = document.querySelector('.bgfx');
+  if (!d) { d = document.createElement('div'); d.setAttribute('aria-hidden', 'true'); document.body.prepend(d); }
+  fxPaint(d);
 }
 
 // Đếm số tăng dần (điểm, số người trả lời)
