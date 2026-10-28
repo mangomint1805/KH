@@ -1,6 +1,6 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack } from './common.js?v=14';
+import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack, quizClass, classLabel, byClass } from './common.js?v=15';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
@@ -130,8 +130,15 @@ async function pick(want) {
     const qs = await x.F.getDocs(x.F.collection(x.db, 'quizzes'));
     const L = []; qs.forEach((d) => L.push({ id: d.id, ...d.data() }));
     L.sort((a, b) => (b.upd || 0) - (a.upd || 0));
-    $('qs').innerHTML = L.length ? L.map((q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu</span></div><button class="btn pri" data-id="' + esc(q.id) + '">Tạo phòng</button></div>').join('') : '<div class="muted">Chưa có bộ câu hỏi nào.</div>';
-    $('qs').querySelectorAll('[data-id]').forEach((b) => { b.onclick = () => create(L.find((q) => q.id === b.dataset.id)); });
+    const G = byClass(L); let lf = '*'; try { lf = localStorage.getItem('qz.lop') || '*'; } catch (e) {}
+    const draw = () => {
+      if (lf !== '*' && !G.some((g) => g[0] === lf)) lf = '*';
+      $('qs').innerHTML = L.length ? '<div class="loptabs"><button type="button" class="thm' + (lf === '*' ? ' on' : '') + '" data-lf="*">Tất cả · ' + L.length + '</button>' + G.map((g) => '<button type="button" class="thm' + (lf === g[0] ? ' on' : '') + '" data-lf="' + esc(g[0]) + '">' + esc(g[0] || 'Dùng chung') + ' · ' + g[1].length + '</button>').join('') + '</div>' +
+        G.filter((g) => lf === '*' || g[0] === lf).map((g) => '<h3 class="lophd">' + esc(classLabel(g[0])) + '</h3>' + g[1].map((q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu</span></div><button class="btn pri" data-id="' + esc(q.id) + '">Tạo phòng</button></div>').join('')).join('') : '<div class="muted">Chưa có bộ câu hỏi nào.</div>';
+      $('qs').querySelectorAll('[data-id]').forEach((b) => { b.onclick = () => create(L.find((q) => q.id === b.dataset.id)); });
+      $('qs').querySelectorAll('[data-lf]').forEach((b) => { b.onclick = () => { lf = b.dataset.lf; try { localStorage.setItem('qz.lop', lf); } catch (e) {} draw(); }; });
+    };
+    draw();
     if (want) { const q = L.find((x) => x.id === want); if (q) create(q); }
   } catch (e) { $('qs').innerHTML = '<div class="err">Không đọc được bộ câu hỏi (' + esc(e.code || e.message) + ').</div>'; }
 }

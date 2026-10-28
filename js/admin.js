@@ -1,5 +1,5 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack } from './common.js?v=14';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack, CLASSES, quizClass, classLabel, byClass } from './common.js?v=15';
 
 const QP = window.QP;
 const LIB = {
@@ -14,6 +14,17 @@ function lib(name) {
   return loaded[name];
 }
 
+let filt = (() => { try { return localStorage.getItem('qz.lop') || '*'; } catch (e) { return '*'; } })();
+// ô chọn lớp trong trang soạn (có cả lớp cũ lạ nếu bộ đang gán)
+function paintLop() {
+  const el = $('lop'); if (!el) return;
+  const ids = CLASSES.map((c) => c[0]); if (cur.lop && !ids.includes(cur.lop)) ids.push(cur.lop);
+  el.innerHTML = ids.map((k) => '<option value="' + esc(k) + '"' + (k === cur.lop ? ' selected' : '') + '>' + esc(classLabel(k)) + '</option>').join('') + '<option value=""' + (!cur.lop ? ' selected' : '') + '>Dùng chung · chưa gán lớp</option>';
+}
+// thanh lọc theo lớp ở danh sách
+function classTabs(groups, n) {
+  return '<div class="loptabs"><button type="button" class="thm' + (filt === '*' ? ' on' : '') + '" data-lf="*">Tất cả · ' + n + '</button>' + groups.map((g) => '<button type="button" class="thm' + (filt === g[0] ? ' on' : '') + '" data-lf="' + esc(g[0]) + '">' + esc(g[0] || 'Dùng chung') + ' · ' + g[1].length + '</button>').join('') + '</div>';
+}
 let FX = null, list = [], cur = null; // cur: { id, title, qs }
 const app = $('app');
 function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
@@ -37,7 +48,7 @@ async function boot() {
 // ---------- danh sách ----------
 async function showList() {
   cur = null; tpl('tList');
-  $('bNew').onclick = () => edit({ id: null, title: '', qs: [] });
+  $('bNew').onclick = () => edit({ id: null, title: '', qs: [], lop: filt && filt !== '*' ? filt : '' });
   $('list').innerHTML = '<div class="muted">Đang tải…</div>';
   showMusic();
   try {
@@ -46,12 +57,16 @@ async function showList() {
     list.sort((a, b) => (b.upd || 0) - (a.upd || 0));
   } catch (e) { if (!$('list')) return; $('list').innerHTML = '<div class="err">Không đọc được (' + esc(e.code || e.message) + '). Thầy đã dán luật Firestore cho quizzes chưa?</div>'; return; }
   if (!$('list')) return; // thầy đã bấm sang trang khác trong lúc đang tải
-  $('list').innerHTML = list.length ? list.map((q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu' + (q.upd ? ' · sửa ' + new Date(q.upd).toLocaleString('vi-VN') : '') + '</span></div>' +
-    '<a class="btn sm pri" href="host.html?quiz=' + encodeURIComponent(q.id) + '">Tạo phòng</a><button class="btn sm" data-e="' + esc(q.id) + '">Sửa</button><button class="btn sm" data-d="' + esc(q.id) + '">Nhân bản</button><button class="btn sm danger" data-x="' + esc(q.id) + '">Xoá</button></div>').join('')
+  const groups = byClass(list);
+  if (filt !== '*' && !groups.some((g) => g[0] === filt)) filt = '*';
+  const row = (q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu' + (q.upd ? ' · sửa ' + new Date(q.upd).toLocaleString('vi-VN') : '') + '</span></div>' +
+    '<a class="btn sm pri" href="host.html?quiz=' + encodeURIComponent(q.id) + '">Tạo phòng</a><button class="btn sm" data-e="' + esc(q.id) + '">Sửa</button><button class="btn sm" data-d="' + esc(q.id) + '">Nhân bản</button><button class="btn sm danger" data-x="' + esc(q.id) + '">Xoá</button></div>';
+  $('list').innerHTML = list.length ? classTabs(groups, list.length) + groups.filter((g) => filt === '*' || g[0] === filt).map((g) => '<h3 class="lophd">' + esc(classLabel(g[0])) + ' <span class="muted">· ' + g[1].length + ' bộ</span></h3>' + g[1].map(row).join('')).join('')
     : '<div class="card muted">Chưa có bộ câu hỏi nào. Bấm <b>+ Bộ mới</b> rồi tải file lên.</div>';
+  app.querySelectorAll('[data-lf]').forEach((b) => { b.onclick = () => { filt = b.dataset.lf; try { localStorage.setItem('qz.lop', filt); } catch (e) {} showList(); }; });
   const by = (id) => list.find((x) => x.id === id);
-  app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, qs: JSON.parse(JSON.stringify(q.qs || [])) }); }; });
-  app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', qs: q.qs || [] }).catch(err); showList(); }; });
+  app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, lop: quizClass(q), qs: JSON.parse(JSON.stringify(q.qs || [])) }); }; });
+  app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', lop: quizClass(q), qs: q.qs || [] }).catch(err); showList(); }; });
   app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; try { await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)); } catch (e) { return err(e); } await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
 }
 // ---------- nhạc theme: thầy tải file nhạc lên Firestore quizMusic (chỉ tài khoản thầy đọc được), màn host tự tải về để phát ----------
@@ -149,7 +164,10 @@ function err(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.messag
 function edit(q) {
   cur = q; cur.imgs0 = imgsOf(q.qs); tpl('tEdit');
   $('title').value = q.title || '';
-  $('title').oninput = () => { cur.title = $('title').value; dirty = true; };
+  $('title').oninput = () => { cur.title = $('title').value; dirty = true; if (!cur.lop) { const k = quizClass({ title: cur.title }); if (k) { cur.lop = k; paintLop(); } } };
+  if (typeof cur.lop !== 'string') cur.lop = quizClass(cur);
+  paintLop();
+  $('lop').onchange = () => { cur.lop = $('lop').value; dirty = true; };
   $('bBack').onclick = () => { if (dirty && !confirm('Có thay đổi chưa lưu. Vẫn quay lại?')) return; dirty = false; showList(); };
   $('bAdd').onclick = () => { cur.qs.push(QP.blank()); dirty = true; renderQs(); const el = $('qs').lastElementChild; if (el) el.scrollIntoView({ behavior: 'smooth' }); };
   $('bSave').onclick = () => doSave(false);
@@ -323,7 +341,7 @@ function summary() {
 function clean(qs) { return qs.map((q) => Object.assign({ t: QP.str(q.t), o: q.o.map((x) => QP.str(x)), c: q.c.slice(), time: q.time, pts: q.pts }, q.img ? { img: q.img } : {})); }
 async function save(q) {
   const F = FX.F, ref = q.id ? F.doc(FX.db, 'quizzes', q.id) : F.doc(F.collection(FX.db, 'quizzes'));
-  await F.setDoc(ref, { title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', qs: clean(q.qs), upd: Date.now(), at: F.serverTimestamp() });
+  await F.setDoc(ref, { title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', lop: String(q.lop || '').slice(0, 20), qs: clean(q.qs), upd: Date.now(), at: F.serverTimestamp() });
   return ref.id;
 }
 const imgsOf = (qs) => new Set((qs || []).map((y) => y.img).filter(Boolean));

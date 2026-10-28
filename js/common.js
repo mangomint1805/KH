@@ -31,6 +31,22 @@ export function savedTheme() {
 }
 
 export const $ = (id) => document.getElementById(id);
+// ---------- lớp của bộ câu hỏi ----------
+// Mỗi bộ có trường lop (mã lớp). Bộ cũ chưa có thì đoán từ mã lớp ghi trong tên, ví dụ "(TOPRE115276)".
+export const CLASSES = [['TOA117110', 'TOEIC A · TOA117110'], ['TOPRE115276', 'TOEIC Pre (mới) · TOPRE115276'], ['PRE115275', 'TOEIC Pre (cũ) · PRE115275']];
+export function quizClass(q) {
+  if (q && typeof q.lop === 'string') return q.lop;
+  const m = String((q && q.title) || '').match(/\b((?:TO)?[A-Z]{1,5}\d{6})\b/); return m ? m[1] : '';
+}
+export function classLabel(id) { const c = CLASSES.find((x) => x[0] === id); return c ? c[1] : (id || 'Dùng chung · chưa gán lớp'); }
+// gom theo lớp: các lớp trong CLASSES trước, rồi lớp khác, cuối cùng là bộ dùng chung
+export function byClass(L) {
+  const g = new Map(); L.forEach((q) => { const k = quizClass(q); if (!g.has(k)) g.set(k, []); g.get(k).push(q); });
+  const order = CLASSES.map((c) => c[0]).filter((k) => g.has(k)).concat([...g.keys()].filter((k) => k && !CLASSES.some((c) => c[0] === k)).sort());
+  if (g.has('')) order.push('');
+  return order.map((k) => [k, g.get(k)]);
+}
+
 // câu hỏi có chỗ trống ------- : giữ chỗ trống trên một dòng, không bị ngắt giữa chừng
 export function qtHtml(t) { return esc(t).replace(/[-_…]{3,}/g, (m) => '<span class="blank">' + m + '</span>'); }
 export function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }

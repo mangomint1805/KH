@@ -2,6 +2,10 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.15', d: '2026-10-29', items: [
+      'Bộ câu hỏi chia theo lớp: trang soạn và màn chọn bộ (lúc tạo phòng) gom các bộ theo từng lớp (TOA117110, TOPRE115276, PRE115275), có thanh lọc "Tất cả / từng lớp". Máy nhớ lớp thầy chọn lần trước.',
+      'Trang soạn có ô chọn Lớp ngay cạnh tên bộ. Bộ cũ tự nhận lớp theo mã lớp ghi trong tên, ví dụ "(TOPRE115276)"; bộ không ghi mã lớp nằm ở mục "Dùng chung". Bấm + Bộ mới khi đang lọc một lớp thì bộ mới tự gán lớp đó.'
+    ] },
     { v: '1.14', d: '2026-10-29', items: [
       'Thanh trên cùng màn chiếu: tên bộ câu hỏi, mã PIN và số người chơi giờ là các thẻ riêng, đổi kiểu theo từng theme (Tím Kahoot, Hành baro, Thiên thần, Băng hoại). Mã PIN to và nổi hơn, số người chơi nảy lên mỗi khi có bạn vào.',
       'Theme Thiên thần đổi sang font pixel VT323: to hơn, rõ hơn và đủ dấu tiếng Việt (font cũ bị vỡ dấu kiểu "kỳ" thành "ky`").'
