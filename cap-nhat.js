@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.9.1', d: '2026-10-28', items: [
+      'Màn chiếu thấp (1024×768, 1366×768 — loại máy chiếu hay gặp ở lớp): câu hỏi dài không còn đẩy 4 ô đáp án tràn xuống dưới. Chữ câu hỏi, ô đáp án, đồng hồ và biểu đồ kết quả tự co theo chiều cao màn hình.',
+      'Câu hỏi dài (trên 100 ký tự) tự dùng cỡ chữ nhỏ hơn một chút, cả màn chiếu và điện thoại.',
+      'Phòng chờ đông (trên 14 bạn): tên nhỏ lại, mã QR thu bớt để còn chỗ; quá đông thì danh sách tên tự cuộn, không đẩy nút Bắt đầu ra khỏi màn hình.',
+      'Điện thoại màn hình nhỏ: 4 ô đáp án thấp lại một chút cho vừa, không phải cuộn.'
+    ] },
     { v: '1.9', d: '2026-10-28', items: [
       'Theme Băng hoại dùng bài nhạc nền "Gion", theme Thiên thần dùng bài "Approval desire" (thay cho nhạc tự tạo). Hai theme còn lại giữ nhạc cũ.',
       'Bài nhạc chạy liền mạch từ phòng chờ sang lúc trả lời, không bị phát lại từ đầu mỗi câu; 5 giây cuối nhạc nhanh lên một chút. Bảng xếp hạng vẫn tạm tắt nhạc như cũ.',

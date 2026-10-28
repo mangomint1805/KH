@@ -217,6 +217,7 @@ function lobbyNames() {
   const L = Object.entries(players).sort((a, b) => (a[1].at || 0) - (b[1].at || 0));
   $('cnt').textContent = L.length + ' người chơi';
   $('bStart').disabled = !L.length;
+  el.classList.toggle('many', L.length > 14); el.classList.toggle('lots', L.length > 28);
   el.innerHTML = L.map(([id, p]) => '<span class="nm">' + esc(p.name) + '<button title="Mời ra" data-k="' + esc(id) + '">×</button></span>').join('');
   el.querySelectorAll('[data-k]').forEach((b) => { b.onclick = () => kick(b.dataset.k); });
 }
@@ -254,12 +255,14 @@ async function goShow(q) {
   } catch (e) { return fail(e); }
   state = { phase: 'show', q };
   Sound.mode(null); Sound.whoosh();
-  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm">' + qtHtml(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext" style="flex:1;display:flex;align-items:center;justify-content:center">' + qtHtml(Q.t) + '</div>') +
+  main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext' + qlen(Q.t) + '" style="flex:1;display:flex;align-items:center;justify-content:center">' + qtHtml(Q.t) + '</div>') +
     (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
     '<div class="prog"><i id="pg"></i></div>';
   requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
   autoT = setTimeout(() => goAnswer(q), SHOW_MS);
 }
+// câu dài thì chữ nhỏ lại để 4 ô đáp án vẫn nằm trọn màn hình
+const qlen = (t) => { const n = String(t || '').length; return n > 170 ? ' xlong' : n > 100 ? ' long' : ''; };
 function qHead(q) { return '<div class="qmeta"><span>Câu ' + (q + 1) + '/' + quiz.qs.length + '</span><span class="muted">PIN ' + PIN + '</span></div>'; }
 
 async function goAnswer(q) {
@@ -274,7 +277,7 @@ function answerView(q, still) {
   const Q = quiz.qs[q];
   if (!still) Sound.mode('q');
   const C = 2 * Math.PI * 58;
-  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + '">' + qtHtml(Q.t) + '</div>' +
+  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div>' +
     '<div class="mid"><div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + Q.time + '</div></div><div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
@@ -388,7 +391,7 @@ function revealView(q) {
   Object.keys(a).forEach((k) => { if (players[k] && a[k] && cnt[a[k].a] != null) cnt[a[k].a]++; });
   const mx = Math.max(1, ...cnt), tot = cnt.reduce((x, y) => x + y, 0), right = Q.c.reduce((x, i) => x + (cnt[i] || 0), 0);
   const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
-  main.innerHTML = qHead(q) + '<div class="qtext">' + qtHtml(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
+  main.innerHTML = qHead(q) + '<div class="qtext' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' +
     '<div style="text-align:right"><button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';

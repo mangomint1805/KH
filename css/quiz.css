@@ -385,3 +385,31 @@ html[data-qz=scifi] .volpop .vr input[type=range] { accent-color: #4ad7ff; }
 .play .pq { font-size: clamp(21px, 6vw, 28px); line-height: 1.35; padding: 14px 16px; text-align: center; }
 .play .pbtn .tx { font-size: clamp(18px, 5vw, 22px); }
 .blank { white-space: nowrap; }
+
+/* ---- 1.9.1: vừa màn chiếu thấp (1024×768, 1366×768) và câu dài ---- */
+.qtext { font-size: clamp(24px, min(3.6vw, 5.4vh), 52px); }
+.qtext.long { font-size: clamp(22px, min(3vw, 4.6vh), 44px); }
+.qtext.xlong { font-size: clamp(20px, min(2.5vw, 3.9vh), 36px); padding: 16px 22px; }
+.qtext.sm.long, .qtext.sm.xlong { font-size: clamp(18px, min(2.2vw, 3.4vh), 32px); }
+.hopt { font-size: clamp(20px, min(2.6vw, 4.2vh), 38px); min-height: clamp(60px, 11vh, 88px); padding: 12px 20px; }
+.ring { width: clamp(96px, 17vh, 140px); height: clamp(96px, 17vh, 140px); }
+.ring .timer { inset: 12%; font-size: clamp(34px, 6.5vh, 52px); }
+.answered b { font-size: clamp(40px, 7vh, 60px); }
+.mid { min-height: 0; }
+.chart { height: clamp(120px, 24vh, 190px); }
+@media (max-height: 860px) {
+  .host main { padding: 14px 24px 64px; gap: 12px; }
+  .chart.go .col .b { height: calc(var(--h) * .65) !important; }
+  .chart .col .n { font-size: 24px; }
+  .chart .col .s { font-size: 20px; padding: 2px; }
+  .vibe { font-size: 22px; }
+}
+/* phòng chờ đông người: tên nhỏ lại, danh sách tự cuộn, QR nhỏ bớt để còn chỗ */
+.names.many .nm { font-size: 18px; padding: 5px 6px 5px 12px; }
+.names.many .nm button { width: 22px; height: 22px; }
+.names.lots .nm { font-size: 15px; padding: 4px 5px 4px 10px; }
+.lobby2 .names { max-height: 34vh; overflow-y: auto; }
+.lobby2:has(.names.many) .joinbar .qr svg { width: clamp(220px, 38vh, 420px); height: clamp(220px, 38vh, 420px); }
+.lobby2:has(.names.many) .joinbar .pin { font-size: clamp(56px, 7vw, 110px); }
+.play .pq.long { font-size: clamp(18px, 4.8vw, 22px); }
+@media (max-height: 700px) { .pbtn { min-height: 84px; } .play main { gap: 10px; padding: 12px; } .play .pq { padding: 10px 12px; } }

@@ -179,7 +179,7 @@ function sendSt(t) { const el = $('sendst'); if (el) el.textContent = t; }
 function answerScreen(q, Q, st) {
   show('sAns');
   $('aNum').textContent = 'Câu ' + (q + 1) + '/' + meta.n;
-  $('aQ').innerHTML = qtHtml(Q.t);
+  $('aQ').innerHTML = qtHtml(Q.t); $('aQ').classList.toggle('long', String(Q.t || '').length > 100);
   const g = $('aGrid'); g.innerHTML = '';
   Q.o.forEach((txt, i) => {
     if (!txt) return;
