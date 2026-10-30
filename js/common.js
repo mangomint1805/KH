@@ -129,9 +129,9 @@ export const Sound = (() => {
   let theme = 'kahoot', mVol = 70, sVol = 70;
   // theme có thể dùng bài nhạc thật thay cho nhạc tự tạo. File nhạc lưu ở Firestore quizMusic (chỉ thầy đọc được, xem loadTrack),
   // tải xong mới có src. g = mức chỉnh cho đều tai giữa các bài (tính lúc thầy tải nhạc lên)
-  // loop = [giây bắt đầu, giây kết thúc]: chỉ lặp một đoạn của bài. Thiên thần (Approval desire) lặp 33 ô nhịp đầu,
-  // quay lại đầu bài ngay trước đoạn drop ở 46,57 giây (thầy thấy đoạn drop không hợp)
-  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089, loop: [0, 46.55] } };
+  // loop = [giây bắt đầu, giây kết thúc]: chỉ lặp một đoạn của bài. Thiên thần (Approval desire) lặp 24 ô nhịp đầu,
+  // quay lại đầu bài ở khoảng lặng 33,7 giây, trước đoạn dồn trống và đoạn drop (thầy thấy không hợp)
+  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089, loop: [0, 33.74] } };
   let trk = null, trkSrc = null, trkGain = null, trkOn = false, trkTok = 0, trkWatch = 0, trkJump = false;
   // canh vòng lặp: gần tới điểm kết thúc thì giảm nhỏ rất nhanh, nhảy về đầu đoạn rồi mở lại (nghe liền, không bị khựng)
   function watchLoop() {
