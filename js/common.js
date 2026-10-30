@@ -129,8 +129,27 @@ export const Sound = (() => {
   let theme = 'kahoot', mVol = 70, sVol = 70;
   // theme có thể dùng bài nhạc thật thay cho nhạc tự tạo. File nhạc lưu ở Firestore quizMusic (chỉ thầy đọc được, xem loadTrack),
   // tải xong mới có src. g = mức chỉnh cho đều tai giữa các bài (tính lúc thầy tải nhạc lên)
-  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089 } };
-  let trk = null, trkSrc = null, trkGain = null, trkOn = false, trkTok = 0;
+  // loop = [giây bắt đầu, giây kết thúc]: chỉ lặp một đoạn của bài. Thiên thần (Approval desire) lặp 33 ô nhịp đầu,
+  // quay lại đầu bài ngay trước đoạn drop ở 46,57 giây (thầy thấy đoạn drop không hợp)
+  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089, loop: [0, 46.55] } };
+  let trk = null, trkSrc = null, trkGain = null, trkOn = false, trkTok = 0, trkWatch = 0, trkJump = false;
+  // canh vòng lặp: gần tới điểm kết thúc thì giảm nhỏ rất nhanh, nhảy về đầu đoạn rồi mở lại (nghe liền, không bị khựng)
+  function watchLoop() {
+    clearInterval(trkWatch); trkWatch = 0; const T = TRACKS[theme];
+    if (!T || !T.loop || !trk) return;
+    trkWatch = setInterval(() => {
+      if (!trkOn || trkJump || !trk || trk.paused) return;
+      const [a, b] = T.loop, lead = 0.025 * (trk.playbackRate || 1);
+      if (trk.currentTime < b - lead) return;
+      trkJump = true; const t = ctx.currentTime, g = trkGain.gain;
+      g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(0.0001, t + 0.02);
+      setTimeout(() => {
+        if (trk) trk.currentTime = a;
+        const t2 = ctx.currentTime; g.cancelScheduledValues(t2); g.setValueAtTime(0.0001, t2); g.linearRampToValueAtTime(TRACKS[theme] ? TRACKS[theme].g : T.g, t2 + 0.03);
+        trkJump = false;
+      }, 22);
+    }, 15);
+  }
   function track() {
     const T = TRACKS[theme]; if (!T || !ac()) return null;
     if (!trk) {
@@ -248,7 +267,7 @@ export const Sound = (() => {
     if (TRACKS[theme] && TRACKS[theme].src && !TRACKS[theme].bad) {
       const a = track();
       if (a) {
-        trkOn = true; const tok = ++trkTok; a.playbackRate = fast ? 1.06 : 1;
+        trkOn = true; const tok = ++trkTok; a.playbackRate = fast ? 1.06 : 1; watchLoop();
         a.play().catch((e) => {
           if (tok !== trkTok || !e || e.name === 'AbortError') return;
           if (e.name === 'NotAllowedError') { trkOn = false; return; } // chưa bấm vào trang: lần bấm sau sẽ phát
@@ -259,7 +278,7 @@ export const Sound = (() => {
     }
     nextT = 0; loop = setInterval(pump, 50); pump();
   }
-  function stopLoop() { clearInterval(loop); loop = 0; if (trk && trkOn) { trk.pause(); } trkOn = false; }
+  function stopLoop() { clearInterval(loop); loop = 0; clearInterval(trkWatch); trkWatch = 0; trkJump = false; if (trk && trkOn) { trk.pause(); } trkOn = false; }
 
   // ===== âm báo theo theme =====
   const arp = (fs, ty, vol, gap, dur) => fs.forEach((f, i) => tone(f, dur || 0.22, ty, vol, later(i * gap)));

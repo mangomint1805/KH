@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.15.1', d: '2026-10-30', items: [
+      'Theme Thiên thần: nhạc nền giờ chỉ lặp đoạn đầu bài (khoảng 46 giây), quay lại đầu bài ngay trước đoạn drop, nên không còn đoạn drop dồn dập chen vào lúc học sinh đang làm bài. Chỗ quay lại vào đúng nhịp, nghe liền như một bài.'
+    ] },
     { v: '1.15', d: '2026-10-29', items: [
       'Bộ câu hỏi chia theo lớp: trang soạn và màn chọn bộ (lúc tạo phòng) gom các bộ theo từng lớp (TOA117110, TOPRE115276, PRE115275), có thanh lọc "Tất cả / từng lớp". Máy nhớ lớp thầy chọn lần trước.',
       'Trang soạn có ô chọn Lớp ngay cạnh tên bộ. Bộ cũ tự nhận lớp theo mã lớp ghi trong tên, ví dụ "(TOPRE115276)"; bộ không ghi mã lớp nằm ở mục "Dùng chung". Bấm + Bộ mới khi đang lọc một lớp thì bộ mới tự gán lớp đó.'
