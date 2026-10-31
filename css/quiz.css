@@ -622,3 +622,53 @@ html[data-qz=y2k] .podium .p .blk { font-size: 80px; }
 .lophd { margin: 14px 0 2px; font-size: 20px; }
 .lophd .muted { font: 500 15px/1 "IBM Plex Sans", sans-serif; }
 .host .wrap .lophd { color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.25); }
+
+/* ---- 1.16: ⛏️ Đào vàng cả lớp ---- */
+.modes { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 18px; }
+.host .wrap .modes { color: #fff; }
+.modes label { display: flex; gap: 6px; align-items: center; }
+.modes select { font: inherit; padding: 2px 6px; border-radius: 8px; }
+.ghint { font-size: 20px; }
+.gold-h { display: flex; align-items: center; gap: 20px; justify-content: center; flex-wrap: wrap; color: #fff; }
+.gclock { font: 800 72px/1 "IBM Plex Sans", sans-serif; text-shadow: 0 4px 0 rgba(0,0,0,.25); min-width: 3.2em; text-align: center; }
+.gclock.hurry, .gtime.hurry { color: #ffd400; animation: pulse .8s ease-in-out infinite; }
+.gsum { font-size: 26px; font-weight: 600; }
+.gbar { height: 10px; background: rgba(255,255,255,.25); border-radius: 6px; overflow: hidden; max-width: 920px; width: 100%; margin: 12px auto 18px; }
+.gbar i { display: block; height: 100%; width: 100%; background: #ffd400; transition: width .25s linear; }
+.gbar.sm { height: 6px; margin: 0 0 8px; max-width: none; }
+.gboard .r { height: 62px; padding: 0 20px; overflow: hidden; }
+.gboard .r > span { position: relative; z-index: 1; }
+.gboard .r .gfill { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(255,212,0,.35), rgba(255,170,0,.5)); width: 0; transition: width .7s ease; z-index: 0; }
+.gboard .r .gs { font-size: 22px; color: #e8590c; min-width: 2.6em; text-align: right; }
+.gboard .r .gv { font-weight: 800; min-width: 3.4em; text-align: right; }
+.gboard .r .gv::after { content: ' 🪙'; }
+.gboard .r.bump { animation: gbump .5s ease; }
+@keyframes gbump { 0% { transform: scale(1); } 40% { transform: scale(1.04); } 100% { transform: scale(1); } }
+.ghud { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #fff; font-weight: 700; margin-bottom: 6px; }
+.gcoin { font-size: 26px; background: rgba(0,0,0,.18); padding: 4px 12px; border-radius: 999px; }
+.gstk { font-size: 18px; } .gstk.hot b { color: #ffd400; font-size: 22px; }
+.gtime { font-size: 22px; font-variant-numeric: tabular-nums; }
+.gfb { text-align: center; font: 800 28px/1.2 "IBM Plex Sans", sans-serif; padding: 10px; border-radius: 12px; color: #fff; animation: popin .4s cubic-bezier(.2,1.6,.4,1) both; }
+.gfb small { display: block; font-size: 16px; font-weight: 600; margin-top: 4px; }
+.gfb.ok { background: var(--ok); } .gfb.no { background: var(--red); }
+.pbtn.gok { outline: 5px solid #fff; box-shadow: 0 0 0 9px var(--ok); }
+.pbtn.gno { opacity: .85; outline: 4px dashed #fff; }
+.pbtn.dim { opacity: .35 !important; }
+.ghud .muted { color: rgba(255,255,255,.75); }
+.hw .card .stat { color: var(--brand-ink); background: var(--brand-soft); display: inline-block; }
+.sndbtn { background: none; border: 0; font-size: 22px; cursor: pointer; margin-left: 8px; }
+.play.gold main { display: flex; flex-direction: column; }
+
+/* ---- 1.16: 📝 bài về nhà ---- */
+.hw { max-width: 720px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.hw .card { background: var(--card); color: var(--ink); border-radius: 14px; padding: 16px; }
+.hw select, .hw input { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); width: 100%; box-sizing: border-box; }
+.hw .rv { display: grid; gap: 8px; }
+.hw .rv .it { border-left: 6px solid var(--line); padding: 8px 12px; background: var(--card); border-radius: 8px; }
+.hw .rv .it.ok { border-color: var(--ok); } .hw .rv .it.no { border-color: var(--red); }
+.hwtab { width: 100%; border-collapse: collapse; font-size: 14px; }
+.hwtab th, .hwtab td { border: 1px solid var(--line); padding: 4px 6px; text-align: center; white-space: nowrap; }
+.hwtab td.n { text-align: left; }
+.hwtab .y { color: var(--ok); font-weight: 700; } .hwtab .x { color: var(--red); }
+.hwlink { display: flex; gap: 8px; } .hwlink input { flex: 1; font: inherit; padding: 8px; }
+.hwov .card { text-align: left; }

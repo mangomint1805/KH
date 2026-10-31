@@ -4,7 +4,7 @@
 import { $, esc, isTeacher } from './common.js?v=17';
 
 const COL = 'quizResults', GOP = '_gop';
-let FX = null, all = [], gop = {}, tab = 'buoi', pick = null, q = '', open = {};
+let FX = null, all = [], gop = {}, tab = location.hash === '#hw' ? 'hw' : 'buoi', pick = null, q = '', open = {};
 const app = $('app');
 function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 const pad = (n) => ('0' + n).slice(-2);
@@ -60,10 +60,11 @@ async function load() {
 
 function render() {
   app.innerHTML = '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1 style="margin:0;flex:1">Lịch sử kết quả</h1>' +
-    '<div class="tabs"><button class="btn sm' + (tab === 'buoi' ? ' pri' : '') + '" data-t="buoi">Từng buổi</button><button class="btn sm' + (tab === 'tong' ? ' pri' : '') + '" data-t="tong">Cộng dồn</button></div></div>' +
+    '<div class="tabs"><button class="btn sm' + (tab === 'buoi' ? ' pri' : '') + '" data-t="buoi">Từng buổi</button><button class="btn sm' + (tab === 'tong' ? ' pri' : '') + '" data-t="tong">Cộng dồn</button><button class="btn sm' + (tab === 'hw' ? ' pri' : '') + '" data-t="hw">📝 Bài về nhà</button></div></div>' +
     '<p class="muted">Mỗi ván chơi xong được lưu tự động. Chỉ tài khoản giáo viên xem được trang này.</p>' +
     '<div id="body"></div>';
   app.querySelectorAll('[data-t]').forEach((b) => { b.onclick = () => { tab = b.dataset.t; render(); }; });
+  if (tab === 'hw') return hwList();
   if (!all.length) { $('body').innerHTML = '<div class="card muted">Chưa có buổi nào. Chơi xong một ván trên màn host là kết quả hiện ở đây.</div>'; return; }
   if (tab === 'buoi') sessions(); else total();
 }
@@ -84,8 +85,8 @@ function sessions() {
   $('body').querySelectorAll('[data-del]').forEach((b) => { b.onclick = () => del(b.dataset.del); });
 }
 function table(x) {
-  return '<div class="tblw"><table class="tbl"><thead><tr><th>Hạng</th><th>Tên</th><th class="n">Điểm</th><th class="n">Câu đúng</th></tr></thead><tbody>' +
-    (x.players || []).map((p) => '<tr><td>' + (p.r <= 3 ? ['', '🥇', '🥈', '🥉'][p.r] : p.r) + '</td><td>' + esc(p.name) + '</td><td class="n">' + p.s + '</td><td class="n">' + p.ok + '/' + (x.nq || 0) + '</td></tr>').join('') +
+  return '<div class="tblw"><table class="tbl"><thead><tr><th>Hạng</th><th>Tên</th><th class="n">' + (x.mode === 'gold' ? 'Vàng 🪙' : 'Điểm') + '</th><th class="n">Câu đúng</th></tr></thead><tbody>' +
+    (x.players || []).map((p) => '<tr><td>' + (p.r <= 3 ? ['', '🥇', '🥈', '🥉'][p.r] : p.r) + '</td><td>' + esc(p.name) + '</td><td class="n">' + p.s + '</td><td class="n">' + p.ok + '/' + (x.mode === 'gold' ? (p.n || 0) : (x.nq || 0)) + '</td></tr>').join('') +
     '</tbody></table></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn sm" data-csv="' + esc(x.id) + '">⬇ CSV</button><span style="flex:1"></span><button class="btn sm danger" data-del="' + esc(x.id) + '">Xoá buổi này</button></div>';
 }
 async function del(id) {
@@ -169,3 +170,43 @@ function csvTotal(L) {
 }
 
 boot();
+
+// ---------- 📝 bài về nhà: quizHW (đề), quizHWKey (đáp án), quizHWSub (bài nộp) ----------
+let HW = null, hwOpen = '';
+async function hwList() {
+  const body = $('body');
+  if (!HW) {
+    body.innerHTML = '<div class="muted">Đang tải bài về nhà…</div>';
+    try { const F = FX.F, s = await F.getDocs(F.collection(FX.db, 'quizHW')); HW = []; s.forEach((d) => HW.push({ id: d.id, ...d.data() })); HW.sort((a, b) => (b.at || 0) - (a.at || 0)); }
+    catch (e) { console.error(e); body.innerHTML = '<div class="card err">Không đọc được bài về nhà (' + esc(e.code || e.message) + ').' + (e.code === 'permission-denied' ? '<br><span class="muted">Thầy cần dán luật Firestore mới cho <code>quizHW</code>, <code>quizHWKey</code>, <code>quizHWSub</code> (xem FIREBASE.md, mục Bài về nhà).</span>' : '') + '</div>'; return; }
+  }
+  if (tab !== 'hw') return;
+  if (!HW.length) { body.innerHTML = '<div class="card muted">Chưa giao bài nào. Vào <a href="admin.html">Bộ câu hỏi</a> → 📝 Giao về nhà.</div>'; return; }
+  body.innerHTML = '<div class="qlist">' + HW.map((h) => '<div class="card"><div class="qrow"><div class="t"><b>' + esc(h.title) + '</b><span class="muted">' + (h.n || 0) + ' câu · hạn ' + day(h.due) + ' ' + time(h.due) + (h.due < Date.now() ? ' · đã hết hạn' : '') + '</span></div>' +
+    '<button class="btn sm" data-cp="' + esc(h.id) + '">Chép link</button><button class="btn sm" data-hwo="' + esc(h.id) + '">' + (hwOpen === h.id ? 'Thu gọn' : 'Xem bài nộp') + '</button></div><div id="hwb-' + esc(h.id) + '"></div></div>').join('') + '</div>';
+  body.querySelectorAll('[data-cp]').forEach((b) => { b.onclick = () => { const u = new URL('hw.html?id=' + b.dataset.cp, location.href).href; navigator.clipboard.writeText(u).then(() => toast('Đã chép: ' + u), () => prompt('Link bài về nhà', u)); }; });
+  body.querySelectorAll('[data-hwo]').forEach((b) => { b.onclick = () => { hwOpen = hwOpen === b.dataset.hwo ? '' : b.dataset.hwo; hwList(); }; });
+  if (hwOpen) hwSubs(HW.find((h) => h.id === hwOpen));
+}
+async function hwSubs(h) {
+  const box = $('hwb-' + h.id); if (!box) return;
+  box.innerHTML = '<div class="muted">Đang tải…</div>';
+  try {
+    const F = FX.F;
+    const [k, s] = await Promise.all([F.getDoc(F.doc(FX.db, 'quizHWKey', h.id)), F.getDocs(F.query(F.collection(FX.db, 'quizHWSub'), F.where('hw', '==', h.id)))]);
+    const C = ((k.exists() && k.data().c) || []).map((x) => x.c || []), L = [];
+    s.forEach((d) => { const x = d.data(); const a = x.a || []; const ok = a.map((v, i) => v != null && v >= 0 && C[i] && C[i].includes(v)); L.push({ ...x, ok, sc: ok.filter(Boolean).length }); });
+    L.sort((a, b) => b.sc - a.sc || (a.at || 0) - (b.at || 0));
+    if (!L.length) { box.innerHTML = '<p class="muted">Chưa có bạn nào nộp.</p>'; return; }
+    const n = h.n || C.length, mm = (ms) => { const t = Math.round((ms || 0) / 1000); return Math.floor(t / 60) + ':' + pad(t % 60); };
+    box.innerHTML = '<div class="tblw"><table class="hwtab"><thead><tr><th>#</th><th>Tên</th><th>Lớp</th><th>Điểm</th><th>Thời gian</th><th>Nộp lúc</th>' + Array.from({ length: n }, (_, i) => '<th>' + (i + 1) + '</th>').join('') + '</tr></thead><tbody>' +
+      L.map((x, j) => '<tr><td>' + (j + 1) + '</td><td class="n">' + esc(x.name) + '</td><td>' + esc(x.lop || '') + '</td><td><b>' + x.sc + '/' + n + '</b></td><td>' + mm((x.at || 0) - (x.t0 || x.at || 0)) + '</td><td>' + day(x.at) + ' ' + time(x.at) + '</td>' +
+        Array.from({ length: n }, (_, i) => { const v = (x.a || [])[i]; return v == null || v < 0 ? '<td class="x">–</td>' : x.ok[i] ? '<td class="y">✓</td>' : '<td class="x">✗' + ('ABCD'[v] || '') + '</td>'; }).join('') + '</tr>').join('') +
+      '</tbody></table></div><div style="margin-top:8px"><button class="btn sm" id="hwCsv-' + esc(h.id) + '">⬇ CSV</button></div>';
+    $('hwCsv-' + h.id).onclick = () => {
+      const rows = [['Tên', 'Lớp', 'Điểm', 'Số câu', 'Thời gian (giây)', 'Nộp lúc'].concat(Array.from({ length: n }, (_, i) => 'Câu ' + (i + 1)))].concat(L.map((x) => [x.name, x.lop || '', x.sc, n, Math.round(((x.at || 0) - (x.t0 || x.at || 0)) / 1000), new Date(x.at).toLocaleString('vi-VN')].concat(Array.from({ length: n }, (_, i) => { const v = (x.a || [])[i]; return v == null || v < 0 ? '' : ('ABCD'[v] || '') + (x.ok[i] ? ' ✓' : ' ✗'); }))));
+      const txt = '﻿' + rows.map((r) => r.map((c) => { const t = String(c); const v = /^[=+\-@\t\r]/.test(t) && typeof c !== 'number' ? "'" + t : t; return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(',')).join('\r\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' })); a.download = 'bai-ve-nha-' + h.id + '.csv'; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 500);
+    };
+  } catch (e) { console.error(e); box.innerHTML = '<p class="err">Không đọc được bài nộp (' + esc(e.code || e.message) + ').</p>'; }
+}

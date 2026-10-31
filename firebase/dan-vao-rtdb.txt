@@ -23,6 +23,9 @@
           "theme": {
             ".validate": "newData.isString() && newData.val().matches(/^(kahoot|idol|y2k|scifi)$/)"
           },
+          "mode": {
+            ".validate": "newData.isString() && newData.val().matches(/^(gold)$/)"
+          },
           "$other": {
             ".validate": false
           }
@@ -31,7 +34,7 @@
           ".read": "auth != null",
           ".validate": "newData.hasChildren(['phase', 'q', 'qs'])",
           "phase": {
-            ".validate": "newData.isString() && newData.val().matches(/^(lobby|show|answer|reveal|board|end)$/)"
+            ".validate": "newData.isString() && newData.val().matches(/^(lobby|show|answer|reveal|board|end|gold)$/)"
           },
           "q": {
             ".validate": "newData.isNumber()"
@@ -166,6 +169,31 @@
               "$other": {
                 ".validate": false
               }
+            }
+          }
+        },
+        "gold": {
+          ".read": "auth != null",
+          "$uid": {
+            ".write": "auth != null && auth.uid == $uid && newData.exists() && root.child('quiz/' + $pin + '/players/' + $uid).exists() && root.child('quiz/' + $pin + '/state/phase').val() == 'gold' && now <= root.child('quiz/' + $pin + '/state/endAt').val() + 3000",
+            ".validate": "newData.hasChildren(['g', 'n', 'c', 'at'])",
+            "g": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000 && (!data.exists() || newData.val() >= data.val())"
+            },
+            "n": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 5000"
+            },
+            "c": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= newData.parent().child('n').val()"
+            },
+            "s": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() <= now"
+            },
+            "$other": {
+              ".validate": false
             }
           }
         },

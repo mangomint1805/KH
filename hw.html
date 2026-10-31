@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#46178f">
+<title>Minto Quiz · Bài về nhà</title>
+<link rel="icon" type="image/png" href="/fav-64.png?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/quiz.css?v=23">
+</head>
+<body class="play">
+  <div class="top"><span class="serif logo" style="color:var(--brand-ink)">📝 Bài về nhà</span><span id="who"></span></div>
+  <main>
+    <section id="sMsg" data-screen class="center">
+      <div id="mIc" class="big-ic">⏳</div>
+      <h2 id="mT" style="margin:0">Đang tải bài…</h2>
+      <div id="mS" class="muted" style="font-size:18px"></div>
+    </section>
+
+    <section id="sJoin" data-screen class="join" hidden>
+      <h1 id="jT" style="margin:0;font-size:24px"></h1>
+      <div id="jS" class="muted"></div>
+      <input id="name" maxlength="40" autocomplete="name" placeholder="Họ tên của em" aria-label="Họ tên">
+      <select id="lop" aria-label="Lớp"></select>
+      <button id="go" class="btn pri">Bắt đầu làm bài</button>
+      <div id="jerr" class="err" role="alert"></div>
+    </section>
+
+    <section id="sQ" data-screen hidden style="flex:1;display:flex;flex-direction:column;gap:10px">
+      <div class="qmeta" style="font-size:16px"><span id="qNum"></span><span id="qTime"></span></div>
+      <div class="gbar sm"><i id="qBar"></i></div>
+      <div id="qQ" class="pq"></div>
+      <div id="qGrid" class="pgrid"></div>
+      <div style="display:flex;gap:10px;justify-content:space-between">
+        <button id="bPrev" class="btn">← Câu trước</button>
+        <button id="bNext" class="btn pri">Câu tiếp →</button>
+      </div>
+    </section>
+
+    <section id="sRes" data-screen hidden class="hw">
+      <div class="card" style="text-align:center">
+        <div class="big-ic">🎉</div>
+        <h2 style="margin:4px 0" id="rT"></h2>
+        <div class="stat">Điểm<b id="rS">0</b></div>
+        <div class="muted" id="rM"></div>
+      </div>
+      <h3 style="color:#fff;margin:6px 0 0">Xem lại đáp án</h3>
+      <div id="rv" class="rv"></div>
+    </section>
+  </main>
+<canvas id="fx"></canvas>
+<script src="/acc.js?v=9"></script>
+<script type="module" src="js/hw.js?v=1"></script>
+</body>
+</html>

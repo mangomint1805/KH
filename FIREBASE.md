@@ -37,6 +37,17 @@ Nếu trước đây thầy đã dán phần `quizzes` rồi thì chỉ cần d�
 
 Sau khi dán `quizMusic`: mở trang **Bộ câu hỏi**, kéo xuống mục **🎵 Nhạc theme**, bấm **Tải nhạc lên** cho từng theme (file .mp3 hoặc .m4a, tối đa 8 MB).
 
+> **Cập nhật 31/10 (⛏️ Đào vàng cả lớp):** luật Realtime Database có thêm `meta/mode`, pha `gold` và nhánh `gold/$uid` (mỗi bạn chỉ ghi vàng của mình, vàng không giảm, chỉ ghi được khi vòng đang chạy và chưa hết giờ). Thầy dán lại đoạn `"quiz"` mới từ `firebase/dan-vao-rtdb.txt` (thay đoạn cũ). Chưa dán thì chế độ cổ điển vẫn chạy, chỉ là bấm tạo phòng Đào vàng sẽ báo cần dán luật.
+>
+> Lưu ý: ở chế độ Đào vàng, đáp án được đưa lên phòng ngay từ đầu để điện thoại tự chấm, nên một bạn rành máy tính vẫn có thể dò ra. Chế độ này dùng để luyện tập vui, không dùng để kiểm tra lấy điểm.
+
+> **Cập nhật 31/10 (📝 Bài về nhà):** dán thêm 3 khối `match /quizHW/{id}`, `match /quizHWKey/{id}`, `match /quizHWSub/{sid}` ở cuối `firebase/firestore.rules.quiz.txt` vào Firestore Rules (chỉ thêm 3 khối này, không thay luật đang chạy). Luật cho phép:
+> - Học sinh (đăng nhập ẩn danh) đọc đề `quizHW` (đề không kèm đáp án); chỉ thầy tạo/sửa.
+> - Học sinh nộp **một lần**, trước hạn, vào `quizHWSub/{mã bài}_{mã máy}`; không sửa, không xem bài của bạn khác.
+> - Đáp án `quizHWKey` chỉ thầy đọc được, học sinh đọc được sau khi đã nộp bài của mình.
+>
+> Chưa dán thì nút "📝 Giao về nhà" sẽ báo lỗi quyền kèm hướng dẫn, các phần khác vẫn chạy.
+
 ## 4. Bật GitHub Pages cho repo KH
 
 1. Vào repo `KH` trên GitHub → **Settings** → **Pages**.

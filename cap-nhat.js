@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.16', d: '2026-10-31', items: [
+      '⛏️ Đào vàng cả lớp: chế độ chơi mới, chọn lúc tạo phòng (hoặc bấm "⛏️ Đào vàng" ở bộ câu hỏi). Mỗi bạn tự trả lời liên tục trên điện thoại, không chờ cả lớp. Đúng được 10 vàng, đúng liên tiếp được nhân vàng: ×1.5 từ chuỗi 3, ×2 từ chuỗi 5, ×3 từ chuỗi 10. Sai thì hiện đáp án đúng vài giây và chuỗi về 0.',
+      'Màn chiếu Đào vàng có đồng hồ đếm ngược (mặc định 5 phút, chọn 3–15 phút), bảng vàng top 10 tự đổi chỗ khi có bạn vượt lên, tổng vàng cả lớp; hết giờ hiện bục vinh danh, lưu vào Lịch sử kết quả và tải được CSV.',
+      '📝 Giao bài về nhà: ở mỗi bộ câu hỏi bấm "📝 Giao về nhà", chọn hạn nộp (có thể bật tính giờ từng câu) rồi gửi link cho học sinh. Học sinh nhập họ tên + lớp, làm theo tốc độ của mình, nộp một lần, xem điểm và đáp án từng câu ngay sau khi nộp.',
+      'Lịch sử kết quả có thêm thẻ "📝 Bài về nhà": xem bảng từng bạn (điểm, lớp, thời gian làm, đúng/sai từng câu) và tải CSV.'
+    ] },
     { v: '1.15.1', d: '2026-10-30', items: [
       'Theme Thiên thần: nhạc nền giờ chỉ lặp đoạn đầu bài (khoảng 34 giây), quay lại đầu bài trước đoạn dồn trống và đoạn drop, nên không còn khúc dồn dập chen vào lúc học sinh đang làm bài. Chỗ quay lại vào đúng nhịp, nghe liền như một bài.'
     ] },

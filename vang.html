@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#46178f">
+<title>Minto Quiz · Đào vàng</title>
+<link rel="icon" type="image/png" href="/fav-64.png?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=VT323&family=Rajdhani:wght@600;700&family=M+PLUS+Rounded+1c:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/quiz.css?v=23">
+</head>
+<body class="play gold">
+  <div class="top"><span class="serif logo" style="color:var(--brand-ink)">⛏️ Đào vàng</span><span id="who"></span><button type="button" id="bSnd" class="sndbtn" title="Âm thanh" aria-label="Bật/tắt âm thanh">🔇</button></div>
+  <div id="net" class="toast" hidden>Mất kết nối… đang thử lại</div>
+  <main>
+    <div id="hud" class="ghud" hidden>
+      <div class="gcoin"><span id="hG">0</span> 🪙</div>
+      <div class="gstk" id="hS"></div>
+      <div class="gtime" id="hT">--:--</div>
+    </div>
+    <div id="hBar" class="gbar sm" hidden><i id="hBarI"></i></div>
+
+    <section id="sMsg" data-screen class="center">
+      <div id="mIc" class="big-ic">⏳</div>
+      <h2 id="mT" style="margin:0">Đang vào phòng…</h2>
+      <div id="mS" class="muted" style="font-size:18px"></div>
+      <a id="mA" class="btn pri" href="play.html" hidden>Vào phòng khác</a>
+    </section>
+
+    <section id="sQ" data-screen hidden style="flex:1;display:flex;flex-direction:column;gap:10px">
+      <div id="qQ" class="pq"></div>
+      <div id="qGrid" class="pgrid"></div>
+      <div id="qFb" class="gfb" hidden></div>
+    </section>
+
+    <section id="sEnd" data-screen class="center" hidden>
+      <div class="big-ic">🏁</div>
+      <h2 style="margin:0">Hết giờ!</h2>
+      <div style="display:flex;gap:28px;justify-content:center;flex-wrap:wrap">
+        <div class="stat">Vàng<b id="eG">0</b></div>
+        <div class="stat">Đúng<b id="eC">0</b></div>
+        <div class="stat">Hạng<b id="eR">–</b></div>
+      </div>
+      <div id="eM" class="rankmsg"></div>
+    </section>
+  </main>
+<canvas id="fx"></canvas>
+<script src="/acc.js?v=9"></script>
+<script type="module" src="js/vang.js?v=1"></script>
+</body>
+</html>

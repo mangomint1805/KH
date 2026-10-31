@@ -5,6 +5,7 @@ import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Soun
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
 let PIN = '', meta = null, quiz = null, state = {}, players = {}, answers = {}, keys = {};
+let golds = {};
 let unsub = [], ansOff = null, timer = 0, autoT = 0, wake = null;
 // hình của câu hỏi (Firestore quizImg/{id}), tải sẵn lúc tạo phòng
 const IMGS = {}; let imgP = Promise.resolve();
@@ -93,7 +94,7 @@ async function boot() {
     const ok = await resume(old).catch((e) => { console.error(e); return false; });
     if (ok) return;
   }
-  pick(params.get('quiz'));
+  pick(params.get('quiz'), params.get('mode'));
 }
 
 // Mất mạng: hiện thanh đỏ trên cùng; Firebase tự gửi lại khi có mạng, trò chơi tạm dừng tới lúc đó.
@@ -118,12 +119,18 @@ async function cleanup() {
 }
 
 // ---------- chọn bộ câu hỏi ----------
-async function pick(want) {
+const goldPicked = () => { const x = document.querySelector('[name=qmode]:checked'); return !!(x && x.value === 'gold'); };
+async function pick(want, wantMode) {
   main.innerHTML = '<div class="wrap" style="width:100%"><h1>Chọn bộ câu hỏi</h1><div id="qs" class="qlist"><div class="muted">Đang tải…</div></div>' +
-    '<label style="display:flex;gap:8px;align-items:center;margin-top:18px"><input type="checkbox" id="optStreak" checked> Thưởng chuỗi trả lời đúng liên tiếp (+100 mỗi câu, tối đa +500)</label>' +
+    '<div class="modes"><b>Chế độ:</b><label><input type="radio" name="qmode" value="" checked> Cổ điển · cả lớp cùng câu</label><label><input type="radio" name="qmode" value="gold"> ⛏️ Đào vàng cả lớp · mỗi bạn tự làm trên điện thoại</label>' +
+    '<label id="gMin" hidden>Thời gian <select id="optMin">' + [3, 5, 7, 10, 15].map((m) => '<option' + (m === 5 ? ' selected' : '') + '>' + m + '</option>').join('') + '</select> phút</label></div>' +
+    '<label id="lStreak" style="display:flex;gap:8px;align-items:center;margin-top:18px"><input type="checkbox" id="optStreak" checked> Thưởng chuỗi trả lời đúng liên tiếp (+100 mỗi câu, tối đa +500)</label>' +
     '<div class="themes" id="themes"><b>Theme:</b>' + THEMES.map((t) => '<button type="button" class="thm" data-t="' + t.id + '"><i style="background:' + t.sw + '"></i>' + esc(t.n) + '</button>').join('') + '</div>' +
     '<p class="muted" style="margin-top:18px">Chưa có bộ câu hỏi? <a href="admin.html">Tạo hoặc nhập từ file</a>.</p></div>';
   paintThemes();
+  const paintMode = () => { const g = goldPicked(); $('gMin').hidden = !g; $('lStreak').hidden = g; };
+  document.querySelectorAll('[name=qmode]').forEach((x) => { x.checked = x.value === (wantMode || ''); x.onchange = paintMode; });
+  paintMode();
   $('themes').querySelectorAll('[data-t]').forEach((b) => { b.onclick = () => setTheme(b.dataset.t); });
   try {
     const x = await window.MACC.fs();
@@ -153,10 +160,14 @@ async function create(q) {
     if (!(await D.get(D.ref(B.db, 'quiz/' + p + '/meta'))).exists()) pin = p;
   }
   PIN = pin;
-  meta = { title: String(q.title || 'Minto Quiz').slice(0, 120), n: q.qs.length, qz: q.id, streak: $('optStreak').checked, theme: THEME, at: D.serverTimestamp() };
-  imgP = loadImgs(); pzLoad();
+  const gold = goldPicked();
+  meta = { title: String(q.title || 'Minto Quiz').slice(0, 120), n: Math.min(500, q.qs.length), qz: q.id, streak: gold ? false : $('optStreak').checked, theme: THEME, at: D.serverTimestamp() };
+  if (gold) { meta.mode = 'gold'; goldMinSet(+$('optMin').value || 5); }
+  imgP = gold ? Promise.resolve() : loadImgs(); pzLoad();
   try { await D.set(r(), { meta, state: { phase: 'lobby', q: -1, qs: '-1' } }); }
   catch (e) {
+    // chế độ Đào vàng cần luật mới (meta/mode, nhánh gold): chưa dán luật thì báo cho thầy, không tạo phòng
+    if (gold) { console.error(e); PIN = ''; return toast('Chưa mở được chế độ Đào vàng: thầy cần dán luật Firebase mới (xem FIREBASE.md, mục Đào vàng).'); }
     // luật Realtime Database cũ chưa có trường theme: tạo phòng không kèm theme (điện thoại dùng màu tím mặc định)
     delete meta.theme;
     try { await D.set(r(), { meta, state: { phase: 'lobby', q: -1, qs: '-1' } }); console.warn('Luật RTDB chưa có meta/theme, xem FIREBASE.md'); }
@@ -198,6 +209,7 @@ function attach() {
     paintStrip();
     if (first) restore();
   }));
+  if (meta.mode === 'gold') unsub.push(D.onValue(r('gold'), (s) => { golds = s.val() || {}; if (state.phase === 'gold') goldPaint(); }));
   unsub.push(D.onValue(r('meta'), (s) => { if (!s.exists()) { toast('Phòng đã bị xoá.'); try { localStorage.removeItem(LS_KEY); } catch (e) {} setTimeout(() => location.reload(), 1200); } }));
   keepAwake();
 }
@@ -206,6 +218,7 @@ function attach() {
 function restore() {
   const p = state.phase, q = state.q;
   if (p === 'lobby') return lobby();
+  if (meta.mode === 'gold') return p === 'gold' ? goldView() : goldEnd();
   if (p === 'show') return isPaused() ? pauseView(q) : goShow(q);
   if (p === 'answer') return now() < state.endAt ? answerView(q) : goReveal(q);
   if (p === 'reveal') return goReveal(q);
@@ -230,6 +243,7 @@ function lobby() {
     '<button class="btn big pri" id="bStart" disabled>Bắt đầu ▶</button></div><div class="names" id="names"></div>' +
     '<p class="hint" id="hint">Đang chờ học sinh vào phòng<span class="waitdots"></span> Bấm × để mời một bạn ra (ví dụ tên không phù hợp).</p></div>';
   $('bStart').onclick = () => start();
+  if (meta.mode === 'gold') $('hint').insertAdjacentHTML('beforebegin', '<p class="hint ghint">⛏️ <b>Đào vàng cả lớp</b> · ' + goldMin() + ' phút · mỗi bạn tự trả lời trên điện thoại, đúng liên tiếp được nhân vàng (×1.5 từ chuỗi 3, ×2 từ chuỗi 5, ×3 từ chuỗi 10)</p>');
   lobbyNames();
 }
 function lobbyNames() {
@@ -244,7 +258,7 @@ function lobbyNames() {
 function kick(uid) {
   const p = players[uid]; if (!p) return;
   if (!confirm('Mời "' + p.name + '" ra khỏi phòng?')) return;
-  D.update(r(), { ['players/' + uid]: null, ['kick/' + uid]: true, ['scores/' + uid]: null }).catch(fail);
+  D.update(r(), { ['players/' + uid]: null, ['kick/' + uid]: true, ['scores/' + uid]: null, ...(meta.mode === 'gold' ? { ['gold/' + uid]: null } : {}) }).catch(fail);
 }
 
 let starting = false;
@@ -255,7 +269,7 @@ function start() {
   const ov = document.createElement('div'); ov.className = 'overlay'; document.body.appendChild(ov);
   let n = 3;
   const step = () => {
-    if (n === 0) { ov.remove(); goShow(0).finally(() => { starting = false; }); return; }
+    if (n === 0) { ov.remove(); (meta.mode === 'gold' ? goldStart() : goShow(0)).finally(() => { starting = false; }); return; }
     ov.innerHTML = '<div class="t">' + esc(meta.title) + '</div><div class="big" key="' + n + '">' + n + '</div><div class="t" style="font-size:26px">Chuẩn bị nhé!</div>';
     Sound.count(n); n--; setTimeout(step, 1000);
   };
@@ -540,6 +554,7 @@ function next() {
 function step1() {
   const p = state.phase, q = state.q;
   if (p === 'lobby') return start();
+  if (p === 'gold') return; // đang đào vàng: chỉ kết thúc bằng nút trên màn hình
   if (p === 'show') return isPaused() ? unpause() : goAnswer(q);
   if (p === 'answer') return goReveal(q);
   if (p === 'reveal') return q + 1 < quiz.qs.length ? goBoard(q) : goEnd();
@@ -610,7 +625,7 @@ const setPref = (k, v) => { try { localStorage.setItem(k, v ? '1' : '0'); } catc
 function paintCtl() { $('bMusic').style.opacity = Sound.music && Sound.musicVol > 0 ? 1 : 0.4; $('bSfx').style.opacity = Sound.sfx ? 1 : 0.4; }
 Sound.setSfx(pref('qz.sfx', true));
 const musicWanted = pref('qz.music', true);
-function musicFor() { const p = state.phase; Sound.mode(p === 'lobby' && !starting ? 'lobby' : p === 'answer' ? 'q' : null); }
+function musicFor() { const p = state.phase; Sound.mode(p === 'lobby' && !starting ? 'lobby' : p === 'answer' || p === 'gold' ? 'q' : null); }
 function setMusicOn(v) { Sound.setMusic(v); if (v) musicFor(); setPref('qz.music', v); paintCtl(); }
 // bảng âm lượng: bấm 🎵 để mở / đóng
 const numPref = (k, d) => { try { const v = localStorage.getItem(k); return v == null || isNaN(+v) ? d : +v; } catch (e) { return d; } };
@@ -638,6 +653,124 @@ document.addEventListener('keydown', firstGesture);
 paintCtl();
 async function keepAwake() { try { if (navigator.wakeLock && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch (e) {} }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && PIN) keepAwake(); });
+
+// ---------- ⛏️ Đào vàng cả lớp: mỗi bạn tự làm trên điện thoại, máy chiếu hiện bảng vàng ----------
+// Lúc bắt đầu, thầy đưa hết câu hỏi (qpub) và đáp án (key) lên phòng; điện thoại tự chấm và ghi gold/$uid = { g vàng, n số câu, c số câu đúng, s chuỗi, at }.
+// Số phút lưu trên máy thầy (RTDB không có trường riêng), giờ kết thúc nằm trong state.endAt.
+const goldMin = () => { try { return +localStorage.getItem('qz.gmin.' + PIN) || 5; } catch (e) { return 5; } };
+function goldMinSet(m) { try { localStorage.setItem('qz.gmin.' + PIN, String(m)); } catch (e) {} }
+let gTimer = 0, gRows = {}, gTop = '';
+async function goldStart() {
+  const up = {}, n = meta.n;
+  quiz.qs.slice(0, n).forEach((Q, q) => {
+    up['qpub/' + q] = { t: String(Q.t).slice(0, 1000), o: Q.o.map((x) => String(x || '').slice(0, 500)), time: Q.time || 20, pts: Q.pts == null ? 1 : Q.pts };
+    up['key/' + q] = { c: (Q.c || []).slice(0, 4), s: 0, e: 0 };
+  });
+  const startAt = Math.round(now()) + 500, endAt = startAt + goldMin() * 60000;
+  up.state = { phase: 'gold', q: 0, qs: 'g', startAt, endAt };
+  try { await D.update(r(), up); } catch (e) { return fail(e); }
+  state = up.state;
+  goldView();
+}
+function goldView() {
+  clearInterval(gTimer); gRows = {}; gTop = '';
+  musicFor();
+  main.innerHTML = '<div class="gold-h"><div class="gclock" id="gClock">--:--</div><div class="gsum"><span id="gSum">0</span> 🪙 cả lớp · <span id="gAct">0</span> bạn đang đào</div>' +
+    '<button class="btn" id="gStop">Kết thúc sớm</button></div><div class="gbar"><i id="gBar"></i></div><div class="board2 gboard" id="gBoard"></div>';
+  $('gStop').onclick = () => { if (confirm('Kết thúc vòng đào vàng ngay bây giờ?')) goldFinish(); };
+  goldPaint();
+  const tick = () => {
+    const left = Math.max(0, state.endAt - now()), tot = Math.max(1, state.endAt - state.startAt), sec = Math.ceil(left / 1000);
+    const c = $('gClock'); if (!c) return clearInterval(gTimer);
+    c.textContent = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+    c.classList.toggle('hurry', sec <= 10);
+    $('gBar').style.width = (left / tot * 100) + '%';
+    if (sec <= 5 && sec > 0 && c.dataset.s !== String(sec)) { c.dataset.s = String(sec); Sound.tick(); }
+    if (now() > state.endAt + 2500) { clearInterval(gTimer); goldFinish(); }
+  };
+  tick(); gTimer = setInterval(tick, 250);
+}
+function goldList() {
+  const L = Object.keys(players).map((uid) => { const g = golds[uid] || {}; return { uid, name: players[uid].name, g: g.g || 0, n: g.n || 0, c: g.c || 0, s: g.s || 0 }; });
+  L.sort((a, b) => b.g - a.g || b.c - a.c || a.name.localeCompare(b.name));
+  L.forEach((x, i) => { x.r = i && L[i - 1].g === x.g ? L[i - 1].r : i + 1; });
+  return L;
+}
+const ROW_H = 74, SHOW_N = 10;
+function goldPaint() {
+  const box = $('gBoard'); if (!box) return;
+  const L = goldList(), top = L.slice(0, SHOW_N), max = Math.max(1, L.length ? L[0].g : 1);
+  $('gSum').textContent = L.reduce((t, x) => t + x.g, 0).toLocaleString('vi-VN');
+  $('gAct').textContent = L.filter((x) => x.n).length;
+  box.style.height = (Math.max(1, top.length) * ROW_H) + 'px';
+  const keep = new Set(top.map((x) => x.uid));
+  Object.keys(gRows).forEach((k) => { if (!keep.has(k)) { gRows[k].el.remove(); delete gRows[k]; } });
+  top.forEach((x, i) => {
+    let R = gRows[x.uid];
+    if (!R) { const el = document.createElement('div'); el.className = 'r'; el.style.top = (SHOW_N * ROW_H) + 'px'; el.innerHTML = '<span class="rk"></span><span class="nm"></span><span class="gs"></span><span class="gv"></span><i class="gfill"></i>'; box.appendChild(el); R = gRows[x.uid] = { el, g: 0 }; requestAnimationFrame(() => { el.style.top = (i * ROW_H) + 'px'; }); }
+    else R.el.style.top = (i * ROW_H) + 'px';
+    const el = R.el;
+    el.classList.toggle('first', i === 0 && x.g > 0);
+    el.querySelector('.rk').textContent = x.r;
+    el.querySelector('.nm').textContent = x.name;
+    el.querySelector('.gs').textContent = x.s >= 3 ? '🔥' + x.s : '';
+    el.querySelector('.gfill').style.width = (x.g / max * 100) + '%';
+    if (x.g !== R.g) { countUp(el.querySelector('.gv'), R.g, x.g, 700); if (R.g) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); } R.g = x.g; }
+    else el.querySelector('.gv').textContent = x.g.toLocaleString('vi-VN');
+  });
+  const t1 = top[0] && top[0].g > 0 ? top[0].uid : '';
+  if (t1 && gTop && t1 !== gTop) Sound.climb();
+  gTop = t1 || gTop;
+}
+async function goldFinish() {
+  clearInterval(gTimer);
+  if (state.phase !== 'end') {
+    try { await D.set(r('state'), { phase: 'end', q: 0, qs: 'g', startAt: state.startAt || 0, endAt: Math.min(state.endAt || 0, Math.round(now())) }); } catch (e) { return fail(e); }
+    state = Object.assign({}, state, { phase: 'end' });
+    // đợi các điện thoại gửi nốt câu cuối rồi mới chốt bảng
+    await new Promise((ok) => setTimeout(ok, 1200));
+    try { golds = (await D.get(r('gold'))).val() || {}; } catch (e) {}
+    return goldEnd(true);
+  }
+  goldEnd();
+}
+function goldEnd(anim) {
+  Sound.mode(null);
+  const t = goldList();
+  const slot = (x, k) => x ? '<div class="p p' + k + '"><div class="nm">' + esc(x.name) + '</div><div class="blk">' + k + '<small>' + x.g.toLocaleString('vi-VN') + ' 🪙</small></div></div>' : '<div class="p p' + k + '"></div>';
+  main.innerHTML = '<h1 style="text-align:center;margin:0">⛏️ ' + esc(meta.title) + '</h1>' +
+    '<div class="podium">' + slot(t[1], 2) + slot(t[0], 1) + slot(t[2], 3) + '</div>' +
+    (t.length > 3 ? '<div class="rest">' + t.slice(3, 12).map((x) => '<span>' + x.r + '. ' + esc(x.name) + ' · ' + x.g + ' 🪙</span>').join('') + '</div>' : '') +
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn pri" id="bCsv">⬇ Tải kết quả CSV</button><button class="btn" id="bNew">Chơi bộ khác</button><button class="btn danger" id="bClose">Đóng phòng (xoá dữ liệu)</button></div>' +
+    '<p class="muted" style="text-align:center" id="saveSt"></p>';
+  $('bCsv').onclick = () => goldCsv(t);
+  $('bNew').onclick = () => { try { localStorage.removeItem(LS_KEY); } catch (e) {} location.href = 'host.html'; };
+  $('bClose').onclick = async () => { if (!confirm('Xoá phòng ' + PIN + '?')) return; unsub.forEach((f) => f()); unsub = []; await D.remove(r()).catch(fail); try { localStorage.removeItem(LS_KEY); } catch (e) {} location.href = 'host.html'; };
+  goldSave(t);
+  if (anim) { Sound.drum(2.1); setTimeout(() => { Sound.win(); confetti($('fx'), 8000); }, 2300); }
+}
+async function goldSave(t) {
+  if (!t.length) return;
+  const el = $('saveSt');
+  if (savedPin === PIN) { if (el) el.innerHTML = '✅ Đã lưu vào <a href="ket-qua.html">Lịch sử kết quả</a>'; return; }
+  try {
+    const x = await window.MACC.fs(), F = x.F;
+    await F.setDoc(F.doc(x.db, 'quizResults', resultId()), {
+      title: '⛏️ ' + meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq: meta.n, streak: false, mode: 'gold',
+      players: t.map((p) => ({ name: String(p.name || '').slice(0, 40), s: p.g, r: p.r, ok: p.c, n: p.n })),
+    });
+    savedPin = PIN;
+    if (el) el.innerHTML = '✅ Đã lưu vào <a href="ket-qua.html">Lịch sử kết quả</a>';
+  } catch (e) { console.error(e); if (el) el.textContent = '⚠️ Chưa lưu được vào lịch sử (' + (e.code || e.message || 'lỗi') + ').'; }
+}
+function goldCsv(t) {
+  const rows = [['Hạng', 'Tên', 'Vàng', 'Số câu đã làm', 'Số câu đúng', 'Tỉ lệ đúng']].concat(t.map((x) => [x.r, x.name, x.g, x.n, x.c, x.n ? Math.round(x.c / x.n * 100) + '%' : '']));
+  const txt = '﻿' + rows.map((r) => r.map((c) => { const s = String(c); const v = /^[=+\-@\t\r]/.test(s) && typeof c !== 'number' ? "'" + s : s; return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'dao-vang-' + (meta.title || 'quiz').replace(/[^\p{L}\p{N}]+/gu, '-').slice(0, 40) + '.csv';
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
 
 bgfx(14);
 boot();

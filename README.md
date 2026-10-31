@@ -23,6 +23,8 @@ Cài đặt Firebase lần đầu: xem [FIREBASE.md](FIREBASE.md).
 3. **Chơi:** bấm **Bắt đầu**. Mỗi câu: hiện câu hỏi 3 giây, mở 2–4 ô màu (theo số đáp án của câu) kèm đồng hồ. Hết giờ, cả lớp đã trả lời, hoặc bấm **Bỏ qua** thì khoá và công bố đáp án kèm biểu đồ. Sau đó là bảng xếp hạng top 5.
 4. **Cuối game:** bục top 3, nút **Tải kết quả CSV** (tên, điểm từng câu, đúng/sai, thời gian trả lời). Bảng điểm (tên, điểm, hạng, số câu đúng) tự lưu vào **Lịch sử kết quả**.
 5. **Lịch sử kết quả** (`ket-qua.html`): xem lại từng buổi, tải CSV, xoá buổi. Thẻ **Cộng dồn** cộng điểm nhiều buổi theo tên học sinh (tổng điểm, trung bình, số lần top 1 / top 3, số câu đúng). Tên khác dấu hoặc chữ hoa tự gộp; tên gõ khác hẳn thì tick rồi bấm **Gộp**.
+6. **⛏️ Đào vàng cả lớp**: lúc tạo phòng chọn chế độ Đào vàng (hoặc nút ⛏️ ở bộ câu hỏi). Mỗi bạn tự trả lời liên tục trên điện thoại (`vang.html`), đúng được 10 vàng × hệ số chuỗi (×1.5 / ×2 / ×3 từ chuỗi 3 / 5 / 10); màn chiếu hiện đồng hồ và bảng vàng. Cần luật RTDB mới (FIREBASE.md).
+7. **📝 Bài về nhà**: nút 📝 ở bộ câu hỏi tạo link `hw.html?id=…` có hạn nộp; học sinh làm, nộp một lần, xem điểm + đáp án; thầy xem bảng ở `ket-qua.html` thẻ Bài về nhà. Cần luật Firestore mới (FIREBASE.md).
 
 Phím tắt trên màn host: **Space / Enter** sang bước tiếp, **F** toàn màn hình. Góc trái dưới có nút bật/tắt nhạc nền và âm báo (âm thanh tự tạo bằng WebAudio).
 
@@ -49,6 +51,8 @@ play.html           màn học sinh        js/play.js
 host.html           màn chiếu           js/host.js
 admin.html          soạn bộ câu hỏi     js/admin.js
 ket-qua.html        lịch sử kết quả     js/ket-qua.js
+vang.html           học sinh Đào vàng   js/vang.js
+hw.html             học sinh bài về nhà js/hw.js
 js/parse.js         đọc Excel / CSV / văn bản đề
 js/common.js        Firebase, đồng hồ máy chủ, âm thanh, tính điểm
 cap-nhat.js         mục "Có gì mới"

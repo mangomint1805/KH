@@ -10,7 +10,7 @@ jobs:
       - name: Cú pháp JavaScript
         run: |
           for f in js/parse.js cap-nhat.js test/*.js; do node --check "$f"; done
-          for f in js/common.js js/host.js js/play.js js/admin.js js/ket-qua.js; do node --input-type=module --check < "$f"; done
+          for f in js/common.js js/host.js js/play.js js/admin.js js/ket-qua.js js/vang.js js/hw.js; do node --input-type=module --check < "$f"; done
       - name: Luật Firebase là JSON hợp lệ
         run: node -e "JSON.parse(require('fs').readFileSync('firebase/database.rules.quiz.json','utf8'))"
       - name: Đoạn luật để dán khớp với file luật gốc

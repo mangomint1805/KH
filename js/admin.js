@@ -60,13 +60,14 @@ async function showList() {
   const groups = byClass(list);
   if (filt !== '*' && !groups.some((g) => g[0] === filt)) filt = '*';
   const row = (q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu' + (q.upd ? ' · sửa ' + new Date(q.upd).toLocaleString('vi-VN') : '') + '</span></div>' +
-    '<a class="btn sm pri" href="host.html?quiz=' + encodeURIComponent(q.id) + '">Tạo phòng</a><button class="btn sm" data-e="' + esc(q.id) + '">Sửa</button><button class="btn sm" data-d="' + esc(q.id) + '">Nhân bản</button><button class="btn sm danger" data-x="' + esc(q.id) + '">Xoá</button></div>';
+    '<a class="btn sm pri" href="host.html?quiz=' + encodeURIComponent(q.id) + '">Tạo phòng</a><a class="btn sm" href="host.html?mode=gold&amp;quiz=' + encodeURIComponent(q.id) + '" title="Mỗi bạn tự làm trên điện thoại, tính vàng">⛏️ Đào vàng</a><button class="btn sm" data-hw="' + esc(q.id) + '" title="Gửi link cho học sinh làm ở nhà">📝 Giao về nhà</button><button class="btn sm" data-e="' + esc(q.id) + '">Sửa</button><button class="btn sm" data-d="' + esc(q.id) + '">Nhân bản</button><button class="btn sm danger" data-x="' + esc(q.id) + '">Xoá</button></div>';
   $('list').innerHTML = list.length ? classTabs(groups, list.length) + groups.filter((g) => filt === '*' || g[0] === filt).map((g) => '<h3 class="lophd">' + esc(classLabel(g[0])) + ' <span class="muted">· ' + g[1].length + ' bộ</span></h3>' + g[1].map(row).join('')).join('')
     : '<div class="card muted">Chưa có bộ câu hỏi nào. Bấm <b>+ Bộ mới</b> rồi tải file lên.</div>';
   app.querySelectorAll('[data-lf]').forEach((b) => { b.onclick = () => { filt = b.dataset.lf; try { localStorage.setItem('qz.lop', filt); } catch (e) {} showList(); }; });
   const by = (id) => list.find((x) => x.id === id);
   app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, lop: quizClass(q), qs: JSON.parse(JSON.stringify(q.qs || [])) }); }; });
   app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', lop: quizClass(q), qs: q.qs || [] }).catch(err); showList(); }; });
+  app.querySelectorAll('[data-hw]').forEach((b) => { b.onclick = () => hwDialog(by(b.dataset.hw)); });
   app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; try { await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)); } catch (e) { return err(e); } await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
 }
 // ---------- nhạc theme: thầy tải file nhạc lên Firestore quizMusic (chỉ tài khoản thầy đọc được), màn host tự tải về để phát ----------
@@ -157,6 +158,39 @@ async function dropMusic(id) {
   const F = FX.F, meta = F.doc(FX.db, 'quizMusic', id), d = await F.getDoc(meta);
   if (!d.exists()) return;
   await F.deleteDoc(meta); await dropParts(id, d.data());
+}
+// ---------- 📝 giao bài về nhà ----------
+// quizHW/{id} = đề không kèm đáp án (học sinh đọc được), quizHWKey/{id} = đáp án (học sinh chỉ đọc được sau khi nộp).
+// Bài nộp ở quizHWSub/{id}_{uid}. Luật Firestore xem firebase/firestore.rules.quiz.txt.
+function hwDialog(q) {
+  if (!q || !(q.qs || []).length) return toast('Bộ câu hỏi trống.');
+  const d = new Date(Date.now() + 7 * 864e5); d.setHours(23, 59, 0, 0);
+  const pad = (n) => String(n).padStart(2, '0'), iso = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T23:59';
+  const ov = document.createElement('div'); ov.className = 'overlay hwov';
+  ov.innerHTML = '<div class="card" style="max-width:520px;width:calc(100% - 32px);color:var(--ink)"><h2 style="margin-top:0">📝 Giao về nhà</h2><p class="muted">' + esc(q.title || '') + ' · ' + q.qs.length + ' câu' + (q.qs.some((x) => x.img) ? ' · <b>bài về nhà không kèm hình</b>' : '') + '</p>' +
+    '<label>Hạn nộp<br><input type="datetime-local" id="hwDue" value="' + iso + '" style="font:inherit;padding:6px"></label>' +
+    '<label style="display:flex;gap:8px;align-items:center;margin:12px 0"><input type="checkbox" id="hwTimed"> Tính giờ từng câu (theo số giây đã đặt cho mỗi câu)</label>' +
+    '<div id="hwOut"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn" id="hwX">Đóng</button><button class="btn pri" id="hwGo">Tạo link</button></div></div>';
+  document.body.appendChild(ov);
+  ov.querySelector('#hwX').onclick = () => ov.remove();
+  ov.querySelector('#hwGo').onclick = async (e) => {
+    const b = e.target, due = new Date(ov.querySelector('#hwDue').value).getTime();
+    if (!due || due < Date.now() + 60000) return toast('Hạn nộp phải ở tương lai.');
+    b.disabled = true; b.textContent = 'Đang tạo…';
+    try {
+      const F = FX.F, ref = F.doc(F.collection(FX.db, 'quizHW')), qs = q.qs.slice(0, 500);
+      await F.setDoc(F.doc(FX.db, 'quizHWKey', ref.id), { c: qs.map((x) => ({ c: (x.c || []).slice(0, 4) })) });
+      await F.setDoc(ref, { title: String(q.title || 'Bài về nhà').slice(0, 120), qz: q.id, lop: quizClass(q), due, timed: ov.querySelector('#hwTimed').checked, n: qs.length,
+        qs: qs.map((x) => ({ t: String(x.t || '').slice(0, 1000), o: (x.o || []).map((o) => String(o || '').slice(0, 500)), time: x.time || 20 })), at: Date.now() });
+      const url = new URL('hw.html?id=' + ref.id, location.href).href;
+      ov.querySelector('#hwOut').innerHTML = '<p>✅ Đã tạo. Gửi link này cho học sinh (hạn ' + esc(new Date(due).toLocaleString('vi-VN')) + '):</p><div class="hwlink"><input readonly value="' + esc(url) + '"><button class="btn sm pri" id="hwCp">Chép</button></div><p class="muted">Xem bài nộp ở <a href="ket-qua.html#hw">Kết quả → Bài về nhà</a>.</p>';
+      ov.querySelector('#hwCp').onclick = () => { navigator.clipboard.writeText(url).then(() => toast('Đã chép link'), () => ov.querySelector('.hwlink input').select()); };
+      b.hidden = true;
+    } catch (x) {
+      console.error(x); b.disabled = false; b.textContent = 'Tạo link';
+      ov.querySelector('#hwOut').innerHTML = '<p class="err">' + (/permission/i.test(x.code || x.message || '') ? 'Firestore chưa cho phép bài về nhà: thầy dán luật mới trong firebase/firestore.rules.quiz.txt (khối quizHW, quizHWKey, quizHWSub) vào Firebase Console → Firestore → Rules rồi thử lại.' : 'Lỗi: ' + esc(x.code || x.message)) + '</p>';
+    }
+  };
 }
 function err(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }
 

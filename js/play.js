@@ -86,6 +86,8 @@ async function join(pin, name, resume) {
   } else name = meS.val().name;
   SS.set('qz.pin', pin); SS.set('qz.name', name);
   try { localStorage.setItem('qz.name', $('name').value.trim().slice(0, 20)); } catch (e) {}
+  // phòng Đào vàng cả lớp: mỗi bạn tự làm, chuyển sang trang riêng
+  if (meta.mode === 'gold') { location.replace('vang.html?pin=' + pin); return; }
   me = { name };
   $('who').textContent = name;
   joined = true;
