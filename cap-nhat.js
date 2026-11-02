@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.17', d: '2026-11-02', items: [
+      '🎵 Nhạc nền theme Thiên thần lặp đoạn ngắn hơn (khoảng 23 giây thay vì 34 giây), chỉ phần dạo đầu nhẹ nhàng, không còn nghe đoạn trống.'
+    ] },
     { v: '1.16', d: '2026-10-31', items: [
       '⛏️ Đào vàng cả lớp: chế độ chơi mới, chọn lúc tạo phòng (hoặc bấm "⛏️ Đào vàng" ở bộ câu hỏi). Mỗi bạn tự trả lời liên tục trên điện thoại, không chờ cả lớp. Đúng được 10 vàng, đúng liên tiếp được nhân vàng: ×1.5 từ chuỗi 3, ×2 từ chuỗi 5, ×3 từ chuỗi 10. Sai thì hiện đáp án đúng vài giây và chuỗi về 0.',
       'Màn chiếu Đào vàng có đồng hồ đếm ngược (mặc định 5 phút, chọn 3–15 phút), bảng vàng top 10 tự đổi chỗ khi có bạn vượt lên, tổng vàng cả lớp; hết giờ hiện bục vinh danh, lưu vào Lịch sử kết quả và tải được CSV.',

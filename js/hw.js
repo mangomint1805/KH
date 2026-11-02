@@ -1,7 +1,7 @@
 /* Minto Quiz — 📝 bài về nhà (màn học sinh, hw.html?id=…).
    Đề ở Firestore quizHW/{id} (không kèm đáp án). Học sinh làm theo tốc độ của mình, nộp một lần vào quizHWSub/{id}_{uid};
    nộp xong mới đọc được đáp án quizHWKey/{id} để xem điểm và xem lại từng câu. */
-import { $, esc, qtHtml, show, player, bgfx, confetti, SDK, SHAPES, LETTERS, CLASSES, classLabel } from './common.js?v=17';
+import { $, esc, qtHtml, show, player, bgfx, confetti, SDK, SHAPES, LETTERS, CLASSES, classLabel } from './common.js?v=18';
 
 const ID = (new URLSearchParams(location.search).get('id') || '').replace(/[^\w-]/g, '').slice(0, 40);
 const LS = { get: (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { localStorage.removeItem(k); } catch (e) {} } };
