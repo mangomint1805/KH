@@ -1,7 +1,7 @@
 /* Minto Quiz — chỉ giao diện sáng */
 :root {
   --paper: #faf8f4; --card: #fff; --line: #e6e0d3; --ink: #1e232b; --dim: #666e7a;
-  --brand: #a8691a; --brand-soft: #f2e2c4; --brand-ink: #6b4410; --red: #b0453a; --red-soft: #f7e3df;
+  --brand: #9a5f14; --brand-soft: #f2e2c4; --brand-ink: #6b4410; --red: #b0453a; --red-soft: #f7e3df;
   --ok: #26890c; --ok-soft: #e3f3dc;
   --k0: #e21b3c; --k1: #0891d1; --k2: #d89e00; --k3: #26890c;
   color-scheme: light;
@@ -85,6 +85,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .hopt.dim { opacity: .28; }
 .hopt .ok { margin-left: auto; font-size: 1.2em; }
 .loading { flex: 1; display: flex; align-items: center; justify-content: center; }
+.loading.err { flex: 0 1 auto; align-self: center; max-width: 440px; margin: 40px auto; padding: 14px 18px; border-radius: 12px; background: var(--card); color: var(--red); font-weight: 600; text-align: center; }
 .prog { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; }
 .prog i { display: block; height: 100%; background: var(--brand); width: 0; transition: width 3s linear; }
 .chart { display: flex; justify-content: center; align-items: flex-end; gap: 22px; height: 190px; }
