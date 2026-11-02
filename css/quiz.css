@@ -464,7 +464,7 @@ html[data-qz=idol] .host .bar .logo::after, html[data-qz=idol] .play .top .logo:
 html[data-qz=idol] :is(.qtext, .joinbar, .pq, .qrov .qrcard) { border-top: 6px solid #39c5bb !important; box-shadow: 0 6px 0 rgba(0,0,0,.18), inset 0 -4px 0 #e12885 !important; }
 html[data-qz=idol] .board2 .r { box-shadow: inset 6px 0 0 #39c5bb, 0 5px 0 rgba(0,0,0,.18); }
 html[data-qz=idol] .board2 .r.first { background: #39c5bb; color: #fff; } html[data-qz=idol] .board2 .r.first .rk, html[data-qz=idol] .board2 .r.first .up, html[data-qz=idol] .board2 .r.first .mv { color: #fff; }
-html[data-qz=idol] .btn.pri { background: #e12885; border-color: #e12885; } html[data-qz=idol] .btn.pri:hover { background: #c41e73; }
+html[data-qz=idol] .btn.pri { background: #d0207a; border-color: #d0207a; } html[data-qz=idol] .btn.pri:hover { background: #c41e73; }
 html[data-qz=idol] .ring .fg { stroke: #39c5bb; } html[data-qz=idol] .ring .bgc { stroke: rgba(255,255,255,.2); }
 html[data-qz=idol] .lobbyrow .brand, html[data-qz=idol] .overlay .t { font-family: "M PLUS Rounded 1c", sans-serif; font-weight: 800; }
 html[data-qz=idol] .lobbyrow .brand::after { content: ' ♪'; color: #ff8fc4; }

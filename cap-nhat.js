@@ -4,7 +4,8 @@
   var NEWS = [
     { v: '1.17.1', d: '2026-11-03', items: [
       'Nút "Vào phòng" và các nút màu cam đậm hơn một chút, chữ trắng trên nút đọc rõ hơn trên điện thoại học sinh.',
-      'Khi mạng lỗi không tải được dịch vụ đăng nhập, thông báo lỗi giờ nằm trong khung trắng dễ đọc thay vì chữ đỏ trên nền tím.'
+      'Khi mạng lỗi không tải được dịch vụ đăng nhập, thông báo lỗi giờ nằm trong khung trắng dễ đọc thay vì chữ đỏ trên nền tím.',
+      'Theme Hành baro: nút chính màu hồng đậm hơn một chút cho chữ trắng đọc rõ.'
     ] },
     { v: '1.17', d: '2026-11-02', items: [
       '🎵 Nhạc nền theme Thiên thần lặp đoạn ngắn hơn (khoảng 23 giây thay vì 34 giây), chỉ phần dạo đầu nhẹ nhàng, không còn nghe đoạn trống.'
