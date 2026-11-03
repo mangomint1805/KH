@@ -2,6 +2,10 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.17.2', d: '2026-11-03', items: [
+      '🔍 Câu hỏi có hình: bấm vào hình, nút 🔍 ở góc hình hoặc phím Z để phóng to toàn màn chiếu. Bấm bất kỳ đâu, Esc hoặc Space để đóng.',
+      '🖼 Màn chữa đáp án có nút "Xem lại ảnh" (hoặc phím Z) để mở lại hình của câu vừa làm khi sửa bài.'
+    ] },
     { v: '1.17.1', d: '2026-11-03', items: [
       'Nút "Vào phòng" và các nút màu cam đậm hơn một chút, chữ trắng trên nút đọc rõ hơn trên điện thoại học sinh.',
       'Khi mạng lỗi không tải được dịch vụ đăng nhập, thông báo lỗi giờ nằm trong khung trắng dễ đọc thay vì chữ đỏ trên nền tím.',

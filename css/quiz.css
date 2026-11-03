@@ -297,6 +297,16 @@ body.play.st-no { background: linear-gradient(160deg, #a11a1a, #d13b3b); }
 .qtext.sm { font-size: clamp(22px, 2.6vw, 38px); padding: 14px 22px; }
 #pics { flex: 1; display: flex; justify-content: center; align-items: center; min-width: 0; }
 #pics .qimg { max-height: 24vh; }
+/* nút phóng to hình + khung xem hình lớn */
+.qzw { position: relative; display: inline-block; max-width: 100%; }
+.qzw .qimg { cursor: zoom-in; }
+.qzoom { position: absolute; right: 8px; bottom: 8px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0,0,0,.62); color: #fff; font-size: 20px; cursor: zoom-in; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.qzoom:hover, .qzoom:focus-visible { background: rgba(0,0,0,.82); outline: 3px solid #fff; outline-offset: 2px; }
+#qzbox { position: fixed; inset: 0; z-index: 9999; background: rgba(10,10,20,.9); display: flex; align-items: center; justify-content: center; cursor: zoom-out; animation: qzIn .15s ease-out; }
+#qzbox img { max-width: 96vw; max-height: 92vh; object-fit: contain; border-radius: 12px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+#qzbox .qzx { position: absolute; top: 16px; right: 20px; width: 52px; height: 52px; border-radius: 50%; border: 0; background: #fff; color: #222; font-size: 24px; font-weight: 700; cursor: pointer; }
+@keyframes qzIn { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { #qzbox { animation: none; } }
 /* ---- tạm dừng ---- */
 .pauseov { background: rgba(20,5,45,.72); }
 .pauseov .pic { font-size: 110px; line-height: 1; }

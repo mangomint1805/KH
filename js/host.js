@@ -14,7 +14,26 @@ function loadImgs() {
   if (!ids.length) return Promise.resolve();
   return window.MACC.fs().then((x) => Promise.all(ids.map((id) => x.F.getDoc(x.F.doc(x.db, 'quizImg', id)).then((d) => { if (d.exists()) IMGS[id] = d.data().d; }).catch((e) => console.warn('img', id, e)))));
 }
-function imgTag(Q, cls) { return Q.img && IMGS[Q.img] ? '<img class="' + cls + '" src="' + IMGS[Q.img] + '" alt="">' : ''; }
+function imgTag(Q, cls) { return Q.img && IMGS[Q.img] ? '<span class="qzw"><img class="' + cls + '" src="' + IMGS[Q.img] + '" alt="Hình câu hỏi" title="Bấm để phóng to"><button type="button" class="qzoom" title="Phóng to (phím Z)" aria-label="Phóng to hình">🔍</button></span>' : ''; }
+// phóng to hình câu hỏi: bấm vào hình / nút 🔍 / phím Z; bấm bất kỳ đâu, Esc, Space hoặc Enter để đóng
+function zoomOpen(src) {
+  if (!src) return; zoomClose();
+  const d = document.createElement('div'); d.id = 'qzbox'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Hình phóng to');
+  d.innerHTML = '<img src="' + src + '" alt="Hình câu hỏi phóng to"><button type="button" class="qzx" aria-label="Đóng">✕</button>';
+  d.onclick = zoomClose; document.body.appendChild(d);
+  // hình nhỏ cũng phóng cho vừa màn chiếu (giữ đúng tỉ lệ)
+  const im = d.querySelector('img'), fit = () => { const w = im.naturalWidth, h = im.naturalHeight; if (!w || !h) return; const k = Math.min(innerWidth * 0.96 / w, innerHeight * 0.92 / h); im.style.width = Math.round(w * k) + 'px'; im.style.height = Math.round(h * k) + 'px'; };
+  if (im.complete) fit(); else im.onload = fit;
+}
+function zoomClose() { const d = document.getElementById('qzbox'); if (d) d.remove(); }
+function curImgSrc() { const i = main && main.querySelector('.qimg'); return i ? i.src : (quiz && state && quiz.qs[state.q] && IMGS[quiz.qs[state.q].img]) || ''; }
+document.addEventListener('click', (e) => {
+  const t = e.target.closest && e.target.closest('.qzoom, .qimg, #bZoom');
+  if (!t) return;
+  if (t.id === 'bZoom') return zoomOpen(t.dataset.src);
+  const w = t.closest('.qzw'), im = w ? w.querySelector('img') : t;
+  if (im && im.src) zoomOpen(im.src);
+});
 // (8) tạm dừng: lúc dừng, state.phase = 'show' nhưng vẫn giữ startAt/endAt (luật cũ chấp nhận, điện thoại không gửi được đáp án).
 // Khoảng dừng lưu trên máy thầy để trừ ra khi tính thời gian trả lời.
 let PZ = {};
@@ -429,8 +448,9 @@ function revealView(q) {
   main.innerHTML = qHead(q) + '<div class="qtext' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' +
-    '<div style="text-align:right"><button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
+    '<div style="text-align:right">' + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = next;
+  if ($('bZoom')) $('bZoom').dataset.src = IMGS[Q.img];
   requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
 }
 
@@ -608,6 +628,8 @@ function csv() {
 document.addEventListener('keydown', (e) => {
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
   if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (document.getElementById('qzbox')) { if (/^( |Enter|Escape|z|Z)$/.test(e.key)) { e.preventDefault(); zoomClose(); } return; }
+  if ((e.key === 'z' || e.key === 'Z') && main && (main.querySelector('.qimg') || $('bZoom'))) { e.preventDefault(); const b = $('bZoom'); zoomOpen(b ? b.dataset.src : curImgSrc()); return; }
   if ((e.key === ' ' || e.key === 'Enter') && PIN && state.phase && state.phase !== 'end') {
     e.preventDefault();
     if (state.phase === 'lobby' && !Object.keys(players).length) return;
