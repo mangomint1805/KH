@@ -18,6 +18,8 @@ Cài đặt Firebase lần đầu: xem [FIREBASE.md](FIREBASE.md).
    - CSV cùng các cột (có hoặc không có dòng tiêu đề, phân cách bằng `,` `;` hoặc tab).
    - Văn bản dạng đề (`.txt`, `.docx`, `.pdf`, hoặc dán thẳng): `1. …` rồi `(A) … (B) …` hoặc `A. …` mỗi dòng một đáp án, dòng `Answer: B` / `Đáp án: B` / `Correct answer: B`. Cũng nhận bảng đáp án ở cuối (`Answer key` rồi `1-B 2-A …`).
 
+   Hoặc bấm **📚 Tạo từ bài học**: chọn khoá (Pre mới / A mới / Pre cũ), chọn bài, số câu, loại câu (từ vựng, loại từ, cụm từ, ngữ pháp, mẹo làm bài), thời gian, trộn câu / đáp án → bản nháp mở ngay trong trang soạn, xem lại rồi Lưu như bộ thường.
+
    File chỉ được đọc trên máy của thầy, không gửi lên đâu. Sau khi đọc, sửa trực tiếp trong bảng: nội dung, đáp án đúng, thời gian (5–240 giây), điểm (thường / gấp đôi / không tính). Câu lỗi được tô đỏ, sửa xong mới lưu được. Có thể thêm, xoá, đổi thứ tự, nhân đôi câu, nhân bản cả bộ, xuất ngược ra Excel mẫu Kahoot.
 2. **Tạo phòng** (`host.html`): chọn bộ, bấm **Tạo phòng**. Màn hình hiện PIN 6 số và QR.
 3. **Chơi:** bấm **Bắt đầu**. Mỗi câu: hiện câu hỏi 3 giây, mở 2–4 ô màu (theo số đáp án của câu) kèm đồng hồ. Hết giờ, cả lớp đã trả lời, hoặc bấm **Bỏ qua** thì khoá và công bố đáp án kèm biểu đồ. Sau đó là bảng xếp hạng top 5.
@@ -56,6 +58,7 @@ hw.html             học sinh bài về nhà js/hw.js
 js/parse.js         đọc Excel / CSV / văn bản đề
 js/common.js        Firebase, đồng hồ máy chủ, âm thanh, tính điểm
 cap-nhat.js         mục "Có gì mới"
+data/bai-hoc/       ngân hàng câu theo bài học (sinh từ test/bai-hoc/*.txt bằng node test/build-bai-hoc.js, đừng sửa tay)
 firebase/           luật Realtime Database và Firestore để dán vào Console
 test/               kiểm thử (bộ đọc câu hỏi, chơi thử cả trận trên Firebase Emulator)
 ```
@@ -68,6 +71,7 @@ Thư viện tải từ CDN, có ghi phiên bản: Firebase 10.12.2, SheetJS 0.18
 
 ```bash
 node test/parse.test.js                       # bộ đọc câu hỏi
+node test/build-bai-hoc.js                    # sinh lại data/bai-hoc/ sau khi sửa test/bai-hoc/*.txt (kiểm tra từng câu)
 node test/build-rules.js                      # ghép luật cho Emulator
 cd test/emu && npx firebase-tools emulators:start --project minto-english
 node test/server.js                           # cửa sổ khác: http://127.0.0.1:8000/KH/

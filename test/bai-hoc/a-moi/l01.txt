@@ -1,0 +1,25 @@
+# title: Listening Unit 1: Accommodation & Restaurant
+# group: Listening
+# src: summary-new/docs/a/listening/unit-01-accommodation-restaurant.html
+v|napkin|Khăn ăn
+v|countertop|Mặt bàn (bếp, quầy)
+v|wipe off|Lau sạch, lau đi
+v|serve|Phục vụ, đưa/mang ra
+v|silverware|Bộ dao, muỗng, nĩa (bằng kim loại)
+v|light fixture|Đèn chùm, thiết bị chiếu sáng gắn cố định
+v|clear away|Dọn dẹp, dọn đi
+v|utensils|Dụng cụ, đồ dùng (nhà bếp/ăn uống)
+v|cashier|Nhân viên thu ngân / Quầy thu ngân
+# hand
+tip|Chiến lược SEA ở Part 1 gồm…|Setting – Entity – Activities|Speak – Eat – Act|Start – End – Answer|See – Erase – Answer
+tip|Bước S (Setting) trong SEA là xác định…|Bối cảnh bức ảnh|Hành động của người|Màu sắc đồ vật|Số người
+tip|Bước A (Activities) trong SEA là xác định…|Hành động / trạng thái|Bối cảnh|Tên đồ vật|Thời tiết
+tip|Tranh: người đàn ông đã đeo kính sẵn. Câu nào đúng?|He's wearing glasses.|He's putting on glasses.|He's removing glasses.|He's cleaning glasses.
+tip|Chỉ chọn "She's pouring water" khi thấy…|Nước đang chảy từ bình vào ly|Một ly nước trên bàn|Cô ấy cầm menu|Bình nước để trống
+tip|Chỉ chọn "He's taking an order" khi thấy…|Nhân viên cầm sổ ghi món, khách đang gọi|Khách đang ăn|Bàn trống|Đầu bếp đang nấu
+tip|Chọn "She's paying for the meal" khi thấy…|Tiền / thẻ / điện thoại đang được đưa|Cô ấy đọc menu|Cô ấy uống nước|Cô ấy lau bàn
+grammar|Tranh không có người: "The table ____ set for dinner."|has been|is being|is setting|have been
+grammar|"A waiter ____ food to the table."|is serving|has been served|is served|serve
+colloc|The waiter is clearing ____ the dishes.|away|on|in|out
+colloc|She is wiping ____ the countertop.|off|out|up to|at
+grammar|Some napkins ____ on the table.|have been placed|are placing|has placed|placing

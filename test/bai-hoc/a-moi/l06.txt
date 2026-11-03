@@ -1,0 +1,25 @@
+# title: Listening Unit 6: Work Issues
+# group: Listening
+# src: summary-new/docs/a/listening/unit-06-work-issues.html
+v|malfunction|Bị lỗi / Sự cố hoạt động (máy móc)
+v|technical glitch|Trục trặc kỹ thuật nhỏ
+v|out of order|Bị hỏng / Không hoạt động (máy móc)
+v|behind schedule|Chậm tiến độ / Trễ so với kế hoạch
+v|miss the deadline|Trễ hạn chót / Trễ thời hạn
+v|understaffed|Thiếu nhân sự / Không đủ nhân viên
+v|heavy workload|Khối lượng công việc lớn / Nặng nề
+v|overlook|Bỏ qua / Bỏ sót
+v|misplace|Để không đúng nơi / Làm thất lạc
+v|scheduling conflict|Trùng lịch trình / Xung đột lịch làm việc
+# hand
+tip|Part 4: câu mở đầu "Attention, passengers…" là loại bài…|Thông báo công cộng|Quảng cáo|Lời nhắn thoại|Phát biểu
+tip|Câu "Hi, this message is for…" là loại bài…|Lời nhắn thoại|Bản tin|Quảng cáo|Bài phát biểu
+tip|Top-Down: đi theo thứ tự nào?|Ý chính → chi tiết → việc tiếp theo|Chi tiết → ý chính → kết|Cuối → giữa → đầu|Ngẫu nhiên
+tip|"What problem does the speaker mention?" thường nghe từ tín hiệu…|Unfortunately… / I'm afraid…|Welcome…|Thank you…|Hello…
+colloc|The printer is out of ____.|order|work|running|function
+colloc|The project is behind ____.|schedule|time|deadline|late
+colloc|We are ____, so we need new staff.|understaffed|overstaffed|staffing|staffed out
+colloc|I ____ my keys. I can't find them.|misplaced|overlooked|malfunctioned|missed out
+colloc|There is a scheduling ____ on Monday.|conflict|conflicts with|confuse|contact
+colloc|I have a heavy ____ this week.|workload|workloads on|working|worker
+grammar|If we miss the ____, the client will be upset.|deadline|dead|deadly|deadlines

@@ -1,0 +1,30 @@
+# title: Listening Unit 3: Part 2 – Information Questions (1)
+# group: Listening
+# src: summary-old/docs/listening/unit-03-information-questions-1.html
+v|Receptionist (n)|Nhân viên lễ tân
+v|Supervisor (n)|Người giám sát
+v|Accountant (n)|Kế toán viên
+v|Manager (n)|Quản lý
+v|Secretary (n)|Thư ký
+v|Vice President (n)|Phó chủ tịch
+v|Accounting department (n)|Phòng kế toán
+v|Personnel department (n)|Phòng nhân sự
+v|Purchasing department (n)|Phòng mua hàng
+v|Marketing department (n)|Phòng tiếp thị
+v|Sales department (n)|Phòng kinh doanh
+v|Sunny (adj)|Nhiều nắng
+v|Foggy (adj)|Sương mù
+v|Rainy (adj)|Nhiều mưa
+v|Snowy (adj)|Có tuyết
+# hand
+tip|"Who" hỏi về…|Người (tên, chức vụ, phòng ban)|Thời gian|Nơi chốn|Lý do
+tip|"Who is the new manager?" Đáp án hợp lý?|Mr. Tan from Sales.|Yes, he is.|At 10 a.m.|In the meeting room.
+tip|"Who should I give this to?" Đáp án hợp lý?|The Personnel department.|Yes, please.|By Monday.|It's a gift.
+tip|"What's the weather like today?" Đáp án hợp lý?|It's sunny and warm.|At the weather station.|Yes, it's fine with me.|I like weather.
+tip|"Which room is the meeting in?" Đáp án hợp lý?|The one on the 3rd floor.|At 3 p.m.|Ms. Kim will.|Yes, it is.
+tip|"What time does the bank close?" Đáp án hợp lý?|At 4:30.|Near the station.|It's closed.|I closed it.
+tip|Mẹo loại trừ Part 2: đáp án có từ phát âm giống từ trong câu hỏi thường…|Sai|Đúng|Hay nhất|Không xuất hiện
+tip|Câu hỏi "Which…?" đáp án thường có…|"The one…"|"Yes / No"|"Because…"|Một con số giờ
+colloc|The ____ department handles hiring. (phòng nhân sự)|Personnel|Purchasing|Accounting|Marketing
+colloc|The ____ department buys supplies. (phòng mua hàng)|Purchasing|Personnel|Sales|Accounting
+form|"accountant" là…|Kế toán viên (người)|Ngành kế toán|Tài khoản|Kế toán (động từ)

@@ -1,0 +1,33 @@
+# title: Reading Unit 12: Agreement
+# group: Reading
+# src: summary-old/docs/reading/unit-12-agreement.html
+v|Lay off (phrasal v)|Sa thải
+v|Social benefit (n.p)|Lợi ích xã hội
+v|Suffer from (v.p)|Bị, chịu (bệnh, khó khăn)
+v|Seek (v)|Tìm kiếm
+v|Politics (n)|Chính trị
+v|Contain (v)|Chứa đựng
+v|Housekeeper (n)|Quản gia, người giúp việc nhà
+v|Workload (n)|Khối lượng công việc
+v|Side effect (n.p)|Tác dụng phụ
+v|Exhausted (adj)|Kiệt sức
+v|Reserve (v)|Đặt trước (phòng, bàn); dự trữ
+v|Registration (n)|Sự đăng ký
+v|Inconvenience (n)|Sự bất tiện
+v|Malfunction (n)|Sự trục trặc, lỗi
+v|Inevitable (adj)|Không thể tránh khỏi
+v|Disability (n)|Sự khuyết tật
+v|Maintenance (n)|Sự bảo trì, bảo dưỡng
+# hand
+grammar|The staff ____ working overtime.|are|is|was being|has
+grammar|Each housekeeper ____ a key.|has|have|having|are having
+grammar|The number of applicants ____ increasing.|is|are|were|have
+grammar|A number of employees ____ laid off.|were|was|has|is
+grammar|Politics ____ an interesting subject.|is|are|were|have
+grammar|Maintenance ____ every month.|is done|are done|do|doing
+grammar|Many ____ suffered from side effects.|patients|patient|patience|a patient
+grammar|Much ____ was caused by the malfunction.|inconvenience|inconveniences|inconvenient|inconveniently
+grammar|She said that she ____ exhausted.|was|is being|will|be
+tip|Chủ ngữ là V-ing / To V → động từ chia…|Số ít|Số nhiều|Nguyên mẫu|V3
+tip|"The number of + N số nhiều" → động từ…|Số ít|Số nhiều|Nguyên mẫu|V-ing
+tip|"A number of + N số nhiều" → động từ…|Số nhiều|Số ít|Nguyên mẫu|V-ing

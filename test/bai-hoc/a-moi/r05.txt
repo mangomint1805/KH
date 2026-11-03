@@ -1,0 +1,26 @@
+# title: Reading Unit 5: Investment
+# group: Reading
+# src: summary-new/docs/a/reading/unit-05-investment.html
+v|Financial|Tài chính
+v|Portfolio|Danh mục đầu tư
+v|Analyst|Chuyên viên phân tích
+v|Client|Khách hàng
+v|Collaborate|Hợp tác
+v|Stock market|Thị trường chứng khoán
+v|Advisor|Cố vấn
+v|Arrange a meeting|Sắp xếp một cuộc họp
+v|Bankrupt|Phá sản
+# hand
+grammar|The analyst ____ wrote the report is here.|who|which|whose|where
+grammar|The fund ____ we invested in is growing.|which|who|whose|where
+grammar|Ms. Lee is the advisor ____ client went bankrupt.|whose|who|which|whom
+grammar|This is the bank ____ I opened my account.|where|which|who|whose
+grammar|The man ____ you met yesterday is our advisor.|whom|whose|where|which he
+grammar|The report ____ by the analyst is clear.|written|writing|wrote|writes
+grammar|Investors ____ in tech stocks made a profit.|investing|invested|invest|investment
+grammar|The meeting ____ for Monday was canceled.|arranged|arranging|arranges|arrange
+tip|Rút gọn mệnh đề quan hệ: nghĩa chủ động dùng…|V-ing|V3|to be|which
+tip|Rút gọn mệnh đề quan hệ: nghĩa bị động dùng…|V3|V-ing|to V|who
+tip|Câu hỏi "What is suggested about…?" là dạng…|Suy luận (Inference)|Ý chính|Từ đồng nghĩa|Điền câu
+tip|Suy luận Part 7: mọi suy luận phải dựa vào…|Thông tin có trong bài|Kiến thức riêng|Đáp án dài nhất|Đoán
+form|"collaborate" → danh từ là?|collaboration|collaborative|collaborately|collaborated

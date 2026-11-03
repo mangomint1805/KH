@@ -1,0 +1,37 @@
+# title: Reading Unit 9: Prepositions
+# group: Reading
+# src: summary-old/docs/reading/unit-09-prepositions.html
+v|Exhibition (n)|Triển lãm
+v|Safety (n)|Sự an toàn
+v|Inspection (n)|Sự kiểm tra
+v|Postpone (v)|Trì hoãn
+v|Chief financial officer (n)|Giám đốc tài chính
+v|Banquet (n)|Bữa tiệc lớn, yến tiệc
+v|Caterer (n)|Người / công ty cung cấp đồ ăn (cho tiệc, sự kiện)
+v|Except (prep)|Ngoại trừ
+v|Noon (n)|Buổi trưa
+v|Export (n,v)|Xuất khẩu, xuất
+v|Spread (v)|Lây lan, lan tỏa
+v|Register (v)|Đăng ký
+v|Burglar (n)|Tên trộm
+v|Resign (v)|Từ chức
+v|Debt (n)|Khoản nợ
+v|Ship (v)|Vận chuyển, gửi hàng
+v|Construction (n)|Sự xây dựng, công trình xây dựng
+v|Delay (n,v)|(Sự) trì hoãn, chậm trễ
+v|Locate (v)|Xác định vị trí; đặt ở (be located in = nằm ở)
+v|Renovation (n)|Sự cải tạo, sửa sang (nhà cửa, tòa nhà)
+v|Promise (v)|Hứa
+# hand
+grammar|The exhibition opens ____ Monday.|on|in|at|since
+grammar|The inspection is ____ noon.|at|on|in|during
+grammar|The banquet will be held ____ December.|in|on|at|by
+grammar|The store is closed ____ the renovation.|during|while|when|for while
+grammar|Please register ____ next Friday. (muộn nhất)|by|until|for|since
+grammar|I have worked here ____ five years.|for|since|during|in
+grammar|Everyone came ____ Tom.|except|exception|excepted|unless
+grammar|The office is located ____ the bank and the post office.|between|among|across|through
+grammar|We shipped the goods ____ air.|by|with|on|in
+grammar|____ the delay, the construction finished on time.|Despite|Although|Even though|Because
+tip|Giới từ (despite, because of) + …, liên từ (although, because) + …|Danh từ / mệnh đề|Mệnh đề / danh từ|Cả hai + V|Cả hai + to V
+colloc|The burglar was ____ by the police.|caught|catched|catch|catching

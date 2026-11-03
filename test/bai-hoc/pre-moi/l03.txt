@@ -1,0 +1,25 @@
+# title: Listening Unit 3: Part 2 – Information Questions
+# group: Listening
+# src: summary-new/docs/listening/unit-03-information-questions.html
+v|urgent|khẩn cấp, gấp
+v|cut down on|cắt giảm (chi phí, số lượng…)
+v|go over|xem lại, rà soát (tài liệu, báo cáo)
+v|malfunction|sự trục trặc, hỏng hóc (máy móc, hệ thống)
+v|conference|hội nghị
+v|decline|sự sụt giảm; giảm xuống
+# hand
+tip|Part 2 có bao nhiêu câu?|25 câu|6 câu|39 câu|30 câu
+tip|Part 2: câu hỏi Wh- mà đáp án bắt đầu bằng "Yes / No" thì…|Thường sai, loại ngay|Luôn đúng|Chọn ngay|Chỉ đúng với Why
+tip|Đáp án lặp lại y nguyên từ trong câu hỏi thường…|Là bẫy, dễ sai|Luôn đúng|Chỉ đúng ở câu Who|Là đáp án hay nhất
+tip|"Who is in charge of the event?" Đáp án hợp lý nhất?|Ms. Kim from Marketing.|Yes, it is.|At 3 o'clock.|In the main hall.
+tip|"When will the conference start?" Đáp án hợp lý nhất?|Next Monday morning.|In Room 5.|Mr. Lee did.|Because it's urgent.
+tip|"Where is the finance report?" Đáp án hợp lý nhất?|On your desk.|Yesterday.|It's very long.|Yes, I wrote it.
+tip|"Why was the meeting postponed?" Đáp án hợp lý nhất?|Because the manager is sick.|In the afternoon.|Room 302.|Yes, it was.
+tip|"How long does the trip take?" Đáp án hợp lý nhất?|About two hours.|By bus.|Every Monday.|It's my trip.
+tip|"Which printer should I use?" Đáp án hợp lý nhất?|The one by the window.|Yes, you should.|At noon.|Mr. Park printed it.
+tip|"What time does the store open?" Đáp án hợp lý nhất?|At 9 a.m.|At the corner.|A new store.|Yes, it does.
+tip|"I don't know" / "Let me check" trong Part 2 thường…|Là đáp án đúng|Luôn sai|Chỉ đúng với câu Yes/No|Không bao giờ xuất hiện
+grammar|"How ____ does the ticket cost?"|much|many|long|often
+grammar|"How ____ do you visit the branch?" – Twice a month.|often|long|much|far
+colloc|We need to ____ down on costs.|cut|go|take|look
+colloc|Can you go ____ the report with me?|over|on|off|in

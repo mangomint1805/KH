@@ -1,0 +1,31 @@
+# title: Reading Unit 5: Participles
+# group: Reading
+# src: summary-new/docs/reading/unit-05-participles.html
+v|Warehouse|Nhà kho
+v|Equipment|Trang thiết bị
+v|Goods|Hàng hóa
+v|Barcode|Mã vạch
+v|Labels|Nhãn mác
+v|Storage area|Khu vực lưu trữ hàng hoá
+v|Technician|Kỹ thuật viên
+v|Logistics|Hậu cần (vận chuyển, kho bãi)
+v|Damage|Làm hư hại
+v|Scan|Quét (mã)
+v|Report|Báo cáo
+v|Ensure|Đảm bảo
+v|Unload|Dỡ hàng (xuống xe)
+v|Clear|Dọn sạch
+# hand
+grammar|The ____ goods were sent back.|damaged|damaging|damage|damages
+grammar|The news was very ____.|surprising|surprised|surprise|surprises
+grammar|I was ____ with the result.|satisfied|satisfying|satisfy|satisfaction
+grammar|The man ____ the goods is our technician.|unloading|unloaded|unloads|unload
+grammar|The labels ____ on the boxes are new.|placed|placing|place|places
+grammar|Please read the ____ instructions.|attached|attaching|attach|attaches
+grammar|The movie was ____, so I fell asleep.|boring|bored|bore|bores
+tip|V-ing (phân từ hiện tại) mang nghĩa…|Chủ động (tự làm / gây ra cảm xúc)|Bị động (bị / được)|Quá khứ|Tương lai
+tip|V-ed / V3 (phân từ quá khứ) mang nghĩa…|Bị động (bị / được) hoặc cảm thấy|Chủ động|Đang làm|Sắp làm
+tip|Người cảm thấy chán → dùng…|bored|boring|bore|boredom
+form|"logistics" nghĩa là?|Hậu cần (vận chuyển, kho bãi)|Hợp đồng|Chi nhánh|Lương thưởng
+colloc|Please scan the ____ on each box.|barcode|barcoding|bar|code bar
+colloc|Please ____ the storage area before 5 p.m.|clear|clean up to|clearing|cleared

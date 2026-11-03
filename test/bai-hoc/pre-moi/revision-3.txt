@@ -1,0 +1,27 @@
+# title: Weekly Revision 3
+# group: Weekly Revision
+# src: summary-new/docs/weekly/revision-3.html
+v|deadline|hạn chót, thời hạn
+v|productive|năng suất, hiệu quả
+v|meeting|cuộc họp
+v|office|văn phòng
+v|break down|bị hỏng, gặp sự cố
+v|fix|sửa chữa
+v|storage area|khu vực lưu trữ
+v|technician|kỹ thuật viên
+v|goods|hàng hóa
+v|equipment|thiết bị
+v|warehouse|nhà kho
+v|report|báo cáo
+# hand
+grammar|The ____ equipment was fixed by the technician.|broken|breaking|break|breaks
+grammar|The goods ____ in the warehouse are new.|stored|storing|store|stores
+grammar|The deadline is ____, so let's hurry.|approaching|approached|approach|approaches
+grammar|The staff were ____ by the news.|shocked|shocking|shock|shocks
+grammar|The meeting was ____ productive.|very|much|more|many
+grammar|The machine broke down, ____ we called a technician.|so|but|or|because
+grammar|____ the delay, we finished on time.|Despite|Although|Because|However
+grammar|The goods will arrive ____ Monday.|on|in|at|for
+grammar|The report is due ____ the end of the month.|at|on|in|for
+tip|Tranh: thùng hàng ĐÃ được chất lên kệ. Câu nào đúng?|Boxes have been stacked on shelves.|A man is stacking boxes.|Boxes are being stacked.|They are buying boxes.
+colloc|Can you ____ the printer? It's broken.|fix|fixing|fixed|fixes

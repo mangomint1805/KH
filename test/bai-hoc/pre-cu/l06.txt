@@ -1,0 +1,37 @@
+# title: Listening Unit 6: Part 2 – Other Question Types
+# group: Listening
+# src: summary-old/docs/listening/unit-06-other-question-types.html
+v|Launch (v)|Ra mắt (sản phẩm)
+v|Advertise (v)|Quảng cáo
+v|Complimentary (adj)|Miễn phí
+v|On the market (phr)|Có mặt trên thị trường
+v|Evaluation (n)|Sự đánh giá
+v|Distribute leaflets (phr)|Phát tờ rơi
+v|Customer survey (phr)|Khảo sát khách hàng
+v|Memo (n)|Bản ghi nhớ
+v|Company banquet (phr)|Tiệc công ty
+v|Fax machine (phr)|Máy fax
+v|Announce (v)|Thông báo
+v|Contest winner (phr)|Người chiến thắng cuộc thi
+v|Go to the concert (phr)|Đi đến buổi hòa nhạc
+v|Work properly (phr)|Hoạt động tốt
+v|Go on vacation (phr)|Đi nghỉ
+v|Finish in time (phr)|Kết thúc đúng hạn
+v|Take a taxi (phr)|Bắt xe taxi
+v|Place the order (phr)|Đặt hàng
+v|Sales representative (n)|Đại diện bán hàng
+v|Win the competition (phr)|Chiến thắng cuộc thi
+v|Be away on business (phr)|Đi công tác xa
+v|Promote a product (phr)|Quảng bá sản phẩm
+# hand
+grammar|"____ you going to the concert?" – Yes, I am.|Aren't|Don't|Didn't|Won't
+grammar|"The fax machine works, ____?"|doesn't it|isn't it|does it|won't it
+grammar|"You've met Ms. Lee, ____?"|haven't you|didn't you|don't you|aren't you
+grammar|"Do you know ____?"|who won the contest|who did win the contest|won who the contest|who the contest win
+tip|Câu hỏi phủ định "Didn't you go on vacation?" – Nếu CÓ đi, trả lời…|Yes, I went to Bali.|No, I went to Bali.|No, I did.|Yes, I didn't.
+tip|Câu hỏi đuôi: trả lời giống như câu hỏi…|Khẳng định bình thường|Phủ định ngược nghĩa|Lựa chọn|Câu Who
+tip|"Should I call or email the client?" Đáp án hợp lý?|Calling is faster.|Yes, you should.|Two clients.|At the office.
+tip|Câu hỏi "Or" thường KHÔNG trả lời bằng…|Yes / No|Chọn 1 trong 2|"Either is fine"|"Neither"
+colloc|The new phone is now ____ the market.|on|in|at|for
+colloc|The drinks at the event are ____. (miễn phí)|complimentary|complementary|compliment|completed
+colloc|Mr. Kim is away ____ business.|on|in|at|for

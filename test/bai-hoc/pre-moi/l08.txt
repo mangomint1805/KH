@@ -1,0 +1,30 @@
+# title: Listening Unit 8: Part 4 – Telephone Messages & Advertisements
+# group: Listening
+# src: summary-new/docs/listening/unit-08-telephone-messages-advertisements.html
+v|purchase|mua, sự mua hàng
+v|computer accessories|phụ kiện máy tính
+v|be on sale|được giảm giá, đang khuyến mãi
+v|external hard drive|ổ cứng ngoài
+v|wireless mouse|chuột không dây
+v|knowledgeable professional|chuyên viên am hiểu
+v|give out a special gift|phát / tặng một món quà đặc biệt
+v|grab deals|chớp lấy ưu đãi
+v|mortgage|khoản vay thế chấp
+v|interest|lãi suất; tiền lãi
+v|return|trả lại; gọi lại (return a call)
+v|on the line|đang ở đầu dây (điện thoại); stay on the line = giữ máy
+v|get to you|liên lạc với bạn; đến được với bạn
+v|a representative|người đại diện; nhân viên (tổng đài, chăm sóc khách hàng)
+# hand
+tip|Part 4 khác Part 3 ở điểm nào?|Chỉ có 1 người nói|Có tranh|Có 4 người nói|Không có câu hỏi
+tip|Part 4 có bao nhiêu câu hỏi?|30 câu|39 câu|25 câu|6 câu
+tip|Lời nhắn "I'm calling about…" cho biết…|Lý do gọi điện|Số điện thoại|Tên công ty|Giờ làm việc
+tip|Nghe "Could you…? / Please…" thường để trả lời câu hỏi…|Người nói yêu cầu gì|Người nói là ai|Người nói ở đâu|Chủ đề chính
+tip|Quảng cáo thường nói gì ở cuối bài?|Ưu đãi, cách liên hệ, hạn dùng|Tên người nghe|Giá cổ phiếu|Thời tiết
+tip|Câu hỏi "What is being advertised?" hỏi về…|Sản phẩm / dịch vụ được quảng cáo|Tên người nói|Giờ mở cửa|Địa chỉ
+colloc|All computer accessories are ____ sale this week.|on|in|at|for
+colloc|Please stay ____ the line.|on|in|at|with
+colloc|I'll return your ____ tomorrow.|call|calling|phone line|ring line
+colloc|A ____ will be with you shortly. (nhân viên tổng đài)|representative|represent|representing|representation
+colloc|Hurry in and ____ these great deals!|grab|hold up|catch on|take off
+form|"purchase" có thể là…|Động từ và danh từ|Chỉ tính từ|Chỉ trạng từ|Chỉ giới từ

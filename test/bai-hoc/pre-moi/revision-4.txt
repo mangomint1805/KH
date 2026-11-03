@@ -1,0 +1,27 @@
+# title: Weekly Revision 4
+# group: Weekly Revision
+# src: summary-new/docs/weekly/revision-4.html
+v|interview|cuộc phỏng vấn
+v|require|yêu cầu
+v|further information|thông tin chi tiết hơn
+v|working experience|kinh nghiệm làm việc
+v|job duties|nhiệm vụ công việc
+v|candidate|ứng viên
+v|office assistant|trợ lý văn phòng
+v|training program|chương trình đào tạo
+v|take part in|tham gia vào
+v|provide resume|nộp sơ yếu lý lịch / CV
+v|teamwork|làm việc nhóm
+# hand
+grammar|The candidate ____ good working experience.|has|have|having|are
+grammar|Each candidate ____ an interview.|needs|need|needing|are needing
+grammar|The job duties ____ listed in the email.|are|is|was|be
+grammar|Neither the assistant nor the managers ____ here.|are|is|was|has
+grammar|Many ____ applied for the job.|candidates|candidate|candidacy|a candidate
+grammar|Much ____ is required for this job.|experience|experiences|experienced|experiencing
+grammar|Every employee must bring ____ own laptop.|his or her|their own|its|our
+grammar|The company announced ____ new training program.|its|it's|their|it
+grammar|Working in a team ____ important.|is|are|were|be
+tip|Chủ ngữ là "Each / Every + N" → động từ chia…|Số ít|Số nhiều|Nguyên mẫu|V-ing
+tip|"a few / many" đi với…|Danh từ đếm được số nhiều|Danh từ không đếm được|Danh từ số ít|Động từ
+colloc|Please provide your ____ before Friday.|resume|resumes it|resuming|resumed

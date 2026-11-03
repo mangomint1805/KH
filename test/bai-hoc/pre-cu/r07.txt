@@ -1,0 +1,35 @@
+# title: Reading Unit 7: Participles
+# group: Reading
+# src: summary-old/docs/reading/unit-07-participles.html
+v|Evaluation (n)|Sự đánh giá
+v|Policy (n)|Chính sách
+v|Launch (v)|Ra mắt, khởi động, khai trương
+v|Publish (v)|Xuất bản
+v|Existing (adj)|Hiện có
+v|Missing (adj)|Bị thiếu, bị mất
+v|Enclosed (adj)|Được đính kèm
+v|Limited (adj)|Có giới hạn
+v|Campaign (n)|Chiến dịch
+v|Incentives (n)|Khoản thưởng, ưu đãi (để khuyến khích)
+v|Manual (adj)|Thủ công, làm bằng tay
+v|Branch (n)|Chi nhánh
+v|Place (v)|Đặt (đơn hàng), đặt để
+v|Regulation (n)|Quy định
+v|Announce (v)|Thông báo
+v|Prove (v)|Chứng minh
+v|Academic (adj)|Thuộc học thuật, lý thuyết
+v|Charity (n)|Từ thiện
+v|Satisfactory (adj)|Thỏa đáng, đạt yêu cầu
+v|Reasonable (adj)|Hợp lý, phải chăng
+# hand
+grammar|Please read the ____ document.|enclosed|enclosing|enclose|encloses
+grammar|We found the ____ files.|missing|missed|miss|misses
+grammar|The offer is for a ____ time only.|limited|limiting|limit|limits
+grammar|The ____ policy will change soon.|existing|existed|exist|exists
+grammar|The results were ____.|satisfactory|satisfy|satisfaction|satisfactorily
+grammar|The book ____ last year is popular.|published|publishing|publish|publishes
+grammar|____ the order, she left the store.|Having placed|Placed|Being placed|Place
+grammar|____ in 1990, the branch is very old.|Built|Building|Build|Builds
+grammar|I was ____ by the long meeting.|tired|tiring|tire|tires
+tip|Phân từ đứng sau danh từ nghĩa bị động → chọn…|V3 / V-ed|V-ing|to V|V nguyên mẫu
+tip|Cụm phân từ: chủ ngữ của cụm phải là…|Chủ ngữ của mệnh đề chính|Bất kỳ ai|Tân ngữ|Người nói

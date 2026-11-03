@@ -45,7 +45,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .qe .hd { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .qe .num { font-weight: 700; color: var(--brand-ink); min-width: 2.2em; }
 .qe textarea { width: 100%; resize: vertical; min-height: 44px; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 8px; background: #fff; }
-.qe .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.qe .opts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
+#qs, .qe { grid-template-columns: minmax(0, 1fr); } .qe { min-width: 0; }
 .qe .opt { display: flex; align-items: center; gap: 6px; border-radius: 8px; padding: 4px 6px 4px 4px; color: #fff; }
 .qe .opt input[type=text] { flex: 1; min-width: 0; border: 0; border-radius: 6px; padding: 6px 8px; background: rgba(255,255,255,.95); color: var(--ink); }
 .qe .opt label { display: flex; align-items: center; gap: 4px; font-size: 13px; white-space: nowrap; cursor: pointer; }
@@ -53,7 +54,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .qe .long { outline: 2px solid var(--red); }
 .qe .msg { font-size: 13.5px; }
 .qe select { padding: 5px 6px; border-radius: 8px; border: 1.5px solid var(--line); background: #fff; }
-@media (max-width: 640px) { .qe .opts { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .qe .opts { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- màn host ---------- */
 .host { min-height: 100vh; display: flex; flex-direction: column; }
@@ -683,3 +684,11 @@ html[data-qz=y2k] .podium .p .blk { font-size: 80px; }
 .hwtab .y { color: var(--ok); font-weight: 700; } .hwtab .x { color: var(--red); }
 .hwlink { display: flex; gap: 8px; } .hwlink input { flex: 1; font: inherit; padding: 8px; }
 .hwov .card { text-align: left; }
+.bhov .card { max-width: 560px; width: calc(100% - 32px); max-height: calc(100vh - 32px); overflow: auto; color: var(--ink); }
+.bh-row { display: grid; gap: 6px; margin: 12px 0; }
+.bh-row select { font: inherit; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); width: 100%; min-width: 0; }
+.bh-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.bh-kinds { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.bh-kinds label, .bh-ck { display: inline-flex; gap: 6px; align-items: center; margin-right: 16px; }
+.bh-act { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 14px; }
+@media (max-width: 520px) { .bh-2 { grid-template-columns: 1fr; } }

@@ -1,0 +1,31 @@
+# title: Reading Unit 4: Active & Passive Voice
+# group: Reading
+# src: summary-old/docs/reading/unit-04-active-passive-voice.html
+v|Promote (v)|Thăng chức, quảng bá
+v|Fix (v)|Sửa chữa
+v|Submit (v)|Gửi
+v|Handle (v)|Xử lý
+v|Involved (adj)|Có liên quan
+v|Interested (adj)|Quan tâm
+v|Worried (adj)|Lo lắng
+v|Concerned (adj)|Lo ngại, lo lắng
+v|Dedicated (adj)|Tận tụy, dành riêng
+v|Satisfied (adj)|Hài lòng
+v|Delighted (adj)|Vui mừng
+v|Conference (n)|Hội nghị
+v|Accountant (n)|Kế toán
+v|Procedure (n)|Thủ tục
+# hand
+grammar|The machine ____ yesterday.|was fixed|fixed|has fix|is fixing
+grammar|The report must ____ by Friday.|be submitted|submit|submitted|be submitting
+grammar|Tom ____ to manager last month.|was promoted|promoted|has promoted|is promoting
+grammar|The complaint is being ____ now.|handled|handling|handle|handles
+grammar|The new procedure ____ next week.|will be introduced|will introduce|introduced|is introducing
+tip|Câu bị động với động từ khiếm khuyết: can / must + …|be + V3|V3|been + V-ing|to be V
+tip|Sau chỗ trống có tân ngữ (danh từ) → thường chọn…|Chủ động|Bị động|Tính từ|Danh từ
+colloc|I am interested ____ the conference.|in|on|at|for
+colloc|We are pleased ____ the result.|with|on|at|in
+colloc|She is accustomed ____ working late.|to|with|for|on
+colloc|He is dedicated ____ his job.|to|for|with|on
+colloc|They are concerned ____ the cost.|about|on|at|in
+colloc|The accountant is involved ____ the project.|in|on|at|of

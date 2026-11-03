@@ -1,0 +1,52 @@
+# title: Reading Unit 5–6: To-infinitives & Gerunds
+# group: Reading
+# src: summary-old/docs/reading/unit-05-to-infinitives-gerunds.html
+v|Afford (v)|Có thể chi trả được, đủ khả năng
+v|Attempt (v)|Cố gắng, thử
+v|Renew (v)|Gia hạn, làm mới
+v|Contract (n)|Hợp đồng
+v|Appointment (n)|Sự hẹn gặp, sự bổ nhiệm
+v|Advise (v)|Khuyên bảo
+v|Encourage (v)|Khuyến khích
+v|Benefit (n)|Lợi ích
+v|Government (n)|Chính phủ
+v|Provide (v)|Cung cấp
+v|Tax (n)|Thuế
+v|Alcohol (n)|Đồ uống có cồn
+v|Unhealthy (adj)|Không lành mạnh, có hại cho sức khỏe
+v|Basic (adj)|Cơ bản
+v|Economics (n)|Kinh tế học
+v|Effort (n)|Sự nỗ lực
+v|Headquarters (n)|Trụ sở chính
+v|City council (n)|Hội đồng thành phố
+v|Convert (v)|Đổi, biến đổi
+v|Foreign (adj)|(Thuộc) nước ngoài
+v|Patience (n)|Sự kiên nhẫn
+v|Comic (adj)|Hài hước; comic book: truyện tranh
+v|Fund (v)|Tài trợ, cấp tiền
+v|Nonprofit (n)|Tổ chức phi lợi nhuận
+v|Efficiently (adv)|Một cách có hiệu quả
+v|Instead of (prep)|Thay vì
+v|Overtime (n)|Giờ làm thêm
+v|Fed up (adj)|Chán nản
+v|Elderly (adj)|Cao tuổi (the elderly: người cao tuổi)
+v|Retire (v)|Nghỉ hưu
+v|Postpone (v)|Trì hoãn
+v|Fresh (adj)|Tươi, mới
+v|Capable (adj)|Có khả năng
+v|Reporter (n)|Phóng viên
+v|Technician (n)|Kỹ thuật viên
+v|Error (n)|Lỗi, sai lầm
+# hand
+grammar|We can't afford ____ a new car.|to buy|buying|buy|bought
+grammar|She decided ____ the contract.|to renew|renewing|renew|renewed
+grammar|The manager advised us ____ early.|to come|coming|come|came
+grammar|They enjoy ____ for nonprofits.|working|to work|work|worked
+grammar|He finished ____ the error.|fixing|to fix|fix|fixed
+grammar|I'm fed up with ____ overtime.|working|to work|work|worked
+grammar|____ too much alcohol is unhealthy.|Drinking|Drink|Drunk|To drinking
+grammar|Instead of ____, he retired.|working|to work|work|worked
+grammar|We made an effort ____ costs.|to cut|cutting|cut|cuts
+tip|"look forward to, be used to" + …|V-ing|to V|V nguyên mẫu|V3
+tip|"encourage / advise / allow + O + …"|to V|V-ing|V nguyên mẫu|V3
+colloc|The reporter is capable ____ writing fast.|of|to|for|in

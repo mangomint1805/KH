@@ -7,15 +7,15 @@
 <title>Minto Quiz · Bộ câu hỏi</title>
 <link rel="icon" type="image/png" href="/fav-64.png?v=3">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/quiz.css?v=26">
+<link rel="stylesheet" href="css/quiz.css?v=27">
 </head>
 <body>
   <div class="bar"><a class="logo" href="admin.html">Minto Quiz</a><span class="muted">Bộ câu hỏi</span><span class="sp"></span><button class="btn sm" id="bNews" hidden>✨ Có gì mới</button><a class="btn sm" href="ket-qua.html">📒 Lịch sử kết quả</a><a class="btn sm" href="host.html">Màn host ▶</a></div>
   <div class="wrap" id="app"><div class="muted">Đang tải…</div></div>
 
   <template id="tList">
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1 style="margin:0;flex:1">Bộ câu hỏi của thầy</h1><button class="btn pri" id="bNew">+ Bộ mới</button></div>
-    <p class="muted">Tạo bộ mới bằng cách tải file Excel mẫu Kahoot, CSV, Word, PDF hoặc dán văn bản đề. Bộ câu hỏi lưu trên Firebase, chỉ tài khoản giáo viên đọc được.</p>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1 style="margin:0;flex:1">Bộ câu hỏi của thầy</h1><button class="btn" id="bLesson" title="Soạn sẵn bản nháp từ nội dung một bài học">📚 Tạo từ bài học</button><button class="btn pri" id="bNew">+ Bộ mới</button></div>
+    <p class="muted">Tạo bộ mới bằng cách tải file Excel mẫu Kahoot, CSV, Word, PDF, dán văn bản đề, hoặc bấm <b>📚 Tạo từ bài học</b> để có sẵn bản nháp theo bài. Bộ câu hỏi lưu trên Firebase, chỉ tài khoản giáo viên đọc được.</p>
     <div id="list" class="qlist"></div>
     <h2 style="margin:28px 0 4px">🎵 Nhạc theme</h2>
     <p class="muted" style="margin-top:0">Bài nhạc nền cho từng theme trên màn chiếu. File nhạc lưu trên Firebase, chỉ tài khoản giáo viên nghe được (không để công khai trên GitHub). Theme chưa có nhạc thì dùng nhạc tự tạo.</p>
@@ -49,7 +49,7 @@
   </template>
 <script src="/acc.js?v=9"></script>
 <script src="js/parse.js?v=2"></script>
-<script src="cap-nhat.js?v=19"></script>
-<script type="module" src="js/admin.js?v=19"></script>
+<script src="cap-nhat.js?v=20"></script>
+<script type="module" src="js/admin.js?v=20"></script>
 </body>
 </html>

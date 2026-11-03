@@ -1,0 +1,31 @@
+# title: Reading Unit 2: Adjectives & Adverbs
+# group: Reading
+# src: summary-old/docs/reading/unit-02-adjectives-adverbs.html
+v|Hard-working (adj)|Chăm chỉ
+v|Submit (v)|Nộp, gửi
+v|Profitable (adj)|Có lợi nhuận
+v|Confidential (adj)|Bảo mật
+v|Convenient (adj)|Thuận tiện
+v|Complete (v)|Hoàn thành
+v|Device (n)|Thiết bị
+v|Demolish (v)|Phá hủy
+v|Regular (adj)|Đều đặn, thường xuyên
+v|Consistent (adj)|Nhất quán
+v|Productivity (n)|Năng suất
+v|Vending machines (n)|Máy bán hàng tự động
+v|Lobby (n)|Sảnh
+v|Air quality (n)|Chất lượng không khí
+v|Gauge (n)|Máy đo
+v|Accurate (adj)|Chính xác
+# hand
+grammar|She is a ____ worker.|hard-working|hard-workingly|hardly work|hard-worked
+grammar|The data is ____ accurate.|highly|high|higher|height
+grammar|This location is very ____.|convenient|conveniently|convenience|conveniences
+grammar|Please keep this file ____.|confidential|confidentially|confidence|confide
+grammar|The machine works ____.|consistently|consistent|consistence|consist
+grammar|He ____ arrives late. (hầu như không)|hardly|hard|harder|hardest
+grammar|The lobby is ____ than before.|cleaner|more clean|cleanest|clean
+grammar|This is the ____ device in the store.|most expensive|more expensive|expensivest|expensive
+form|"profit" → tính từ là?|profitable|profitly|profiting|profitably
+form|"productive" → danh từ là?|productivity|productively|produced|producing
+tip|"hard" (chăm, khó) và "hardly" (hầu như không) …|Khác nghĩa|Cùng nghĩa|Đều là tính từ|Đều là danh từ

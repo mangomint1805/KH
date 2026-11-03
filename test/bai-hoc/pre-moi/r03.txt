@@ -1,0 +1,32 @@
+# title: Reading Unit 3: Verb Tenses
+# group: Reading
+# src: summary-new/docs/reading/unit-03-verb-tenses.html
+v|Business trip (n)|Chuyến đi công tác
+v|Book in advance (phr)|Đặt trước (vé/phòng)
+v|Depart from (phr)|Khởi hành từ
+v|Arrive at (phr)|Đến (địa điểm nhỏ: sân bay, nhà ga)
+v|Arrive in (phr)|Đến (địa điểm lớn: thành phố, quốc gia)
+v|Train station (n)|Nhà ga tàu hỏa
+v|Express train (n)|Tàu tốc hành
+v|Schedule (n/v)|Lịch trình/Lên lịch
+v|Get on (phr)|Bước lên (xe/tàu)
+v|Get off (phr)|Bước xuống (xe/tàu)
+v|Shuttle bus (n)|Xe buýt đưa đón
+v|Pick up (phr)|Đón (ai đó bằng xe)
+v|Check in (phr)|Làm thủ tục (nhận phòng / lên máy bay)
+# hand
+grammar|He usually ____ by train.|travels|travel|is travel|traveling
+grammar|Yesterday, we ____ from Hanoi at 8 a.m.|departed|depart|have departed|will depart
+grammar|Look! The shuttle bus ____ now.|is arriving|arrives|arrived|has arrived
+grammar|I ____ in this company since 2020.|have worked|work|worked|am working
+grammar|She ____ already ____ in.|has / checked|is / checking|did / check|was / check
+grammar|When I arrived, the train ____ already ____.|had / left|has / left|was / leaving|will / leave
+grammar|By next month, we ____ the project.|will have finished|have finished|finished|had finished
+grammar|We ____ the client tomorrow.|will meet|met|have met|meeting
+grammar|At 9 p.m. last night, I ____ my email.|was checking|am checking|check|have checked
+tip|Dấu hiệu "since, for, already, yet" → thì nào?|Hiện tại hoàn thành|Quá khứ đơn|Tương lai đơn|Hiện tại tiếp diễn
+tip|Dấu hiệu "yesterday, last week, ago" → thì nào?|Quá khứ đơn|Hiện tại hoàn thành|Tương lai đơn|Hiện tại đơn
+tip|"isn't" là viết tắt của…|is not|is no|it not|in not
+colloc|We arrived ____ Tokyo at night.|in|at|on|to
+colloc|Please get ____ the bus at the next stop.|off|out|down|away
+colloc|Please book the room ____ advance.|in|on|at|for

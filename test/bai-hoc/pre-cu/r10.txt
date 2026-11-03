@@ -1,0 +1,37 @@
+# title: Reading Unit 10: Relative Pronouns & Adverbs
+# group: Reading
+# src: summary-old/docs/reading/unit-10-relative-pronouns-adverbs.html
+v|Excellent (adj)|Xuất sắc
+v|Upcoming (adj)|Sắp tới
+v|Exceptionally (adv)|Một cách đặc biệt, cực kỳ
+v|Display (v)|Trưng bày, hiển thị
+v|Misunderstanding (n)|Sự hiểu lầm
+v|Tension (n)|Tình trạng căng thẳng
+v|Political (adj)|Thuộc về chính trị
+v|Issue (n)|Vấn đề
+v|Look for (phrasal verb)|Tìm kiếm
+v|Applicant (n)|Ứng viên
+v|Intermission (n)|Giờ nghỉ giải lao (giữa buổi diễn)
+v|Figure (n)|Hình dáng; con số, số liệu
+v|Skater (n)|Người trượt băng
+v|Specialize (v)|Chuyên về
+v|Available (adj)|Có sẵn; rảnh (có thể gặp)
+v|Agreement (n)|Hợp đồng, thỏa thuận
+v|Postpone (v)|Trì hoãn
+v|Schedule (v, n)|Lên lịch (v); lịch trình (n)
+v|Opportunity (n)|Cơ hội
+v|Development (n)|Sự phát triển
+v|Allow (v)|Cho phép
+# hand
+grammar|The applicant ____ called you is here.|who|which|whose|where
+grammar|The agreement ____ we signed is long.|which|who|whose|where
+grammar|The skater ____ figure is amazing won.|whose|who|which|whom
+grammar|This is the hotel ____ we stayed last year.|where|which|who|when
+grammar|I remember the day ____ we met.|when|where|which|who
+grammar|The woman ____ I interviewed is excellent.|whom|whose|where|when
+grammar|The man ____ is standing there is my boss.|who|whom|whose|which he
+tip|Đại từ quan hệ chỉ người làm chủ ngữ là…|who|which|where|whose
+tip|"whose" theo sau bởi…|Danh từ|Động từ|Giới từ|Trạng từ
+tip|Mệnh đề quan hệ giống như…|Một "tính từ dài" bổ nghĩa cho danh từ|Một động từ|Một câu hỏi|Một trạng từ chỉ thời gian
+tip|"where" = …|in / at which (nơi chốn)|on which (thời gian)|of whom|for which (lý do)
+colloc|She specializes ____ marketing.|in|on|at|with

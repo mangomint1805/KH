@@ -1,0 +1,29 @@
+# title: Listening Unit 2: Part 1 – Photos of Objects & Scenes
+# group: Listening
+# src: summary-new/docs/listening/unit-02-photos-of-objects-scenes.html
+v|folded|được gấp/gập lại
+v|put into|được bỏ vào/đặt vào trong
+v|pushed in|được đẩy vào trong
+v|lined up|được xếp thành hàng
+v|placed on|được đặt trên
+v|empty|trống rỗng
+v|posted on|được đăng/dán lên
+v|planted|được trồng (cây, hoa)
+v|line|xếp thành hàng
+v|hung on|được treo trên
+v|covered with|được bao phủ bởi
+v|chained to|được xích vào/khóa vào
+# hand
+grammar|Tranh không có người: "The chairs have ____ lined up."|been|being|be|to be
+grammar|"The car is ____ repaired." (đang được sửa, phải có người sửa trong tranh)|being|been|be|to
+grammar|Hiện tại hoàn thành bị động: S + ____ + V3|have / has been|is / are being|was being|will being
+grammar|Some books ____ on the shelf.|have been placed|has been placed|are placing|have placing
+grammar|A lamp is hanging ____ the table. (phía trên)|above|under|between|into
+grammar|A bag is ____ the desk. (dưới gầm bàn)|under|on|over|above
+grammar|A cat is sitting ____ the two boxes. (ở giữa)|between|among|next|on top
+tip|Tranh chỉ có đồ vật, không có người. Câu nào thường SAI?|The man is folding a towel.|Some towels have been folded.|Towels are stacked on a shelf.|There are towels on a shelf.
+tip|Câu dùng "is being + V3" chỉ đúng khi nào?|Trong tranh có người đang làm việc đó|Tranh không có ai|Đồ vật đã nằm yên từ trước|Luôn luôn đúng
+tip|"There is / There are + N + nơi chốn" dùng để làm gì?|Mô tả có vật gì ở đâu|Nói về hành động đang làm|Hỏi đường|Nói về tương lai
+form|"folded" là dạng V3 của động từ nào?|fold|folder|folding|folds up
+colloc|A bike is chained ____ a pole.|to|on|with|at
+colloc|The table is covered ____ a cloth.|with|by|to|on

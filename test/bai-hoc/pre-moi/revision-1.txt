@@ -1,0 +1,38 @@
+# title: Weekly Revision 1
+# group: Weekly Revision
+# src: summary-new/docs/weekly/revision-1.html
+v|typing|đánh máy, gõ máy tính
+v|lean on|tựa vào
+v|give a presentation|thuyết trình
+v|talking|nói chuyện
+v|wipe a counter|lau quầy / bàn bếp
+v|cut the grass|cắt cỏ
+v|stack dishes|xếp chồng đĩa / chén
+v|chop a vegetable|băm / thái rau củ
+v|put into|được bỏ vào / đặt vào trong
+v|planted|được trồng (cây, hoa)
+v|lined up|được xếp thành hàng
+v|covered with|được bao phủ bởi
+v|posted on|được đăng / dán lên
+v|placed on|được đặt trên
+v|roll up blinds|cuốn rèm cửa lên
+v|move a chair|di chuyển một chiếc ghế
+v|apply for|ứng tuyển, nộp đơn xin
+v|make an appointment|đặt lịch hẹn
+v|customer's needs|nhu cầu của khách hàng
+v|weekly report|báo cáo hằng tuần
+v|apologize for|xin lỗi về việc gì
+v|deal with|xử lý / giải quyết
+v|workshop|hội thảo / buổi đào tạo
+v|technical team|đội ngũ kỹ thuật
+# hand
+grammar|The ____ manager handled the complaint.|new|newly|newness|news
+grammar|She typed the report ____.|carefully|careful|care|caring
+grammar|The technical team is ____ helpful.|really|real|reality|realize
+grammar|We need a ____ room for the workshop.|large|largely|largeness|enlarge
+grammar|Trạng từ có thể bổ nghĩa cho…|Động từ, tính từ, trạng từ khác|Chỉ danh từ|Chỉ đại từ|Chỉ giới từ
+grammar|Tính từ thường bổ nghĩa cho…|Danh từ|Động từ|Trạng từ|Cả câu
+tip|Tranh: hộp ĐÃ được xếp thành hàng. Câu nào đúng?|The boxes have been lined up.|The boxes are lining up.|A man is lining up boxes.|The boxes are being lined up.
+tip|Tranh: 1 người đàn ông đang lau quầy bếp. Câu nào đúng?|He's wiping a counter.|He's chopping a vegetable.|They're wiping a counter.|He's stacking dishes.
+grammar|The flowers have been ____ in the garden.|planted|planting|plant|plants
+colloc|Please make ____ appointment with the doctor.|an|a|the|some

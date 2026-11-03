@@ -1,0 +1,32 @@
+# title: Reading Unit 2: Meeting
+# group: Reading
+# src: summary-new/docs/a/reading/unit-02-meeting.html
+v|attend|tham dự
+v|present|trình bày, thuyết trình
+v|discuss|thảo luận
+v|wrap up|kết thúc, tổng kết (cuộc họp)
+v|take place|diễn ra
+v|distribute|phân phát
+v|attendee|người tham dự
+v|meeting|cuộc họp
+v|presentation|bài thuyết trình
+v|conference|hội nghị
+v|board|ban giám đốc, hội đồng quản trị
+v|proposal|bản đề xuất
+v|discussion|cuộc thảo luận
+v|agenda|chương trình cuộc họp, nội dung cần bàn
+v|attendance|sự có mặt; số người tham dự
+# hand
+grammar|The meeting will take place ____ in Room 3.|tomorrow|tomorrow's|morrow|the tomorrow
+grammar|The presentation was ____ impressive.|truly|true|truth|truer
+grammar|The agenda was ____ distributed to attendees.|quickly|quick|quicken|quickness
+grammar|She gave a ____ presentation.|clear|clearly|clearness|clarity
+grammar|The board ____ approved the proposal.|finally|final|finalize|finality
+grammar|The new system works ____.|automatically|automatic|automation|automate
+form|"technical" → trạng từ là?|technically|technicaly|technicly|technician
+form|"financial" → trạng từ là?|financially|financialy|financely|finance
+form|Đuôi nào thường là tính từ?|-able / -ive / -ful|-ly|-tion|-ment
+tip|Part 6 loại trừ lớp 1 (theo tham chiếu): kiểm tra…|Đại từ, từ khoá khớp với đoạn văn|Độ dài câu|Chính tả|Số chữ
+tip|Part 6 loại trừ lớp 2 là…|Theo mắt xích logic với câu trước / sau|Theo độ dài|Theo chữ cái đầu|Chọn câu dài nhất
+tip|Đáp án có "he" nhưng đoạn văn chỉ nói về một phụ nữ → …|Loại đáp án đó|Chọn đáp án đó|Không quan trọng|Chọn nếu ngắn
+colloc|Let's ____ up the meeting at 5 p.m.|wrap|warp|wipe|wake

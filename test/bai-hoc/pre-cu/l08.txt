@@ -1,0 +1,43 @@
+# title: Listening Unit 8: Part 3 – Daily Activities
+# group: Listening
+# src: summary-old/docs/listening/unit-08-daily-activities.html
+v|Have something delivered (phr)|Nhờ giao (hàng) đến
+v|Place an order (phr)|Đặt hàng
+v|Out of stock (phr)|Hết hàng
+v|In stock (phr)|Có sẵn hàng
+v|Newly released (phr)|Mới phát hành
+v|Make a payment (phr)|Thanh toán
+v|On sale (phr)|Đang giảm giá
+v|Pay a bill (phr)|Thanh toán hóa đơn
+v|Get a refund (phr)|Được hoàn trả tiền
+v|Get a discount (phr)|Được giảm giá
+v|Exchange (v)|Trao đổi, đổi hàng
+v|Promotional coupon (phr)|Phiếu giảm giá
+v|New arrivals (phr)|Hàng mới về
+v|Have a meal (phr)|Ăn, dùng bữa
+v|Main course (n)|Món chính
+v|Cafeteria (n)|Quán ăn tự phục vụ
+v|Dine (v)|Ăn tối, dùng bữa
+v|Make a reservation (phr)|Đặt bàn trước
+v|Beverage (n)|Đồ uống
+v|Book a table (phr)|Đặt bàn
+v|Grab a bite to eat (phr)|Ăn nhanh, ăn qua loa
+v|Appetizer (n)|Món khai vị
+v|Refreshment (n)|Món ăn nhẹ, đồ uống giải khát
+v|Steamed (adj)|Hấp
+v|Grilled (adj)|Nướng
+v|A cash discount (phr)|Giảm giá khi thanh toán bằng tiền mặt
+v|Opening hours (phr)|Giờ mở cửa
+v|Alterations (n)|Sự thay đổi, sửa đồ (quần áo)
+v|Warranty (n)|Giấy bảo hành
+v|Overdone (adj)|Nấu chín quá
+# hand
+tip|Nghe "main course, appetizer, check" → nơi chốn?|Nhà hàng|Ngân hàng|Sân bay|Bưu điện
+tip|Nghe "refund, receipt, size" → nơi chốn?|Cửa hàng quần áo|Bệnh viện|Phòng họp|Nhà ga
+tip|Nghe "warranty, repair, model" → người nói có thể là?|Nhân viên cửa hàng điện máy|Phi công|Bác sĩ|Đầu bếp
+tip|Câu hỏi "Where most likely are the speakers?" cần…|Suy luận từ các từ khoá|Nghe đúng tên địa điểm|Đọc tranh|Đoán bừa
+colloc|Sorry, that item is out of ____.|stock|stocks it|store|sale
+colloc|I'd like to ____ a table for four.|book|booking|books|booked
+colloc|Let's grab a ____ to eat.|bite|bit|bitten|biting
+colloc|Can I ____ this shirt for a larger size?|exchange|change to|exchanging|switch on
+colloc|I'd like to ____ the bill, please.|pay|paid|pay for it|paying

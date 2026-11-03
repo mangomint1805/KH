@@ -1,0 +1,44 @@
+# title: Reading Unit 2: Adjectives, Adverbs & Comparison
+# group: Reading
+# src: summary-new/docs/reading/unit-02-adjectives-adverbs-comparison.html
+v|Discount coupon (phr)|Phiếu giảm giá
+v|Delivery truck (phr)|Xe tải giao hàng
+v|Workshop (n)|Hội thảo / Buổi đào tạo
+v|Receptionist (n)|Nhân viên lễ tân
+v|Complaint (n)|Lời phàn nàn / Khiếu nại
+v|Technical team (phr)|Đội ngũ kỹ thuật
+v|Handle (v)|Xử lý / Giải quyết
+v|Offer (v)|Đưa ra / Đề nghị
+v|Process (v)|Xử lý (quy trình/hồ sơ)
+v|Resolve (v)|Giải quyết (triệt để)
+v|Apologize for (phr)|Xin lỗi về việc gì
+v|Delay (n)|Sự chậm trễ / Trì hoãn
+v|Office assistant|Trợ lý văn phòng
+v|Training program|Chương trình đào tạo
+v|Working experience|Kinh nghiệm làm việc
+v|Provide resume|Nộp sơ yếu lý lịch / CV
+v|Interview|Cuộc phỏng vấn
+v|Job duty|Nhiệm vụ công việc
+v|Professional|Chuyên nghiệp
+v|Candidate|Ứng viên
+v|Take part in|Tham gia vào
+v|Require|Yêu cầu
+v|Look for|Tìm kiếm
+v|Join|Gia nhập
+v|Teamwork|Làm việc nhóm
+v|Further information|Thông tin chi tiết hơn
+# hand
+grammar|She is a ____ receptionist.|professional|profession|professionally|professionalism
+grammar|The team resolved the problem ____.|quickly|quick|quicker|quickness
+grammar|The workshop was ____ useful.|very|much|many|more than
+grammar|The delivery truck arrived ____ late.|extremely|extreme|extremer|extremity
+grammar|This complaint is ____ than the last one.|more serious|seriouser|most serious|serious
+grammar|She is the ____ candidate of all.|best|better|good|well
+grammar|Our new office is ____ than the old one.|bigger|more big|biggest|big
+grammar|This is the ____ program we have.|most popular|more popular|popularest|popular
+form|Đuôi nào thường là tính từ?|-ful|-ly|-ment|-tion
+form|Đuôi -ly thường là…|Trạng từ|Danh từ|Động từ|Giới từ
+form|"good" → trạng từ là?|well|goodly|better|best
+tip|Chỗ trống đứng giữa "be" và danh từ → chọn…|Tính từ|Trạng từ|Động từ|Đại từ
+colloc|We apologize ____ the delay.|for|to|with|about to
+colloc|Would you like to ____ part in the training program?|take|make|do|join

@@ -1,0 +1,44 @@
+# title: Listening Unit 7: Part 3 – Business Activities
+# group: Listening
+# src: summary-old/docs/listening/unit-07-business-activities.html
+v|Be in a meeting (phr)|Trong cuộc họp
+v|On sick leave (phr)|Nghỉ ốm
+v|Get promoted (phr)|Được thăng chức
+v|Sales figures (phr)|Doanh số
+v|An increase in sales (phr)|Sự tăng doanh số
+v|A decrease in sales (phr)|Sự giảm doanh số
+v|Promotional campaign (phr)|Chiến dịch quảng bá
+v|Last quarter (phr)|Quý trước
+v|Out of order (phr)|Hỏng
+v|Sales report (phr)|Báo cáo doanh số
+v|Audit report (phr)|Báo cáo kiểm toán
+v|Take place (phr)|Diễn ra
+v|Be scheduled to (phr)|Được lên lịch (để làm gì)
+v|Farewell party (phr)|Tiệc chia tay
+v|Training session (phr)|Buổi đào tạo
+v|A keynote speaker (phr)|Diễn giả chính
+v|Give a presentation (phr)|Phát biểu
+v|Give an award (phr)|Trao thưởng
+v|Make it to (phr)|Đến kịp, tham gia được
+v|Trainer (n)|Người đào tạo
+v|Trainee (n)|Thực tập sinh
+v|Organizer (n)|Nhà tổ chức
+v|Participant (n)|Người tham gia
+v|Cartridge (n)|Hộp mực
+v|Equipment (n)|Thiết bị
+v|Install (v)|Lắp đặt
+v|Supply (n)|Đồ dùng, vật tư; sự cung cấp
+v|Out of paper (phr)|Hết giấy
+v|Paper shredder (phr)|Máy hủy giấy
+v|Awards banquet (phr)|Tiệc trao giải
+# hand
+tip|Part 3: 4 dạng câu hỏi gồm…|Chủ đề, chi tiết, suy luận, hành động tiếp theo|Who, What, When, Why|Ảnh, câu hỏi, bài nói, đoạn văn|Ngữ pháp, từ vựng, đọc, nghe
+tip|"What are the speakers discussing?" là dạng…|Chủ đề / ý chính|Chi tiết|Hành động tiếp|Suy luận
+tip|Câu hỏi chủ đề thường nghe ở…|Đầu hội thoại|Cuối hội thoại|Câu hỏi khác|Không có
+tip|"What will the woman do next?" thường nghe ở…|Cuối hội thoại|Đầu hội thoại|Giữa hội thoại|Câu hỏi đầu
+colloc|Sales figures went up last ____.|quarter|quarters|quart|quarterly
+colloc|She is on sick ____ today.|leave|leaving|left|live
+colloc|The copier is out of ____.|paper|papers it|sheet|printing
+colloc|Please ____ in the report by Friday.|hand|give|take|put
+form|"trainee" là…|Người được đào tạo|Người đào tạo|Buổi đào tạo|Đào tạo (động từ)
+form|"participant" là…|Người tham gia|Sự tham gia|Tham gia (động từ)|Có tham gia

@@ -1,0 +1,26 @@
+# title: Listening Unit 6: Part 3 – At the Office
+# group: Listening
+# src: summary-new/docs/listening/unit-06-at-the-office.html
+v|accounting department|phòng kế toán
+v|finance|tài chính
+v|report|báo cáo
+v|under construction|đang được xây dựng
+v|courier service|dịch vụ chuyển phát nhanh
+v|on business|đi công tác
+v|schedule a meeting|lên lịch cuộc họp
+v|go up|tăng lên
+v|emergency repair|sửa chữa khẩn cấp
+v|go for|chấp nhận; đồng ý với
+v|advertising campaign|chiến dịch quảng cáo
+# hand
+tip|Part 3 có bao nhiêu câu hỏi?|39 câu|25 câu|30 câu|6 câu
+tip|Mỗi đoạn hội thoại Part 3 có mấy câu hỏi?|3 câu|1 câu|2 câu|5 câu
+tip|Trước khi nghe Part 3, nên làm gì?|Đọc trước câu hỏi, gạch từ khoá|Nhìn tranh|Nhắm mắt nghe|Đọc đáp án đúng
+tip|Câu hỏi "What are the speakers mainly discussing?" là dạng…|Ý chính|Chi tiết|Hành động tiếp theo|Suy luận nơi chốn
+tip|Câu hỏi "What will the man probably do next?" thường nghe ở đâu?|Cuối đoạn hội thoại|Đầu đoạn|Giữa đoạn|Không có trong bài
+tip|Đáp án đúng Part 3 thường…|Nói lại bằng từ khác (paraphrase)|Lặp y nguyên từ trong bài|Dài nhất|Ngắn nhất
+tip|Nghe: "send the report". Đáp án paraphrase là?|forward the document|read the news|write a letter|sell the product
+tip|Nghe "I'm calling to…" ở đầu bài thường cho biết…|Mục đích cuộc gọi|Tên người nói|Giờ hẹn|Giá tiền
+colloc|The new building is ____ construction.|under|in|on|at
+colloc|Mr. Kim is away ____ business.|on|in|for|at
+colloc|Sales have gone ____ by 10%.|up|on|in|over

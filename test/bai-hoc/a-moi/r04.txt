@@ -1,0 +1,28 @@
+# title: Reading Unit 4: Community
+# group: Reading
+# src: summary-new/docs/a/reading/unit-04-community.html
+v|sanitation worker|công nhân vệ sinh
+v|cooperation|sự hợp tác
+v|recycle|tái chế
+v|volunteer|tình nguyện viên; tình nguyện
+v|observe the rules|tuân thủ các quy định
+v|trash collection|việc thu gom rác
+v|receptacle|thùng chứa, thùng đựng rác
+v|raffle|bốc thăm trúng thưởng
+v|encourage|khuyến khích
+v|registration|sự đăng ký
+# hand
+grammar|____ it was raining, many volunteers came.|Although|Despite|Because of|However
+grammar|____ the rain, many volunteers came.|Despite|Although|Even though|But
+grammar|We stayed inside ____ the storm.|because of|because|since then|so
+grammar|The park was dirty. ____, we cleaned it.|Therefore|Although|Because|Despite
+grammar|We recycle paper; ____, we save trees.|as a result|although|because of|despite
+grammar|Please submit the form ____ Friday.|by|until|during|since
+grammar|The library is closed ____ the renovation.|during|while|when|since
+grammar|You can't enter ____ a ticket.|without|unless|except that|if not
+tip|Giới từ + …|Danh từ / V-ing|Mệnh đề S + V|Động từ nguyên mẫu|Chỉ tính từ
+tip|Part 7 – TOO Rule: đáp án "Too Broad" là…|Quá rộng so với bài|Quá ngắn|Quá dài|Đúng nhất
+tip|Part 7: đáp án có "always, never, only" thường…|Là bẫy (Too Irrelevant)|Luôn đúng|Là ý chính|Là chi tiết đúng
+tip|Kỹ thuật S&M cho câu hỏi chi tiết: Keyword → Scan → …|Match|Memory|Mark|Main idea
+tip|Câu hỏi ý chính: nên đọc kỹ phần nào trước?|Câu đầu bài và câu đầu mỗi đoạn|Chỉ câu cuối|Chỉ tiêu đề|Chỉ đáp án
+colloc|All residents must observe the ____.|rules|rule's|ruling|ruled

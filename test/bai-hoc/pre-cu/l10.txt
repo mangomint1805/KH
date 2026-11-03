@@ -1,0 +1,54 @@
+# title: Listening Unit 10–11: Part 4 – Telephone Messages, Announcements & Ads
+# group: Listening
+# src: summary-old/docs/listening/unit-10-telephone-messages-announcements-ads.html
+v|Be available (adj)|Rảnh, có thể liên hệ được
+v|Let us know (phr)|Hãy cho chúng tôi biết
+v|Reach me (phr)|Liên hệ được với tôi
+v|Be calling about/ To V (phr)|Gọi về… / gọi để…
+v|We are sorry to inform you (phr)|Chúng tôi xin lỗi phải thông báo rằng
+v|At the earliest convenience (phr)|Sớm nhất có thể
+v|Leave a message (phr)|Để lại tin nhắn
+v|Have a conference to attend (phr)|Có hội nghị phải tham dự
+v|Sorry for the inconvenience (phr)|Xin lỗi vì sự bất tiện
+v|Contact me (phr)|Liên hệ với tôi
+v|Call us at 000 (phr)|Gọi chúng tôi qua số 000
+v|Attention, please (phr)|Xin hãy chú ý
+v|Be advised to contact (phr)|Được khuyên liên hệ/ Nên liên hệ
+v|In a few minutes (phr)|Trong một vài phút
+v|Welcome aboard (phr)|Chào mừng quý khách lên máy bay
+v|Inclement weather (phr)|Thời tiết khắc nghiệt
+v|Please note that ~ (phr)|Xin hãy lưu ý rằng
+v|Make sure to check (phr)|Hãy đảm bảo đã kiểm tra
+v|The latest updates (phr)|Những cập nhật mới nhất
+v|Mechanical problem (phr)|Vấn đề máy móc
+v|Be delayed (adj)|Bị hoãn
+v|Tour guide (n)|Hướng dẫn viên du lịch
+v|Promote a product (phr)|Quảng bá sản phẩm
+v|A product launch (phr)|Sự ra mắt sản phẩm
+v|Discount coupon (phr)|Phiếu giảm giá
+v|Marketing strategy (phr)|Chiến lược tiếp thị (marketing)
+v|Cash refund offer (phr)|Ưu đãi hoàn tiền mặt
+v|Retailer (n)|Người, nhà bán lẻ
+v|Appeal to (somebody)|Thu hút ai
+v|Chain store (phr)|Chuỗi cửa hàng
+v|Advertising agency (phr)|Công ty quảng cáo
+v|Wholesaler (n)|Nhà bán buôn
+v|Brochure (n)|Tờ gấp quảng cáo, tờ rơi
+v|Ahead of schedule (phr)|Sớm hơn lịch trình
+v|Souvenir (n)|Quà lưu niệm
+v|Proceed to (phr)|Di chuyển đến, tiến đến
+v|Itinerary (n)|Lịch trình (chuyến đi)
+v|Overseas (adj)|Ở nước ngoài
+v|Approximately (adv)|Khoảng, xấp xỉ
+v|Go sightseeing (phr)|Đi tham quan
+# hand
+tip|Lời nhắn thoại thường bắt đầu bằng…|Hi, this is… / This message is for…|Attention, please…|Welcome aboard…|Stay tuned…
+tip|Thông báo công cộng thường bắt đầu bằng…|Attention, please…|Hi, this is…|Dear Sir…|Thank you for calling…
+tip|"Welcome aboard" thường nghe ở…|Trên máy bay / tàu|Trong cửa hàng|Ở bệnh viện|Ở thư viện
+tip|"We are sorry to inform you that the flight…" → thường là tin…|Xấu (hoãn, huỷ)|Vui (khuyến mãi)|Thời tiết đẹp|Tuyển dụng
+colloc|Please contact me at your earliest ____.|convenience|convenient|conveniently|convene
+colloc|Sorry for the ____.|inconvenience|inconvenient|convenience|inconveniently
+colloc|The flight is delayed due to ____ weather.|inclement|incline|include|income
+colloc|We will arrive ahead ____ schedule.|of|to|on|for
+colloc|Please proceed ____ gate 12.|to|at|on|in
+form|"approximately" là loại từ…|Trạng từ|Tính từ|Danh từ|Động từ

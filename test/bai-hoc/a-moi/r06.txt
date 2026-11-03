@@ -1,0 +1,25 @@
+# title: Reading Unit 6: Work Issues
+# group: Reading
+# src: summary-new/docs/a/reading/unit-06-work-issues.html
+v|meet a deadline|Đáp ứng kịp thời hạn
+v|improve productivity|Cải thiện năng suất
+v|work overtime|Làm thêm giờ
+v|submit a leave request|Nộp đơn xin nghỉ phép
+v|resolve employee disputes|Giải quyết tranh chấp nhân viên
+v|address technical issues|Xử lý các vấn đề kỹ thuật
+v|workload|Khối lượng công việc
+# hand
+grammar|We decided ____ more staff.|to hire|hiring|hire|hired
+grammar|She finished ____ the report.|writing|to write|write|written
+grammar|I plan ____ a leave request.|to submit|submitting|submit|submitted
+grammar|He suggested ____ overtime this week.|working|to work|work|worked
+grammar|They avoid ____ the deadline.|missing|to miss|miss|missed
+grammar|We are looking forward ____ you.|to meeting|to meet|meeting|meet
+grammar|____ productivity is our main goal.|Improving|Improve|Improved|To improving
+grammar|Employees are expected ____ on time.|to arrive|arriving|arrive|arrived
+grammar|We need someone ____ technical issues.|to address|addressing to|address|addressed to
+grammar|She is used ____ overtime.|to working|to work|working|work
+tip|Sau giới từ (in, of, for, about...) động từ ở dạng…|V-ing|to V|V nguyên mẫu|V3
+tip|"want, plan, decide, hope" + …|to V|V-ing|V3|V nguyên mẫu
+tip|"enjoy, finish, avoid, suggest" + …|V-ing|to V|V3|V nguyên mẫu
+colloc|We need to resolve employee ____.|disputes|dispute it|disputing|disputed

@@ -1,0 +1,615 @@
+{
+ "v": 1,
+ "kinds": {
+  "vocab": "Nghĩa từ vựng",
+  "form": "Loại từ / dạng từ",
+  "colloc": "Cụm từ đi kèm",
+  "grammar": "Ngữ pháp (kiểu Part 5)",
+  "tip": "Mẹo làm bài"
+ },
+ "courses": [
+  {
+   "id": "pre-moi",
+   "name": "TOEIC Pre (mới)",
+   "lop": "TOPRE115276",
+   "lessons": [
+    {
+     "id": "l01",
+     "title": "Listening Unit 1: Part 1 – Photos of People",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "grammar": 6,
+      "tip": 4,
+      "form": 1,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "l02",
+     "title": "Listening Unit 2: Part 1 – Photos of Objects & Scenes",
+     "group": "Listening",
+     "n": {
+      "vocab": 12,
+      "grammar": 7,
+      "tip": 3,
+      "form": 1,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "l03",
+     "title": "Listening Unit 3: Part 2 – Information Questions",
+     "group": "Listening",
+     "n": {
+      "vocab": 6,
+      "tip": 11,
+      "grammar": 2,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "l04",
+     "title": "Listening Unit 4: Part 2 – Yes/No Questions",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "grammar": 6,
+      "tip": 4,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "l05",
+     "title": "Listening Unit 5: Part 2 – Other Types of Questions",
+     "group": "Listening",
+     "n": {
+      "vocab": 14,
+      "grammar": 6,
+      "tip": 4,
+      "colloc": 4
+     }
+    },
+    {
+     "id": "l06",
+     "title": "Listening Unit 6: Part 3 – At the Office",
+     "group": "Listening",
+     "n": {
+      "vocab": 11,
+      "tip": 8,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "l07",
+     "title": "Listening Unit 7: Part 3 – Daily Life",
+     "group": "Listening",
+     "n": {
+      "vocab": 12,
+      "tip": 7,
+      "colloc": 4,
+      "form": 1
+     }
+    },
+    {
+     "id": "l08",
+     "title": "Listening Unit 8: Part 4 – Telephone Messages & Advertisements",
+     "group": "Listening",
+     "n": {
+      "vocab": 14,
+      "tip": 6,
+      "colloc": 5,
+      "form": 1
+     }
+    },
+    {
+     "id": "r01",
+     "title": "Reading Unit 1: Nouns & Pronouns",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 9,
+      "form": 2,
+      "tip": 1,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "r02",
+     "title": "Reading Unit 2: Adjectives, Adverbs & Comparison",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 8,
+      "form": 3,
+      "tip": 1,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "r03",
+     "title": "Reading Unit 3: Verb Tenses",
+     "group": "Reading",
+     "n": {
+      "vocab": 13,
+      "grammar": 9,
+      "tip": 3,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "r04",
+     "title": "Reading Unit 4: Active & Passive Voice",
+     "group": "Reading",
+     "n": {
+      "vocab": 14,
+      "grammar": 8,
+      "tip": 2,
+      "form": 2,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "r05",
+     "title": "Reading Unit 5: Participles",
+     "group": "Reading",
+     "n": {
+      "vocab": 14,
+      "grammar": 7,
+      "tip": 3,
+      "form": 1,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "r06",
+     "title": "Reading Unit 6: Conjunctions & Prepositions",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 11,
+      "tip": 2,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r07",
+     "title": "Reading Unit 7: Comparison",
+     "group": "Reading",
+     "n": {
+      "vocab": 14,
+      "grammar": 8,
+      "form": 2,
+      "tip": 2,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "revision-1",
+     "title": "Weekly Revision 1",
+     "group": "Weekly Revision",
+     "n": {
+      "vocab": 16,
+      "grammar": 7,
+      "tip": 2,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "revision-2",
+     "title": "Weekly Revision 2",
+     "group": "Weekly Revision",
+     "n": {
+      "vocab": 10,
+      "grammar": 6,
+      "tip": 3,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "revision-3",
+     "title": "Weekly Revision 3",
+     "group": "Weekly Revision",
+     "n": {
+      "vocab": 12,
+      "grammar": 9,
+      "tip": 1,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "revision-4",
+     "title": "Weekly Revision 4",
+     "group": "Weekly Revision",
+     "n": {
+      "vocab": 11,
+      "grammar": 9,
+      "tip": 2,
+      "colloc": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "a-moi",
+   "name": "TOEIC A (mới)",
+   "lop": "TOA117110",
+   "lessons": [
+    {
+     "id": "l01",
+     "title": "Listening Unit 1: Accommodation & Restaurant",
+     "group": "Listening",
+     "n": {
+      "vocab": 9,
+      "tip": 7,
+      "grammar": 3,
+      "colloc": 2
+     }
+    },
+    {
+     "id": "l02",
+     "title": "Listening Unit 2: Meeting",
+     "group": "Listening",
+     "n": {
+      "vocab": 9,
+      "tip": 9,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "l03",
+     "title": "Listening Unit 3: Business Trip",
+     "group": "Listening",
+     "n": {
+      "vocab": 12,
+      "tip": 8,
+      "colloc": 4
+     }
+    },
+    {
+     "id": "l04",
+     "title": "Listening Unit 4: Community",
+     "group": "Listening",
+     "n": {
+      "vocab": 8,
+      "tip": 7,
+      "colloc": 5,
+      "form": 2
+     }
+    },
+    {
+     "id": "l05",
+     "title": "Listening Unit 5: Investment",
+     "group": "Listening",
+     "n": {
+      "vocab": 9,
+      "tip": 5,
+      "colloc": 5,
+      "form": 2
+     }
+    },
+    {
+     "id": "l06",
+     "title": "Listening Unit 6: Work Issues",
+     "group": "Listening",
+     "n": {
+      "vocab": 10,
+      "tip": 4,
+      "colloc": 6,
+      "grammar": 1
+     }
+    },
+    {
+     "id": "r01",
+     "title": "Reading Unit 1: Accommodation & Restaurant",
+     "group": "Reading",
+     "n": {
+      "vocab": 12,
+      "grammar": 8,
+      "tip": 4,
+      "form": 2
+     }
+    },
+    {
+     "id": "r02",
+     "title": "Reading Unit 2: Meeting",
+     "group": "Reading",
+     "n": {
+      "vocab": 15,
+      "grammar": 6,
+      "form": 3,
+      "tip": 3,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r03",
+     "title": "Reading Unit 3: Business Trip",
+     "group": "Reading",
+     "n": {
+      "vocab": 15,
+      "grammar": 9,
+      "tip": 3
+     }
+    },
+    {
+     "id": "r04",
+     "title": "Reading Unit 4: Community",
+     "group": "Reading",
+     "n": {
+      "vocab": 10,
+      "grammar": 8,
+      "tip": 5,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r05",
+     "title": "Reading Unit 5: Investment",
+     "group": "Reading",
+     "n": {
+      "vocab": 9,
+      "grammar": 8,
+      "tip": 4,
+      "form": 1
+     }
+    },
+    {
+     "id": "r06",
+     "title": "Reading Unit 6: Work Issues",
+     "group": "Reading",
+     "n": {
+      "vocab": 7,
+      "grammar": 10,
+      "tip": 3,
+      "colloc": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "pre-cu",
+   "name": "TOEIC Pre (cũ)",
+   "lop": "PRE115275",
+   "lessons": [
+    {
+     "id": "l01",
+     "title": "Listening Unit 1: Part 1 – Photos of People",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "grammar": 5,
+      "tip": 4,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "l02",
+     "title": "Listening Unit 2: Part 1 – Photos of Objects & Scenes",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "grammar": 5,
+      "tip": 3,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "l03",
+     "title": "Listening Unit 3: Part 2 – Information Questions (1)",
+     "group": "Listening",
+     "n": {
+      "vocab": 15,
+      "tip": 8,
+      "colloc": 2,
+      "form": 1
+     }
+    },
+    {
+     "id": "l04",
+     "title": "Listening Unit 4: Part 2 – Information Questions (2)",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "tip": 7,
+      "colloc": 4
+     }
+    },
+    {
+     "id": "l05",
+     "title": "Listening Unit 5: Part 2 – Yes/No Questions",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "grammar": 4,
+      "tip": 4,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "l06",
+     "title": "Listening Unit 6: Part 2 – Other Question Types",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "grammar": 4,
+      "tip": 4,
+      "colloc": 3
+     }
+    },
+    {
+     "id": "l07",
+     "title": "Listening Unit 7: Part 3 – Business Activities",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "tip": 4,
+      "colloc": 4,
+      "form": 2
+     }
+    },
+    {
+     "id": "l08",
+     "title": "Listening Unit 8: Part 3 – Daily Activities",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "tip": 4,
+      "colloc": 5
+     }
+    },
+    {
+     "id": "l09",
+     "title": "Listening Unit 9: Part 3 – At Public Places",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "tip": 3,
+      "colloc": 6
+     }
+    },
+    {
+     "id": "l10",
+     "title": "Listening Unit 10–11: Part 4 – Telephone Messages, Announcements & Ads",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "tip": 4,
+      "colloc": 5,
+      "form": 1
+     }
+    },
+    {
+     "id": "l11",
+     "title": "Listening Unit 12: Part 4 – Radio Broadcasts, Speeches & Internal Announcements",
+     "group": "Listening",
+     "n": {
+      "vocab": 16,
+      "tip": 3,
+      "colloc": 5,
+      "form": 1
+     }
+    },
+    {
+     "id": "r01",
+     "title": "Reading Unit 1: Nouns & Pronouns",
+     "group": "Reading",
+     "n": {
+      "vocab": 8,
+      "grammar": 10,
+      "form": 1,
+      "tip": 2
+     }
+    },
+    {
+     "id": "r02",
+     "title": "Reading Unit 2: Adjectives & Adverbs",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 8,
+      "form": 2,
+      "tip": 1
+     }
+    },
+    {
+     "id": "r03",
+     "title": "Reading Unit 3: Verb Tenses",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 8,
+      "tip": 2,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r04",
+     "title": "Reading Unit 4: Active & Passive Voice",
+     "group": "Reading",
+     "n": {
+      "vocab": 14,
+      "grammar": 5,
+      "tip": 2,
+      "colloc": 6
+     }
+    },
+    {
+     "id": "r05",
+     "title": "Reading Unit 5–6: To-infinitives & Gerunds",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 9,
+      "tip": 2,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r07",
+     "title": "Reading Unit 7: Participles",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 9,
+      "tip": 2
+     }
+    },
+    {
+     "id": "r08",
+     "title": "Reading Unit 8: Conjunctions",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "tip": 1,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r09",
+     "title": "Reading Unit 9: Prepositions",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "tip": 1,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r10",
+     "title": "Reading Unit 10: Relative Pronouns & Adverbs",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 7,
+      "tip": 4,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r11",
+     "title": "Reading Unit 11: Subjunctive Mood",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 7,
+      "tip": 3,
+      "colloc": 1
+     }
+    },
+    {
+     "id": "r12",
+     "title": "Reading Unit 12: Agreement",
+     "group": "Reading",
+     "n": {
+      "vocab": 16,
+      "grammar": 9,
+      "tip": 3
+     }
+    }
+   ]
+  }
+ ]
+}

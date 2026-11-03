@@ -1,0 +1,26 @@
+# title: Listening Unit 4: Community
+# group: Listening
+# src: summary-new/docs/a/listening/unit-04-community.html
+v|renovation|Sự cải tạo, sự sửa chữa nâng cấp
+v|raise funds|Gây quỹ
+v|launch a campaign|Phát động / khởi xướng một chiến dịch
+v|increase public awareness|Nâng cao nhận thức cộng đồng
+v|distribute flyers|Phát tờ rơi
+v|get in touch with|Liên lạc / giữ liên lạc với
+v|volunteer coordinator|Điều phối viên tình nguyện viên
+v|sense of community|Ý thức cộng đồng / tinh thần gắn kết cộng đồng
+# hand
+tip|Top-Down bước 1 (Prepare) là…|Đọc trước câu hỏi, xác định từ khoá|Nghe ý chính|Chọn đáp án cuối|Đoán nơi chốn
+tip|Top-Down bước 2 (Attack) là…|Nắm ý chính ở đầu bài|Đọc đáp án|Nghe chi tiết cuối|Đoán bừa
+tip|Top-Down bước 3 (Tracking) là…|Bám theo chi tiết ở giữa bài|Đọc câu hỏi|Nghe câu chào|Bỏ qua câu 2
+tip|Top-Down bước 4 (Finish) là…|Xác định hành động tiếp theo|Nắm ý chính|Đọc câu hỏi|Tóm tắt bài
+tip|Nghe "fundraiser, donation" → chủ đề là?|Gây quỹ cộng đồng|Tuyển dụng|Du lịch|Sửa máy móc
+tip|"What will the man probably do next?" → nghe từ tín hiệu…|I'll… / Let me…|Hello…|Because…|Last year…
+tip|Nghe "volunteer, community center" → người nói có thể là?|Điều phối viên tình nguyện|Phi công|Đầu bếp|Kế toán
+colloc|We are trying to ____ funds for the library.|raise|rise|arise|risen
+colloc|They will launch a ____ to clean the park.|campaign|champion|company|camping
+colloc|Volunteers will ____ flyers downtown.|distribute|contribute|attribute|distribution
+colloc|Please get in ____ with the volunteer coordinator.|touch|contact|call|connect
+colloc|The event will increase public ____ of recycling.|awareness|aware|awarely|awaken
+form|"renovation" là loại từ gì?|Danh từ|Động từ|Tính từ|Trạng từ
+form|Động từ của "renovation" là?|renovate|renovative|renovately|renovator

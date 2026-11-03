@@ -1,0 +1,32 @@
+# title: Reading Unit 7: Comparison
+# group: Reading
+# src: summary-new/docs/reading/unit-07-comparison.html
+v|Office assistant|Trợ lý văn phòng
+v|Training program|Chương trình đào tạo
+v|Working experience|Kinh nghiệm làm việc
+v|Provide resume|Nộp sơ yếu lý lịch / CV
+v|Interview|Cuộc phỏng vấn
+v|Job duty|Nhiệm vụ công việc
+v|Professional|Chuyên nghiệp
+v|Candidate|Ứng viên
+v|Take part in|Tham gia vào
+v|Require|Yêu cầu
+v|Look for|Tìm kiếm
+v|Join|Gia nhập
+v|Teamwork|Làm việc nhóm
+v|Further information|Thông tin chi tiết hơn
+# hand
+grammar|This job is ____ than my old one.|easier|easy|more easy|easiest
+grammar|She is the ____ candidate in the group.|most experienced|more experienced|experiencedest|experienced
+grammar|Our new office is ____ bigger than the old one.|much|very|most|many
+grammar|The interview was ____ difficult as the test.|as|so|than|more
+grammar|He works ____ than his coworkers.|harder|more hard|hardest|hardly
+grammar|This is the ____ training program in the city.|best|better|good|most good
+grammar|This year's salary is ____ than last year's.|higher|high|highest|more high
+grammar|Of all candidates, Tom is the ____.|youngest|younger|young|most young
+form|So sánh hơn của "bad" là?|worse|badder|more bad|worst
+form|So sánh nhất của "far" là?|farthest / furthest|farer|most far|farrest
+tip|Thấy "than" sau chỗ trống → chọn…|So sánh hơn|So sánh nhất|So sánh bằng|Danh từ
+tip|Thấy "the ... of / in" → thường chọn…|So sánh nhất|So sánh hơn|So sánh bằng|Động từ
+colloc|We are looking ____ an office assistant.|for|at|after|up
+colloc|Please send your resume for further ____.|information|informations|inform|informative

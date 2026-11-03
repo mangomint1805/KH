@@ -1,0 +1,48 @@
+# title: Listening Unit 1: Part 1 – Photos of People
+# group: Listening
+# src: summary-old/docs/listening/unit-01-photos-of-people.html
+v|Review (v)|Xem lại, rà soát
+v|Examine (v)|Kiểm tra, nghiên cứu
+v|Leaf through (phr)|Đọc lướt qua
+v|Stare at (phr)|Nhìn chằm chằm vào
+v|Arrange (v)|Sắp xếp
+v|Type (v)|Đánh máy
+v|Chop up (phr)|Thái nhỏ, băm nhỏ
+v|Point at (phr)|Chỉ vào
+v|Push (v)|Đẩy
+v|Pull (v)|Kéo
+v|Hold (v)|Nắm, giữ
+v|Gesture (v)|Ra hiệu
+v|Sign (v)|Ký
+v|Hike (v)|Đi bộ đường dài
+v|Ride (v)|Cưỡi, đi (xe đạp, xe máy, ngựa)
+v|Board (v)|Lên (tàu, xe, máy bay)
+v|Lie down (phr)|Nằm xuống
+v|Lean against (phr)|Dựa vào
+v|Rest (v)|Nghỉ ngơi
+v|Reach (v)|Với tới
+v|Sweep (v)|Quét
+v|Polish (v)|Đánh bóng
+v|Display (v)|Trưng bày
+v|Load (v)|Chất hàng, bốc hàng
+v|Presentation (n)|Bài thuyết trình
+v|Apron (n)|Tạp dề
+v|Stove (n)|Bếp
+v|Furniture (n)|Nội thất
+v|Cart (n)|Xe đẩy (chở hàng)
+v|Binoculars (n)|Ống nhòm
+v|Rail (n)|Tay vịn
+v|Hammer a nail (phr)|Đóng đinh
+v|Safety helmet (n)|Mũ bảo hộ
+v|Subway platform (n)|Sân ga tàu điện ngầm
+# hand
+grammar|Ảnh có 1 người phụ nữ: "____ is reviewing a document."|She|They|Some people|The women
+grammar|Ảnh có 2 người: "____ are shaking hands."|They|He|She|One of them
+grammar|Ảnh nhiều người, nói về 1 người: "____ is holding a cup."|One of the men|Some of the men|All the men|They
+grammar|"The man is ____ against the wall."|leaning|lean|leaned|leans
+grammar|"She is ____ a cart in the store."|pushing|push|pushed|pushes
+tip|Câu mô tả ảnh có người thường dùng cấu trúc…|S + is / are + V-ing|S + will + V|S + had + V3|S + used to V
+tip|"stare at, examine, review" là nhóm động từ liên quan…|Mắt (nhìn, xem)|Chân (di chuyển)|Tay (thao tác)|Tư thế
+tip|"lie down, lean against, rest" là nhóm động từ chỉ…|Tư thế|Mắt|Tay|Thời tiết
+tip|Ảnh: người đội mũ bảo hộ đã đội sẵn. Câu nào đúng?|He's wearing a safety helmet.|He's putting on a safety helmet.|He's buying a safety helmet.|He's taking off a safety helmet.
+colloc|He is ____ a nail into the wall.|hammering|hammer|hammered|hammers

@@ -1,0 +1,39 @@
+# title: Listening Unit 2: Part 1 – Photos of Objects & Scenes
+# group: Listening
+# src: summary-old/docs/listening/unit-02-photos-of-objects-scenes.html
+v|Curtain (n)|Rèm cửa
+v|Lamp (n)|Đèn
+v|Ceiling (n)|Trần nhà
+v|Picture (n)|Bức tranh, hình ảnh
+v|Projector (n)|Máy chiếu
+v|Train (n)|Xe lửa
+v|Truck (n)|Xe tải
+v|Train track (n)|Đường ray xe lửa
+v|Bridge (n)|Cầu
+v|Intersection (n)|Ngã tư, giao lộ
+v|Station (n)|Ga tàu, trạm
+v|Tollgate (n)|Trạm thu phí
+v|Trim the lawn (phr)|Cắt cỏ
+v|Pavement (n)|Vỉa hè
+v|Sweep the floor (phr)|Quét nhà
+v|Grocery store (n)|Cửa hàng tạp hóa
+v|Trainer (n)|Huấn luyện viên
+v|Treadmill (n)|Máy chạy bộ
+v|Pile (v)|Chất thành chồng
+v|Gather (v)|Tụ tập
+v|Parasol (n)|Ô che nắng
+v|Stock shelf (phr)|Xếp hàng hóa lên kệ
+v|Occupied (adj)|Đang có người dùng, bị chiếm chỗ
+v|Pedestrian (n)|Người đi bộ
+v|Tow away (phr)|Kéo (xe) đi
+v|Bench (n)|Ghế dài
+# hand
+grammar|Cấu trúc ảnh vật: "There ____ some chairs in the room."|are|is|has|have
+grammar|"The curtains ____ been closed."|have|has|are|is
+grammar|"A lamp is ____ on the desk."|placed|placing|place|places
+grammar|"Some boxes are piled ____ the floor."|on|in|at|to
+grammar|"A car is being ____ away." (đang bị kéo đi, có người kéo)|towed|towing|tow|tows
+tip|Ảnh vật, không có người. Câu nào thường SAI?|A woman is closing the curtains.|The curtains are closed.|There is a lamp near the window.|A picture is hanging on the wall.
+tip|"have / has been + V3" dùng để mô tả…|Trạng thái đã hoàn tất của đồ vật|Hành động đang làm|Tương lai|Câu hỏi
+tip|"The bench is occupied." nghĩa là…|Ghế dài đang có người ngồi|Ghế dài trống|Ghế dài bị hỏng|Ghế dài mới mua
+colloc|Pedestrians are walking on the ____.|pavement|ceiling|curtain|projector

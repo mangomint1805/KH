@@ -1,0 +1,32 @@
+# title: Reading Unit 4: Active & Passive Voice
+# group: Reading
+# src: summary-new/docs/reading/unit-04-active-passive-voice.html
+v|Meeting schedule|Lịch trình cuộc họp
+v|Updated|Đã cập nhật
+v|Deadline|Hạn chót
+v|On time|Đúng giờ
+v|Event coordinator|Điều phối viên sự kiện
+v|Venue|Địa điểm tổ chức
+v|Invitation letters|Thư mời
+v|Annual company dinner|Tiệc tối thường niên
+v|Arrive|Đến nơi
+v|Update|Cập nhật
+v|Confirm|Xác nhận
+v|Host|Tổ chức
+v|Prepare|Chuẩn bị
+v|Send|Gửi
+# hand
+grammar|The venue ____ by the event coordinator last week.|was chosen|chose|has chose|is choosing
+grammar|The invitation letters ____ tomorrow.|will be sent|will send|are sending|sent
+grammar|The schedule has ____ updated.|been|being|be|to be
+grammar|The meeting ____ every Monday.|is held|holds|is holding|hold
+grammar|The dinner is ____ by our company every year.|hosted|hosting|host|hosts
+grammar|The report must ____ before Friday.|be finished|finish|finished|be finishing
+grammar|Câu bị động: S + ____ + V3|be|have|do|get to
+grammar|The project ____ on time by the team.|was completed|completed|has completing|is completing
+tip|Có tân ngữ ngay sau chỗ trống → thường chọn…|Chủ động|Bị động|Tính từ|Danh từ
+tip|Khi nào thường bỏ "by + người"?|Không biết / không quan trọng ai làm|Luôn luôn bỏ|Không bao giờ bỏ|Khi câu có 2 động từ
+form|V3 của "send" là?|sent|sended|send|sending
+form|V3 của "choose" là?|chosen|chose|choosed|choosing
+colloc|She is interested ____ the job.|in|on|at|with
+colloc|The room is equipped ____ a projector.|with|by|for|in

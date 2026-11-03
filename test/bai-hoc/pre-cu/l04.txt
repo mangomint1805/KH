@@ -1,0 +1,36 @@
+# title: Listening Unit 4: Part 2 – Information Questions (2)
+# group: Listening
+# src: summary-old/docs/listening/unit-04-information-questions-2.html
+v|Directing traffic (phr)|Điều khiển giao thông
+v|Break down (phr)|Hỏng, chết máy (xe, máy móc)
+v|Commute (v)|Đi lại (giữa nhà và nơi làm việc)
+v|Give sb a ride (phr)|Cho ai đó đi nhờ
+v|Head for (phr)|Đi về phía, hướng đến
+v|Drop off (phr)|Thả (ai đó) xuống xe
+v|Pick up the laundry (phr)|Đến lấy quần áo
+v|Contact the supplier (phr)|Liên hệ với nhà cung cấp
+v|Approve (v)|Chấp thuận, tán thành
+v|Schedule (v)|Hẹn lịch, đưa vào lịch trình
+v|Retirement party (phr)|Tiệc nghỉ hưu
+v|Book a hotel (phr)|Đặt phòng khách sạn
+v|Run out of something (phr)|Hết cái gì đó
+v|Reserve a table (phr)|Đặt bàn
+v|Evaluation (n)|Sự đánh giá
+v|Apply for (phr)|Ứng tuyển
+v|Stationery store (phr)|Cửa hàng văn phòng phẩm
+v|Public transportation (n)|Phương tiện công cộng
+v|Take a day off (phr)|Nghỉ 1 ngày
+v|Get a regular checkup (phr)|Đi khám sức khỏe định kỳ
+v|Customer Service Department (n)|Bộ phận dịch vụ khách hàng
+# hand
+tip|"When…?" Đáp án hợp lý thường là…|Thời gian (next week, at 5)|Nơi chốn|Người|Lý do
+tip|"Where…?" Đáp án hợp lý thường là…|Nơi chốn (on the desk, in Room 5)|Thời gian|Lý do|Cách thức
+tip|"Why…?" Đáp án thường bắt đầu bằng…|Because / To V / Since|At / In|Yes / No|Mr. / Ms.
+tip|"How did you get here?" Đáp án hợp lý?|I took the subway.|Yesterday.|Because I'm late.|Here it is.
+tip|"Why are you leaving early?" Đáp án hợp lý?|To pick up my son.|At 4 p.m.|By car.|In the lobby.
+tip|"Where can I buy stationery?" Đáp án hợp lý?|At the store on Main Street.|Next Monday.|It's stationary.|Ms. Green did.
+tip|"How often do you commute by bus?" Đáp án hợp lý?|Every day.|For two hours.|By bus.|In the morning paper.
+colloc|Can you give me a ____ to the station?|ride|drive to|car|run
+colloc|We've run out ____ paper.|of|off|from|with
+colloc|I'll take a day ____ next Friday.|off|out|away|up
+colloc|Please drop me ____ at the corner.|off|out|down to|away

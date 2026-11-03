@@ -1,0 +1,30 @@
+# title: Reading Unit 1: Accommodation & Restaurant
+# group: Reading
+# src: summary-new/docs/a/reading/unit-01-accommodation-restaurant.html
+v|A variety of (phr)|Một loạt, nhiều loại, đa dạng
+v|Vegetarian (n)|Người ăn chay
+v|Accommodate (v)|Cung cấp, thích hợp
+v|Exotic (adj)|Đồ nước ngoài
+v|Ingredient (n)|Thành phần
+v|Flavor (n/v)|Hương vị, nêm
+v|Dine out (phr.v)|Ăn tối (tại nhà hàng)
+v|Exquisite cuisine (np)|Ẩm thực tinh tế
+v|Patron (n)|Khách quen
+v|Appetizer (n)|Món khai vị
+v|Entrée (n)|Món chính
+v|Banquet (n/v)|Yến tiệc, ăn tiệc
+# hand
+grammar|We offer a variety of ____.|dishes|dish|dishing|dished
+grammar|The restaurant uses fresh ____.|ingredients|ingredient|ingredienting|ingredial
+grammar|Please make a ____ for two people.|reservation|reserve|reserved|reserving
+grammar|The hotel's ____ is excellent.|service|serve|served|serving
+grammar|Ms. Kim booked the room ____.|herself|she|her|hers
+grammar|The chef and ____ team prepared the banquet.|his|he|him|himself
+grammar|Our hotel staff will help ____ with luggage.|you|your|yours|yourself
+grammar|The guests enjoyed ____ at the party.|themselves|them|their|they
+tip|Part 5 có bao nhiêu câu?|30 câu|16 câu|54 câu|25 câu
+tip|Part 6 có bao nhiêu câu?|16 câu|30 câu|54 câu|12 câu
+tip|Danh từ ghép N + N: "customer ____" (dịch vụ khách hàng)|service|serve|served|serving
+tip|Chỗ trống sau tính từ (a fresh ____) → chọn…|Danh từ|Trạng từ|Động từ|Giới từ
+form|Đuôi nào KHÔNG phải đuôi danh từ?|-ly|-ment|-ness|-tion
+form|"accommodate" → danh từ là?|accommodation|accommodative|accommodately|accommodated

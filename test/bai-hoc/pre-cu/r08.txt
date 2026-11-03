@@ -1,0 +1,33 @@
+# title: Reading Unit 8: Conjunctions
+# group: Reading
+# src: summary-old/docs/reading/unit-08-conjunctions.html
+v|Brochure (n)|Tờ rơi, tờ quảng cáo (dạng gấp)
+v|Pick up (phrasal v)|Nhặt lên, đón ai đó
+v|Proposal (n)|Đề xuất
+v|Accept (v)|Chấp nhận
+v|Utilize (v)|Sử dụng, tận dụng
+v|Promotion (n)|Khuyến mãi; sự thăng chức
+v|Air (v)|Phát sóng, lên sóng
+v|Wrap up (phrasal v)|Kết thúc, hoàn tất (cuộc họp, công việc)
+v|Session (n)|Phiên, buổi
+v|Adjust (v)|Điều chỉnh
+v|Expectation (n)|Sự kỳ vọng
+v|Assistance (n)|Sự giúp đỡ, hỗ trợ
+v|Compatible (adj)|Tương thích (dùng được cùng nhau)
+v|Qualification (n)|Trình độ chuyên môn, bằng cấp
+v|Goal (n)|Mục tiêu
+v|Boost (v)|Tăng cường
+v|Strategy (n)|Chiến lược
+# hand
+grammar|I called you, ____ you didn't answer.|but|and|or|so
+grammar|____ Tom ____ Mary will attend. (cả hai)|Both / and|Either / or|Neither / nor|Not / but
+grammar|You can choose ____ tea ____ coffee.|either / or|both / or|neither / or|not / and
+grammar|____ he was sick, he went to work.|Although|Because|If|So that
+grammar|We left early ____ we could catch the bus.|so that|because of|although|unless
+grammar|____ it rains, we will cancel the event.|If|Although|So|But
+grammar|I'll call you ____ I arrive.|as soon as|so that|although|unless
+grammar|I don't know ____ he will accept the proposal.|whether|that|what|which
+grammar|The problem is ____ the device is not compatible.|that|what|which|because of
+tip|Liên từ chỉ nhượng bộ (mặc dù) là…|although / even though|because / since|if / unless|so that
+grammar|Because ____, the session was canceled.|the speaker was sick|of the speaker's illness|the speaker's illness|sick speaker
+colloc|Let's wrap ____ the session.|up|on|off|in

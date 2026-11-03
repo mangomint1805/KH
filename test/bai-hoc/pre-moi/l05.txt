@@ -1,0 +1,32 @@
+# title: Listening Unit 5: Part 2 – Other Types of Questions
+# group: Listening
+# src: summary-new/docs/listening/unit-05-other-types-of-questions.html
+v|Accounting|Ngành/phòng kế toán
+v|Photocopier|Máy photocopy, máy sao chụp
+v|Feel ill|Cảm thấy bị ốm/mệt
+v|Conference|Hội nghị, cuộc họp lớn
+v|Contract|Hợp đồng
+v|Whichever|Bất kỳ cái nào/điều nào
+v|Give a receipt|Trả/đưa hóa đơn (biên lai)
+v|Break down|Bị hư hỏng, hỏng hóc (máy móc)
+v|Work late|Làm việc muộn, tăng ca
+v|Approve the invoice|Duyệt hóa đơn thanh toán
+v|Meet the deadline|Kịp thời hạn, hoàn thành đúng hạn
+v|Postpone the meeting|Dời/hoãn cuộc họp
+v|A couple of times|Một vài lần
+v|Is supposed to|Lẽ ra phải, dự kiến sẽ (làm gì)
+# hand
+grammar|"Do you know where the meeting ____?"|is|is it|does it|it is be
+grammar|"Can you tell me when ____?"|the store opens|does the store open|opens the store|the store does open
+grammar|"You're coming to the party, ____?"|aren't you|don't you|are you|won't you
+grammar|"She finished the contract, ____?"|didn't she|doesn't she|did she|wasn't she
+grammar|"The printer isn't working, ____?"|is it|isn't it|does it|doesn't it
+grammar|"They have met before, ____?"|haven't they|don't they|didn't they|aren't they
+tip|Câu hỏi lựa chọn "A or B?": đáp án đúng thường…|Chọn A, chọn B, cả hai hoặc không cái nào|Bắt đầu bằng Yes|Bắt đầu bằng No|Là một con số
+tip|"Should we take a taxi or the bus?" Đáp án hợp lý nhất?|Whichever is faster.|Yes, we should.|At the bus stop.|I took it yesterday.
+tip|Câu trần thuật: "The photocopier broke down again." Đáp án hợp lý?|I'll call the repair team.|Yes, it's a copy.|At the front desk.|Two copies, please.
+tip|Câu hỏi gián tiếp "Do you know who…?" thì nghe kỹ từ nào?|Từ để hỏi bên trong (who)|Chữ "Do"|Chữ "know"|Chữ cuối câu
+colloc|Can you ____ the invoice today?|approve|agree|accept to|apply
+colloc|We need to meet the ____.|deadline|time line|end|finish
+colloc|Let's ____ the meeting until Friday.|postpone|delay to|cancel to|post
+colloc|The train is supposed ____ at 9.|to arrive|arriving|arrive|arrived

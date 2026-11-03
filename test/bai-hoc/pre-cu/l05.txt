@@ -1,0 +1,35 @@
+# title: Listening Unit 5: Part 2 – Yes/No Questions
+# group: Listening
+# src: summary-old/docs/listening/unit-05-yes-no-questions.html
+v|Sign the contract (phr)|Ký hợp đồng
+v|Profitable (adj)|Có lợi nhuận
+v|Evaluation form (n)|Mẫu đánh giá
+v|Annual audit (phr)|Kiểm toán hàng năm
+v|Quarterly report (phr)|Báo cáo hàng quý
+v|Budget proposal (phr)|Đề xuất ngân sách
+v|Invest in (phr)|Đầu tư vào
+v|Accountant (n)|Kế toán viên
+v|Direct flight (phr)|Chuyến bay thẳng
+v|Appointment (n)|Cuộc hẹn
+v|Deposit the check (phr)|Gửi (nộp) séc vào ngân hàng
+v|Invoice (n)|Hóa đơn
+v|Focus on (phr)|Tập trung vào
+v|Proofread (v)|Đọc rà soát (để tìm ra lỗi)
+v|Press conference (phr)|Cuộc họp báo
+v|Impressive (adj)|Ấn tượng
+v|Advertising campaign (phr)|Chiến dịch quảng cáo
+v|Beverage (n)|Đồ uống
+v|Get a promotion (phr)|Được thăng chức
+v|Appreciation dinner (phr)|Tiệc tri ân
+# hand
+grammar|"____ the report ready?" – Not yet.|Is|Does|Do|Has
+grammar|"____ you finish the budget proposal?" – Yes, last night.|Did|Are|Were|Has
+grammar|"____ you mind closing the window?" – Not at all.|Would|Will|Do|Could
+grammar|"Should we ____ in the new project?"|invest|investing|invested|invests
+tip|"Could you print out the invoice?" (nhờ vả) Đáp án hợp lý?|Sure, I'll do it now.|It's in print.|Yes, I could be.|Last month.
+tip|"Should we hold a press conference?" (gợi ý) Đáp án hợp lý?|That's a good idea.|Yes, I held it.|In the conference room.|It was pressed.
+tip|"Would you mind…?" – Đồng ý thì trả lời…|Not at all / No problem.|Yes, I mind.|Yes, I would.|I don't know you.
+tip|"Have you signed the contract?" Đáp án hợp lý?|Not yet, I'm reading it.|A sign on the door.|At the bank.|Contact me.
+colloc|I need to ____ the check at the bank.|deposit|deposits|depositing|depose
+colloc|Please ____ the report for mistakes.|proofread|proof|reading|proofs
+colloc|She hopes to get a ____ this year.|promotion|promote|promoted|promoting

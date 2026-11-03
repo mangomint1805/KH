@@ -1,0 +1,36 @@
+# title: Reading Unit 1: Nouns & Pronouns
+# group: Reading
+# src: summary-new/docs/reading/unit-01-nouns-pronouns.html
+v|apply for (phr)|ứng tuyển, nộp đơn xin
+v|file cabinet (n)|tủ đựng hồ sơ
+v|fax machine (n)|máy fax
+v|manager (n)|người quản lý
+v|attend the meeting (phr)|tham dự cuộc họp
+v|project (n)|dự án
+v|weekly report (n)|báo cáo hằng tuần
+v|cooperation (n)|sự hợp tác
+v|find out|tìm ra / tìm hiểu
+v|customer's needs|nhu cầu của khách hàng
+v|deal with|xử lý / giải quyết
+v|make sure|đảm bảo / chắc chắn
+v|make an appointment|đặt lịch hẹn
+v|open an account|mở tài khoản
+v|contract (n)|hợp đồng
+v|regulation (n)|quy định
+v|rent (n)|tiền thuê nhà
+# hand
+grammar|The ____ of the project was successful.|completion|complete|completed|completely
+grammar|Please send me your weekly ____.|report|reported|reporting|reportedly
+grammar|Thank you for your ____.|cooperation|cooperate|cooperative|cooperatively
+grammar|We have a lot of ____ this week.|work|works|a work|working
+grammar|Can I give you some ____?|advice|advices|an advice|advise
+grammar|Mr. Park and ____ will attend the meeting.|I|me|my|mine
+grammar|Ms. Lee did the report by ____.|herself|she|her|hers
+grammar|This file cabinet is ____, not yours.|mine|my|me|I
+grammar|The managers asked ____ staff to arrive early.|their|they|them|theirs
+form|Đuôi nào thường là danh từ?|-tion|-ly|-ive|-ful
+form|Sau mạo từ "a / an / the" thường là…|Danh từ (hoặc tính từ + danh từ)|Động từ nguyên mẫu|Trạng từ đứng một mình|Đại từ "he"
+tip|Thấy ____ đứng sau tính từ sở hữu (my, our...) → chọn…|Danh từ|Động từ|Trạng từ|Giới từ
+colloc|I want to ____ for this job.|apply|attend|deal|find
+colloc|We must deal ____ customers' complaints.|with|for|to|on
+colloc|Please ____ sure the door is locked.|make|do|take|have

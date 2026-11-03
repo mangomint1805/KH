@@ -1,0 +1,25 @@
+# title: Listening Unit 5: Investment
+# group: Listening
+# src: summary-new/docs/a/listening/unit-05-investment.html
+v|give advice|Đưa ra lời khuyên
+v|stock market|Thị trường chứng khoán
+v|suffer a loss|Chịu tổn thất / bị thua lỗ
+v|real estate|Bất động sản
+v|interest rate|Lãi suất
+v|make a profit|Tạo ra lợi nhuận / sinh lời
+v|put money|Đặt tiền / đầu tư tiền
+v|set up a fund|Thành lập / thiết lập một quỹ
+v|investment|Khoản đầu tư / sự đầu tư
+# hand
+tip|Part 4 có bao nhiêu bài nói?|10 bài|13 bài|6 bài|25 bài
+tip|Câu hỏi Q1 trong Top-Down thường là…|Ý chính (ai, ở đâu, vì sao)|Hành động tiếp theo|Con số chi tiết|Từ đồng nghĩa
+tip|Q2 (chi tiết): nên đánh dấu gì trong câu hỏi?|Danh từ cụ thể: con số, giá, tên|Chỉ động từ|Chỉ tính từ|Không cần đánh dấu
+tip|Q3 (do-next): nên gạch chân gì?|Động từ hành động (buy, call…)|Tên người|Màu sắc|Số điện thoại
+tip|Nghe "In this program, we'll talk about…" → loại bài nói?|Bản tin / chương trình phát thanh|Lời nhắn thoại|Quảng cáo|Hội thoại 2 người
+colloc|She ____ a loss on the stock market.|suffered|suffer from|suffering|was suffer
+colloc|Our company ____ a big profit last year.|made|did|took|got on
+colloc|The bank will ____ up a new fund.|set|put|get|take
+colloc|Can you give me some ____ on investing?|advice|advices|advise|advising
+colloc|____ estate prices are rising.|Real|Really|Reality|Realize
+form|"invest" → danh từ là?|investment|investive|investly|invested
+form|"profit" → tính từ là?|profitable|profitly|profiting|profiter

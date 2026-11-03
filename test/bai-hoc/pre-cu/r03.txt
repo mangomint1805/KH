@@ -1,0 +1,36 @@
+# title: Reading Unit 3: Verb Tenses
+# group: Reading
+# src: summary-old/docs/reading/unit-03-verb-tenses.html
+v|Deal (v)|Giải quyết, xử lý (deal with); giao dịch
+v|Client (n)|Khách hàng
+v|Complaint (n)|Lời phàn nàn
+v|Related (adj)|Có liên quan
+v|Department (n)|Phòng ban
+v|Distribute (v)|Phân phối
+v|Attract (v)|Thu hút
+v|Delivery (n)|Giao hàng
+v|Staff (n)|Nhân viên
+v|Donation (n)|Sự tặng, quyên góp
+v|Disabled (adj)|Bị khuyết tật
+v|Elderly (adj)|Cao tuổi
+v|Profit (n)|Lợi nhuận
+v|Outline (v)|Phác thảo
+v|Presentation (n)|Bài thuyết trình
+v|Software (n)|Phần mềm
+v|Sort out (phr.)|Giải quyết, sắp xếp ổn thỏa
+v|Commercial (n)|Quảng cáo (trên TV, radio)
+v|Release (v)|Phát hành
+v|Drastically (adv)|Mạnh, đáng kể (tăng/giảm mạnh)
+v|Adopt (v)|Áp dụng, chấp nhận
+# hand
+grammar|Our staff ____ complaints every day.|handle|handles|is handle|handling
+grammar|The company ____ the new software last year.|released|releases|has released|will release
+grammar|Profits have increased ____ since 2023.|drastically|drastic|drastical|drasticness
+grammar|She ____ the presentation now.|is outlining|outlines|outlined|has outline
+grammar|We ____ the donation already.|have received|receive|are receiving|will receive
+grammar|They ____ a new policy next month.|will adopt|adopted|have adopted|adopting
+grammar|When I called, he ____ a meeting.|was having|has|is having|had had
+grammar|Before she joined us, she ____ in Seoul.|had worked|has worked|works|is working
+tip|Dấu hiệu "now, at the moment" → thì…|Hiện tại tiếp diễn|Quá khứ đơn|Hiện tại hoàn thành|Tương lai đơn
+tip|Dấu hiệu "every day, usually" → thì…|Hiện tại đơn|Quá khứ đơn|Tương lai đơn|Quá khứ tiếp diễn
+colloc|We need to sort ____ this problem.|out|up|on|off

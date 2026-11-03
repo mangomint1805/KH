@@ -1,0 +1,33 @@
+# title: Listening Unit 4: Part 2 – Yes/No Questions
+# group: Listening
+# src: summary-new/docs/listening/unit-04-yes-no-questions.html
+v|client|khách hàng
+v|finance department|phòng tài chính
+v|sales office|văn phòng kinh doanh
+v|interview|cuộc phỏng vấn
+v|promoted|được thăng chức
+v|manage|quản lý, xoay xở
+v|fully booked|đã được đặt hết chỗ
+v|renovation|sự cải tạo, sửa sang
+v|just in case|phòng trường hợp, nhỡ khi
+v|calculated a loss|ghi nhận một khoản thua lỗ
+v|slipped my mind|quên mất, lỡ quên
+v|stop over|quá cảnh, dừng chân (trong chuyến đi)
+v|lower the price|giảm giá
+v|book a flight|đặt vé máy bay
+v|take another look|nhìn lại lần nữa, xem xét lại
+v|make a copy|sao chụp (photo) một bản
+# hand
+grammar|"____ you finished the report?" – Yes, just now.|Have|Are|Do|Were
+grammar|"____ she in the sales office?" – No, she's at lunch.|Is|Does|Has|Do
+grammar|"____ you send me the file?" (nhờ vả lịch sự)|Could|Did|Are|Have
+grammar|"Have you ever ____ to Japan?"|been|go|went|going
+grammar|"Did the client ____ the contract?"|sign|signed|signs|signing
+grammar|"Should we ____ the price?" (gợi ý giảm giá)|lower|lowers|lowered|lowering
+tip|Câu hỏi Yes/No: đáp án KHÔNG có Yes/No thì…|Vẫn có thể đúng (trả lời gián tiếp)|Chắc chắn sai|Luôn đúng|Chỉ đúng khi có "maybe"
+tip|"Is the hotel fully booked?" Đáp án hợp lý nhất?|I'm afraid so.|At the front desk.|A booking fee.|By Friday.
+tip|"Did you book a flight?" Đáp án hợp lý nhất?|Sorry, it slipped my mind.|A flight attendant.|Yes, it's a good book.|At gate 5.
+tip|"Has Mr. Lee been promoted?" Đáp án hợp lý nhất?|Yes, he's the new manager.|At the promotion event.|No, I don't.|Next to the door.
+colloc|Bring an umbrella, just ____ case.|in|on|for|at
+colloc|Could you make a ____ of this page?|copy|copier|copies|copying
+colloc|Let's take another ____ at the plan.|look|see|view|watch

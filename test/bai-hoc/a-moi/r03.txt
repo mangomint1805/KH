@@ -1,0 +1,31 @@
+# title: Reading Unit 3: Business Trip
+# group: Reading
+# src: summary-new/docs/a/reading/unit-03-business-trip.html
+v|business trip|chuyến công tác
+v|travel arrangements|việc sắp xếp chuyến đi
+v|travel authorization|sự phê duyệt đi công tác
+v|reimbursement|sự hoàn tiền (chi phí)
+v|travel expenses|chi phí đi lại, chi phí công tác
+v|itinerary|lịch trình chuyến đi
+v|accommodation|chỗ ở
+v|hotel reservation|việc đặt phòng khách sạn
+v|flight ticket|vé máy bay
+v|departure|sự khởi hành
+v|destination|điểm đến
+v|boarding pass|thẻ lên máy bay
+v|conference agenda|chương trình hội nghị
+v|travel allowance|phụ cấp công tác
+v|travel coordinator|người điều phối chuyến đi
+# hand
+grammar|She ____ to Singapore last Monday.|flew|flies|has flown|will fly
+grammar|We ____ the itinerary since yesterday.|have checked|check|checked|will check
+grammar|The flight ____ at 6 p.m. tomorrow.|will depart|departed|has departed|departing
+grammar|The hotel ____ by Ms. Lee last week.|was booked|booked|has booked|is booking
+grammar|Your travel expenses ____ next month.|will be reimbursed|will reimburse|reimbursed|are reimbursing
+grammar|If you submit the form today, you ____ the money soon.|will get|got|would got|get to
+grammar|If I ____ more time, I would visit the branch.|had|have|will have|having
+grammar|If it rains, the trip ____.|will be canceled|cancels|was canceled|would canceled
+grammar|By the time we arrived, the plane ____.|had left|has left|leaves|will leave
+tip|Dấu hiệu "next week, tomorrow" → thì nào?|Tương lai đơn|Quá khứ đơn|Hiện tại hoàn thành|Quá khứ hoàn thành
+tip|Câu điều kiện loại 1: If + hiện tại đơn, …|will + V|would + V|had + V3|V-ing
+tip|Câu điều kiện loại 2: If + quá khứ đơn, …|would + V|will + V|had + V3|am + V-ing

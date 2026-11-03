@@ -1,0 +1,44 @@
+# title: Listening Unit 9: Part 3 – At Public Places
+# group: Listening
+# src: summary-old/docs/listening/unit-09-at-public-places.html
+v|Have a reservation (phr)|Đã đặt trước
+v|Be equipped with (phr)|Được trang bị với
+v|Reserve (v)|Đặt chỗ trước
+v|Cancelation (n)|Sự hủy
+v|Accommodation (n)|Chỗ ở
+v|Minibar (n)|Tủ lạnh nhỏ
+v|Under the name of (phr)|Dưới tên là
+v|Within walking distance (phr)|Trong khoảng cách đi bộ được (rất gần)
+v|Book a room (phr)|Đặt phòng
+v|Be charged (phr)|Bị tính phí
+v|Continental breakfast (phr)|Bữa sáng kiểu lục địa, kiểu Tây
+v|Public transportation (n)|Phương tiện công cộng
+v|Passport (n)|Hộ chiếu
+v|Be set (phr)|Sẵn sàng
+v|Metal detector (n)|Máy phát hiện kim loại
+v|Pick up luggage (phr)|Lấy hành lý
+v|Passenger (n)|Hành khách
+v|Boarding pass (n)|Thẻ lên máy bay
+v|Check in bags (phr)|Ký gửi hành lý
+v|Conveyor belt (n)|Băng chuyền
+v|Final destination (phr)|Điểm đến cuối cùng
+v|Baggage claim (phr)|Nơi lấy hành lý
+v|Immigration (n)|Nhập cảnh, di trú
+v|Connecting flight (phr)|Chuyến bay nối chuyến
+v|Overweight baggage (phr)|Hành lý quá cân
+v|Highly recommend (phr)|Rất khuyến khích
+v|Layover (n)|Điểm dừng (quá cảnh)
+v|Kitchenette (n)|Bếp nhỏ
+v|Vacancy (n)|Chỗ trống (phòng còn trống)
+v|Amenity (n)|Tiện nghi
+v|Handicapped facility (phr)|Cơ sở vật chất dành cho người khuyết tật
+# hand
+tip|Câu hỏi tần suất "How often…?" trả lời bằng…|Every day / once a week|At 9 a.m.|In the lobby|By taxi
+tip|Nghe "check-in, room key, front desk" → nơi chốn?|Khách sạn|Siêu thị|Thư viện|Ngân hàng
+tip|Nghe "boarding pass, gate, baggage claim" → nơi chốn?|Sân bay|Nhà hàng|Văn phòng|Bệnh viện
+colloc|I have a reservation under the ____ of Kim.|name|names|naming|named
+colloc|The hotel is within walking ____ of the beach.|distance|distant|distances|far
+colloc|Each room is equipped ____ a minibar.|with|by|for|of
+colloc|Please pick ____ your luggage at baggage claim.|up|on|off|in
+colloc|My connecting ____ leaves at 6 p.m.|flight|fly|flying|flew
+colloc|You will be ____ for overweight baggage.|charged|charging|charge|charges

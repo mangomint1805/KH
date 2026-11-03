@@ -1,0 +1,25 @@
+# title: Reading Unit 1: Nouns & Pronouns
+# group: Reading
+# src: summary-old/docs/reading/unit-01-nouns-pronouns.html
+v|Contract (n)|Hợp đồng
+v|Application (n)|Đơn đăng ký
+v|Competitor (n)|Đối thủ cạnh tranh
+v|Patient (n)|Bệnh nhân
+v|Regulation (n)|Quy định
+v|Rent (n)|Tiền thuê (nhà, văn phòng)
+v|Reference (n)|Thư giới thiệu
+v|Defect (n)|Nhược điểm, lỗi
+# hand
+grammar|We received your ____ yesterday.|application|apply|applied|applicable
+grammar|Our main ____ opened a new store.|competitor|compete|competitive|competitively
+grammar|The ____ was found in the product.|defect|defective|defectively|defected
+grammar|The ____ of the office is too high.|rent|rented|renting|rents to
+grammar|Please follow the safety ____.|regulations|regulate|regulated|regulating
+grammar|I need some ____ about the job.|information|informations|an information|inform
+grammar|Ms. Park signed the contract ____.|herself|her|she|hers
+grammar|This laptop is ____.|mine|my|me|I
+grammar|The doctor told ____ patient to rest.|his|he|him|himself
+grammar|Mr. Lee and ____ will visit the client.|I|me|my|myself
+form|Danh từ có thể làm…|Chủ ngữ, tân ngữ, bổ ngữ|Chỉ động từ|Chỉ trạng từ|Chỉ giới từ
+tip|Sau giới từ (in, of, for...) thường là…|Danh từ / đại từ tân ngữ|Động từ nguyên mẫu|Đại từ chủ ngữ|Trạng từ
+tip|Danh từ không đếm được (advice, equipment) thì…|Không thêm -s, không dùng a/an|Luôn thêm -s|Đi với "many"|Đi với "a few"

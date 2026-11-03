@@ -1,0 +1,28 @@
+# title: Listening Unit 3: Business Trip
+# group: Listening
+# src: summary-new/docs/a/listening/unit-03-business-trip.html
+v|check into a hotel|làm thủ tục nhận phòng khách sạn
+v|exchange business cards|trao đổi danh thiếp
+v|submit an expense report|nộp báo cáo chi phí
+v|visit a branch office|thăm chi nhánh
+v|show a boarding pass|xuất trình thẻ lên máy bay
+v|pack a suitcase|xếp va-li
+v|confirm a reservation|xác nhận đặt chỗ
+v|catch a flight|bắt chuyến bay
+v|attend a conference|tham dự hội nghị
+v|take a taxi|đi/bắt taxi
+v|book a hotel room|đặt phòng khách sạn
+v|meet a client|gặp khách hàng
+# hand
+tip|Part 3 có bao nhiêu đoạn hội thoại?|13 đoạn|10 đoạn|25 đoạn|6 đoạn
+tip|Chiến lược Top-Down nghĩa là…|Nắm ý chung trước, rồi dò chi tiết|Đọc từ dưới lên|Nghe câu cuối trước|Đoán bừa đáp án đầu
+tip|Thông tin trả lời 3 câu hỏi thường xuất hiện…|Theo đúng thứ tự 3 câu hỏi|Ngược thứ tự|Chỉ ở cuối bài|Ngẫu nhiên
+tip|Nghe "confirm", đáp án paraphrase là?|verify|cancel|forget|delay
+tip|Nghe "reservation", đáp án paraphrase là?|booking|reception|receipt|review
+tip|Nghe "sales report", đáp án dạng chung hơn là?|a document|a salesperson|a price|a store
+tip|Nghe "revise the plan", đáp án paraphrase là?|make changes to a plan|reveal a plan|read a plan|print a plan
+tip|Câu hỏi "What does the woman suggest?" nghe từ tín hiệu nào?|Why don't we… / You should…|I'm sorry…|Hello…|Thank you…
+colloc|I need to ____ a flight at 7 a.m.|catch|hold|pull|get on to
+colloc|Can you ____ my hotel reservation?|confirm|conform|contact to|consist
+colloc|Let's exchange business ____.|cards|card|carding|carts
+colloc|Please ____ your expense report by Friday.|submit|summit|submission|submitted

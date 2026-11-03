@@ -1,0 +1,25 @@
+# title: Weekly Revision 2
+# group: Weekly Revision
+# src: summary-new/docs/weekly/revision-2.html
+v|urgent|khẩn cấp, gấp
+v|postpone|hoãn lại
+v|reschedule|sắp xếp lại lịch, dời lịch
+v|venue|địa điểm tổ chức
+v|process|quy trình; xử lý
+v|express train|tàu tốc hành
+v|in advance|(đặt) trước
+v|get on|bước lên (xe / tàu)
+v|shuttle bus|xe buýt đưa đón
+v|business trip|chuyến đi công tác
+# hand
+grammar|Every morning she ____ the express train.|takes|take|taking|is take
+grammar|The venue ____ last month.|was booked|has booked|books|is booking
+grammar|We ____ the process since January.|have improved|improve|improved|are improve
+grammar|They ____ a business trip next week.|are taking|took|have taken|takes
+grammar|By the time we arrived, the meeting ____.|had started|has started|starts|will start
+grammar|Right now, the manager ____ the venue.|is checking|checks|checked|has checked
+tip|"Why don't we postpone the meeting?" Đáp án hợp lý?|Good idea, let's do Friday.|Because it's late.|Yes, I don't.|At the venue.
+tip|"When will the shuttle bus arrive?" Đáp án hợp lý?|In about ten minutes.|At the bus stop.|By bus.|Yes, it will.
+tip|"Where should I get on the train?" Đáp án hợp lý?|At platform 3.|At 3 o'clock.|Yes, you should.|By express.
+colloc|We had to ____ the event because of rain.|reschedule|rescheduling|schedule to|rescheduled to
+colloc|This is an ____ request. Please reply now.|urgent|urgently|urgency|urge

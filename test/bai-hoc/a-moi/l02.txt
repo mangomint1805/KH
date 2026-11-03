@@ -1,0 +1,25 @@
+# title: Listening Unit 2: Meeting
+# group: Listening
+# src: summary-new/docs/a/listening/unit-02-meeting.html
+v|launch|ra mắt; khởi động
+v|performance review|đánh giá hiệu suất làm việc
+v|branch office|chi nhánh
+v|office supplies|văn phòng phẩm
+v|give a presentation|thuyết trình
+v|promotional events|các sự kiện quảng bá
+v|send out|gửi đi; phát hành
+v|keep|giữ; duy trì
+v|in charge of|phụ trách; chịu trách nhiệm về
+# hand
+tip|Chiến lược 3U ở Part 2 gồm…|Hiểu từ để hỏi, đối tượng, chi tiết|Nghe 3 lần|Đọc 3 đáp án|Loại 3 đáp án
+tip|Bẫy 1: câu hỏi Wh- mà đáp án "Yes / No" thì…|Sai|Đúng|Đúng nếu ngắn|Đúng nếu có "please"
+tip|"Would you like some coffee?" → "The copies are ready." Đây là bẫy…|Từ gần âm|Từ đồng nghĩa|Trả lời Yes/No|Đáp án gián tiếp
+tip|"Who is in charge of the meeting?" → "The service charge is high." Đây là bẫy…|Lặp từ khác nghĩa|Đúng ý|Trả lời gián tiếp|Câu hỏi đuôi
+tip|Nhóm câu "I don't know / Let me check" thường là…|Đáp án đúng|Đáp án sai|Câu hỏi|Bẫy âm
+tip|"When is the product launch?" Đáp án gián tiếp hợp lý?|It hasn't been decided yet.|At the branch office.|Yes, it's new.|Mr. Kim launched.
+tip|"Who will give the presentation?" Đáp án hợp lý?|Someone from the sales team.|Yes, I will.|At 2 p.m.|It was a nice present.
+tip|"Where are the office supplies?" Đáp án hợp lý?|In the cabinet by the door.|Every Monday.|I supply them.|Yes, they are.
+tip|"Why was the performance review delayed?" Đáp án hợp lý?|The manager was out sick.|In Room 4.|Next week.|A great performance.
+colloc|Who is in ____ of the promotional events?|charge|change|charging|control on
+colloc|We will send ____ the invitations tomorrow.|out|off|up|at
+colloc|Please ____ the door open.|keep|kept|keeping|to keep

@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.18', d: '2026-11-04', items: [
+      '📚 Tạo từ bài học: ở trang Bộ câu hỏi bấm "📚 Tạo từ bài học", chọn khoá (Pre mới, A mới, Pre cũ) rồi chọn bài (Unit hoặc Weekly Revision), có ngay bản nháp câu hỏi soạn theo đúng nội dung bài đó.',
+      'Mỗi bài có sẵn khoảng 20–30 câu: nghĩa từ vựng (Anh → Việt và Việt → Anh), loại từ, cụm từ đi kèm, ngữ pháp kiểu Part 5 và mẹo làm bài nghe / đọc. Chọn số câu (10, 15, 20 hoặc tất cả), loại câu, thời gian mỗi câu, có trộn câu và trộn đáp án.',
+      'Bản nháp mở trong trang soạn như một bộ mới: thầy sửa, xoá, thêm câu hay đổi đáp án thoải mái, bấm Lưu thì thành bộ câu hỏi bình thường, tạo phòng, Đào vàng hay Giao về nhà đều được.',
+      'Trang soạn câu hỏi trên điện thoại không còn bị tràn ngang: các ô đáp án xếp gọn một cột, không phải kéo qua lại.'
+    ] },
     { v: '1.17.2', d: '2026-11-03', items: [
       '🔍 Câu hỏi có hình: bấm vào hình, nút 🔍 ở góc hình hoặc phím Z để phóng to toàn màn chiếu. Bấm bất kỳ đâu, Esc hoặc Space để đóng.',
       '🖼 Màn chữa đáp án có nút "Xem lại ảnh" (hoặc phím Z) để mở lại hình của câu vừa làm khi sửa bài.'

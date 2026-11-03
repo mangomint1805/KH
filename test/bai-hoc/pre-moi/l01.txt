@@ -1,0 +1,37 @@
+# title: Listening Unit 1: Part 1 – Photos of People
+# group: Listening
+# src: summary-new/docs/listening/unit-01-photos-of-people.html
+v|vacuum the floor|hút bụi sàn nhà
+v|stir the food|khuấy thức ăn
+v|chop a vegetable|băm/thái rau củ
+v|stack dishes|xếp chồng đĩa/chén
+v|cut the grass|cắt cỏ
+v|hold a watering can|cầm bình tưới nước
+v|plant flowers|trồng hoa
+v|wipe a counter|lau quầy/bàn bếp
+v|look at|nhìn vào
+v|roll up blinds|cuốn rèm cửa lên
+v|move a chair|di chuyển một chiếc ghế
+v|lean on|tựa vào
+v|give a presentation|thuyết trình
+v|take inventory|kiểm kê hàng hóa
+v|typing|đánh máy, gõ máy tính
+v|talking|nói chuyện
+v|pointing|chỉ tay
+v|writing|viết
+v|gesturing|ra hiệu, làm điệu bộ bằng tay
+# hand
+grammar|Tranh có 1 phụ nữ: "____ is watering a plant."|She|They|It|We
+grammar|Tranh đông người, nói về 1 người: "____ is wearing a hat."|One of the women|Some of the women|All the women|The women
+grammar|Thì hiện tại tiếp diễn: S + ____ + V-ing|am / is / are|have / has|do / does|was / were + V3
+grammar|They ____ at a laptop.|are looking|is looking|looks|looking
+grammar|The man is ____ the floor.|vacuuming|vacuum|vacuumed|vacuums
+grammar|Some of the shoppers ____ carts.|are pushing|is pushing|pushes|has pushed
+tip|Part 1 có bao nhiêu câu?|6 câu|10 câu|25 câu|30 câu
+tip|Tranh: anh ấy ĐÃ đeo kính sẵn. Câu nào đúng?|He's wearing glasses.|He's putting on glasses.|He's taking off glasses.|He's buying glasses.
+tip|Câu bẫy Part 1 thường sai ở đâu?|Một chi tiết nhỏ (hành động, đồ vật)|Sai cả câu, rất dễ nhận ra|Sai thì quá khứ|Sai chính tả
+tip|Tranh có người: động từ trong câu đúng thường ở dạng nào?|is / are + V-ing|V3 / V-ed|to V|will + V
+form|"typing" là dạng V-ing của động từ nào?|type|typ|typed|typer
+colloc|____ a presentation (thuyết trình)|give|take|do|watch
+colloc|____ inventory (kiểm kê hàng hoá)|take|give|make|look
+colloc|wipe a ____ (lau quầy bếp)|counter|grass|blind|presentation

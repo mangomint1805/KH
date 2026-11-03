@@ -1,0 +1,28 @@
+# title: Listening Unit 7: Part 3 – Daily Life
+# group: Listening
+# src: summary-new/docs/listening/unit-07-daily-life.html
+v|groceries|hàng tạp hóa; thực phẩm mua ở siêu thị
+v|repair|sửa chữa
+v|appointment|cuộc hẹn
+v|schedule|lịch trình, lịch làm việc
+v|neighborhood|khu dân cư, khu phố
+v|charge|sạc (điện thoại, pin)
+v|traffic|giao thông
+v|utility bill|hóa đơn tiện ích (điện, nước, gas...)
+v|pharmacy|hiệu thuốc
+v|resident|cư dân
+v|subscription|gói đăng ký (dịch vụ, tạp chí, ứng dụng...)
+v|appliance|thiết bị gia dụng (như tủ lạnh, máy giặt, lò vi sóng...)
+# hand
+tip|Nghe các từ "prescription, medicine" → nơi chốn là?|Hiệu thuốc|Ngân hàng|Nhà hàng|Sân bay
+tip|Nghe "checkout, aisle, groceries" → người nói đang ở đâu?|Siêu thị|Bưu điện|Bệnh viện|Khách sạn
+tip|Nghe "boarding pass, gate, flight" → nơi chốn là?|Sân bay|Thư viện|Phòng tập|Tiệm tóc
+tip|Nghe "deposit, account, loan" → người nói có thể là?|Nhân viên ngân hàng|Đầu bếp|Thợ sửa xe|Giáo viên
+tip|Nghe "rent, lease, apartment" → chủ đề là?|Thuê nhà|Mua vé máy bay|Đặt món ăn|Khám bệnh
+tip|Câu hỏi "Where most likely are the speakers?" là dạng…|Suy luận nơi chốn|Hành động tiếp theo|Ý chính|Lý do
+tip|Câu hỏi "Who most likely is the woman?" là hỏi về…|Nghề nghiệp|Tuổi|Quốc tịch|Sở thích
+colloc|I need to ____ my phone. The battery is low.|charge|charging|change|pay
+colloc|I have a dentist ____ at 3 p.m.|appointment|meeting point|reservation desk|schedule time
+colloc|My ____ bill is too high this month.|utility|traffic|pharmacy|resident
+colloc|The road was busy, so I got stuck in ____.|traffic|traffics|neighborhood|subscription
+form|"resident" (cư dân) là loại từ gì?|Danh từ|Động từ|Tính từ|Trạng từ

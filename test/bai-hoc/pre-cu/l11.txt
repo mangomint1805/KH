@@ -1,0 +1,52 @@
+# title: Listening Unit 12: Part 4 – Radio Broadcasts, Speeches & Internal Announcements
+# group: Listening
+# src: summary-old/docs/listening/unit-11-radio-broadcasts-speeches-internal-announcements.html
+v|Weather report (n)|Bản tin thời tiết
+v|Damp (adj)|Ẩm ướt
+v|Stay tuned (phr)|Đừng chuyển kênh
+v|Shower (n)|Mưa rào
+v|Just in case (phr)|Phòng khi
+v|Chilly (adj)|Se lạnh, lạnh
+v|Boiling/ steaming hot (phr)|Nóng như thiêu đốt
+v|Freezing cold (phr)|Lạnh buốt
+v|Lane (n)|Làn (đường)
+v|Traffic jam (n)|Tắc đường
+v|Speed limit (n)|Tốc độ giới hạn
+v|Crash (n)|Sự đụng xe
+v|I am pleased to (phr)|Tôi rất vui khi
+v|I am honored to (phr)|Tôi rất vinh hạnh khi
+v|Give a big hand to (phr)|Nồng nhiệt hoan nghênh
+v|I am here to tell you (phr)|Tôi ở đây để nói với bạn về
+v|I want to remind you (phr)|Tôi muốn nhắc bạn
+v|Thank you for the opportunity to (phr)|Cảm ơn vì cơ hội
+v|On behalf of (phr)|Thay mặt
+v|May I have your attention? (phr)|Xin mọi người chú ý
+v|I am pleased to announce (phr)|Tôi rất vui khi thông báo rằng
+v|I am delighted to tell you (phr)|Tôi rất vui khi nói rằng
+v|I apologize for (phr)|Tôi xin lỗi vì
+v|I’d like to remind you that (phr)|Tôi muốn nhắc bạn là
+v|Please note/ be advised that (phr)|Xin lưu ý rằng
+v|Please join us for (phr)|Hãy tham gia cùng chúng tôi
+v|I have a note about (phr)|Tôi có một thông báo về
+v|We regret to inform you (phr)|Chúng tôi rất tiếc khi phải thông báo với bạn
+v|Below freezing (phr)|Dưới 0 độ C
+v|Drizzle (v)|Mưa phùn
+v|Overcast (adj)|U ám, nhiều mây
+v|Thunder & lightning (phr)|Sấm sét
+v|Heatwave (n)|Đợt nắng nóng
+v|Drought (n)|Hạn hán
+v|Administrative office (phr)|Văn phòng hành chính
+v|HR manager (n)|Quản lý nhân sự
+v|Payroll Department (phr)|Phòng tiền lương
+v|Be eligible for (phr)|Đủ điều kiện (để nhận/làm gì)
+v|Give sb a raise (phr)|Tăng lương cho ai
+# hand
+tip|Bản tin thời tiết thường kết thúc bằng…|Stay tuned for…|Attention, passengers…|Leave a message…|Welcome aboard…
+tip|"On behalf of the company, I'd like to thank…" là loại bài…|Bài phát biểu|Bản tin giao thông|Lời nhắn thoại|Quảng cáo
+tip|"May I have your attention?" là câu mở đầu của…|Thông báo nội bộ|Quảng cáo|Bản tin thời tiết|Lời nhắn
+colloc|Let's give a big ____ to our speaker!|hand|clap|arm|hands up
+colloc|All staff are eligible ____ the bonus.|for|to|with|at
+colloc|The manager gave Tom a ____.|raise|rise|rising|raised
+colloc|Traffic is heavy in the left ____.|lane|line|land|lake
+colloc|The temperature will drop below ____.|freezing|freeze|frozen|froze
+form|"overcast" (trời u ám) là loại từ…|Tính từ|Động từ|Trạng từ|Giới từ

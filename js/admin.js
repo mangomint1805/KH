@@ -49,6 +49,7 @@ async function boot() {
 async function showList() {
   cur = null; tpl('tList');
   $('bNew').onclick = () => edit({ id: null, title: '', qs: [], lop: filt && filt !== '*' ? filt : '' });
+  $('bLesson').onclick = () => lessonDialog();
   $('list').innerHTML = '<div class="muted">Đang tải…</div>';
   showMusic();
   try {
@@ -190,6 +191,92 @@ function hwDialog(q) {
       console.error(x); b.disabled = false; b.textContent = 'Tạo link';
       ov.querySelector('#hwOut').innerHTML = '<p class="err">' + (/permission/i.test(x.code || x.message || '') ? 'Firestore chưa cho phép bài về nhà: thầy dán luật mới trong firebase/firestore.rules.quiz.txt (khối quizHW, quizHWKey, quizHWSub) vào Firebase Console → Firestore → Rules rồi thử lại.' : 'Lỗi: ' + esc(x.code || x.message)) + '</p>';
     }
+  };
+}
+// ---------- 📚 tạo bản nháp từ bài học ----------
+// Ngân hàng câu soạn sẵn theo từng bài (data/bai-hoc/, sinh bằng test/build-bai-hoc.js). Bản nháp mở trong trang soạn như bộ mới, thầy xem lại rồi Lưu như thường.
+const BH = 'data/bai-hoc/';
+const getJSON = (u) => fetch(BH + u, { cache: 'no-cache' }).then((r) => { if (!r.ok) throw new Error('Không tải được ' + u + ' (' + r.status + ')'); return r.json(); });
+let bhIdx = null;
+const bhPref = (() => { try { return JSON.parse(localStorage.getItem('qz.bh') || '{}') || {}; } catch (e) { return {}; } })();
+function mix(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+// lấy n câu, chia đều các loại đã chọn (lần lượt mỗi loại một câu) để bản nháp không dồn một loại
+function pickQs(qs, kinds, n, shuf) {
+  const by = kinds.map((k) => { const L = qs.filter((q) => q.k === k); return shuf ? mix(L) : L; }).filter((L) => L.length);
+  const out = [];
+  for (let i = 0; out.length < n && by.some((L) => i < L.length); i++) by.forEach((L) => { if (i < L.length && out.length < n) out.push(L[i]); });
+  return shuf ? mix(out) : out;
+}
+function draftQ(q, time, shufO, src) {
+  let o = q.o.slice(), c = q.c.slice();
+  if (shufO) { const ord = mix([0, 1, 2, 3]); o = ord.map((i) => q.o[i]); c = q.c.map((i) => ord.indexOf(i)).sort(); }
+  return { t: q.t, o, c, time: time || q.time || 20, pts: 1, src };
+}
+async function lessonDialog() {
+  const ov = document.createElement('div'); ov.className = 'overlay hwov bhov';
+  ov.innerHTML = '<div class="card" role="dialog" aria-modal="true" aria-labelledby="bhH"><h2 id="bhH" style="margin-top:0">📚 Tạo từ bài học</h2><div id="bhBody" class="muted">Đang tải danh sách bài…</div></div>';
+  document.body.appendChild(ov);
+  const close = () => { ov.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  ov.onclick = (e) => { if (e.target === ov) close(); };
+  try { bhIdx = bhIdx || await getJSON('index.json'); }
+  catch (e) { ov.querySelector('#bhBody').innerHTML = '<p class="err">' + esc(e.message) + '</p><div class="bh-act"><button class="btn" data-x>Đóng</button></div>'; ov.querySelector('[data-x]').onclick = close; return; }
+  const I = bhIdx, K = Object.keys(I.kinds);
+  let C = I.courses.find((c) => c.lop === filt) || I.courses.find((c) => c.id === bhPref.c) || I.courses[0];
+  const body = ov.querySelector('#bhBody'); body.className = '';
+  body.innerHTML = '<p class="muted" style="margin-top:0">Chọn bài, em soạn sẵn bản nháp từ nội dung bài đó (từ vựng, ngữ pháp, mẹo làm bài). Thầy xem lại, sửa hoặc xoá câu rồi mới lưu.</p>' +
+    '<div class="bh-row"><b>Khoá</b><div class="loptabs" id="bhC">' + I.courses.map((c) => '<button type="button" class="thm" data-c="' + esc(c.id) + '">' + esc(c.name) + '</button>').join('') + '</div></div>' +
+    '<label class="bh-row"><b>Bài</b><select id="bhL"></select></label>' +
+    '<div class="bh-row"><b>Loại câu</b><div class="bh-kinds" id="bhK"></div></div>' +
+    '<div class="bh-2"><label class="bh-row"><b>Số câu</b><select id="bhN">' + [10, 15, 20].map((n) => '<option value="' + n + '">' + n + ' câu</option>').join('') + '<option value="999">Tất cả</option></select></label>' +
+    '<label class="bh-row"><b>Thời gian mỗi câu</b><select id="bhT"><option value="0">Theo loại câu (20–30 giây)</option>' + QP.TIMES.map((t) => '<option value="' + t + '">' + t + ' giây</option>').join('') + '</select></label></div>' +
+    '<label class="bh-ck"><input type="checkbox" id="bhS" checked> Trộn thứ tự câu</label><label class="bh-ck"><input type="checkbox" id="bhO" checked> Trộn thứ tự đáp án</label>' +
+    '<div id="bhInfo" class="muted" role="status" style="margin-top:10px"></div>' +
+    '<div class="bh-act"><button class="btn" data-x>Đóng</button><button class="btn pri" id="bhGo">Tạo bản nháp</button></div>';
+  const q = (s) => body.querySelector(s);
+  q('[data-x]').onclick = close;
+  if (bhPref.n) q('#bhN').value = String(bhPref.n);
+  if (bhPref.t != null) q('#bhT').value = String(bhPref.t);
+  const lesson = () => C.lessons.find((l) => l.id === q('#bhL').value) || C.lessons[0];
+  const kinds = () => [...body.querySelectorAll('[data-k]:checked')].map((x) => x.dataset.k);
+  const info = () => {
+    const L = lesson(), have = kinds().reduce((s, k) => s + (L.n[k] || 0), 0), want = +q('#bhN').value;
+    q('#bhInfo').textContent = have ? 'Bài này có ' + have + ' câu thuộc loại đã chọn → bản nháp ' + Math.min(have, want) + ' câu.' : 'Chọn ít nhất một loại câu có trong bài này.';
+    q('#bhGo').disabled = !have;
+  };
+  const paintK = () => {
+    const L = lesson(), off = bhPref.off || []; // loại thầy đã tự bỏ chọn lần trước
+    q('#bhK').innerHTML = K.map((k) => '<label' + (L.n[k] ? '' : ' class="muted"') + '><input type="checkbox" data-k="' + k + '"' + (L.n[k] && !off.includes(k) ? ' checked' : '') + (L.n[k] ? '' : ' disabled') + '> ' + esc(I.kinds[k]) + ' <span class="muted">(' + (L.n[k] || 0) + ')</span></label>').join('');
+    body.querySelectorAll('[data-k]').forEach((x) => { x.onchange = info; });
+    if (!kinds().length) body.querySelectorAll('[data-k]:not(:disabled)').forEach((x) => { x.checked = true; });
+    info();
+  };
+  const paintC = () => {
+    body.querySelectorAll('[data-c]').forEach((b) => { b.classList.toggle('on', b.dataset.c === C.id); b.setAttribute('aria-pressed', b.dataset.c === C.id); });
+    const tot = (l) => Object.values(l.n).reduce((a, b) => a + b, 0);
+    q('#bhL').innerHTML = [...new Set(C.lessons.map((l) => l.group))].map((g) => '<optgroup label="' + esc(g) + '">' + C.lessons.filter((l) => l.group === g).map((l) => '<option value="' + esc(l.id) + '">' + esc(l.title) + ' · ' + tot(l) + ' câu</option>').join('') + '</optgroup>').join('');
+    if (bhPref.c === C.id && C.lessons.some((l) => l.id === bhPref.l)) q('#bhL').value = bhPref.l;
+    paintK();
+  };
+  body.querySelectorAll('[data-c]').forEach((b) => { b.onclick = () => { C = I.courses.find((c) => c.id === b.dataset.c); paintC(); }; });
+  q('#bhL').onchange = paintK; q('#bhN').onchange = info;
+  paintC();
+  q('#bhGo').onclick = async () => {
+    const b = q('#bhGo'), L = lesson(), ks = kinds(), n = +q('#bhN').value, t = +q('#bhT').value, off = [...body.querySelectorAll('[data-k]:not(:checked):not(:disabled)')].map((x) => x.dataset.k);
+    b.disabled = true; b.textContent = 'Đang soạn…';
+    try {
+      const D = await getJSON(C.id + '/' + L.id + '.json');
+      const src = '📚 ' + L.title.split(':')[0];
+      const qs = pickQs(D.qs, ks, n, q('#bhS').checked).map((x) => draftQ(x, t, q('#bhO').checked, src));
+      if (!qs.length) throw new Error('Bài này chưa có câu thuộc loại đã chọn.');
+      try { localStorage.setItem('qz.bh', JSON.stringify({ c: C.id, l: L.id, n, t, off })); } catch (e) {}
+      Object.assign(bhPref, { c: C.id, l: L.id, n, t, off });
+      close();
+      edit({ id: null, title: C.name + ' · ' + L.title, lop: C.lop, qs });
+      dirty = true;
+      $('imp').textContent = '✓ Đã soạn bản nháp ' + qs.length + ' câu từ "' + L.title + '". Xem lại, sửa hoặc xoá câu (🗑) rồi bấm Lưu.';
+    } catch (e) { console.error(e); b.disabled = false; b.textContent = 'Tạo bản nháp'; q('#bhInfo').innerHTML = '<span class="err">' + esc(e.message || e) + '</span>'; }
   };
 }
 function err(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.message)) || 'không rõ')); }

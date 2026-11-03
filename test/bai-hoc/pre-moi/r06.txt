@@ -1,0 +1,34 @@
+# title: Reading Unit 6: Conjunctions & Prepositions
+# group: Reading
+# src: summary-new/docs/reading/unit-06-conjunctions-prepositions.html
+v|Customer survey|Khảo sát khách hàng
+v|Logo|Biểu tượng thương hiệu
+v|Product samples|Mẫu thử sản phẩm
+v|Special discount|Giảm giá đặc biệt
+v|Marketing plan|Kế hoạch marketing
+v|Campaign|Chiến dịch
+v|Business ideas|Ý tưởng kinh doanh
+v|Clients|Khách hàng / Đối tác
+v|Customers|Khách hàng mua sản phẩm
+v|Approve|Phê duyệt
+v|Launch|Tung ra, ra mắt (sản phẩm)
+v|Update|Cập nhật
+v|Attract|Thu hút
+v|Prepare|Chuẩn bị
+v|Discuss|Thảo luận
+v|Offer|Cung cấp
+# hand
+grammar|I wanted to call you, ____ my phone was dead.|but|and|or|so
+grammar|You can pay by cash ____ by card.|or|nor|but|so
+grammar|____ the survey and the samples are ready.|Both|Either|Neither|Not only
+grammar|We need ____ a new logo nor a new name.|neither|either|both|not
+grammar|____ it rained, the launch event was a success.|Although|Because|Despite|So
+grammar|We stayed home ____ the heavy rain.|because of|because|although|so that
+grammar|The plan was approved. ____, we will start next week.|Therefore|However|Although|Because
+grammar|The campaign is ____ Monday.|on|in|at|since
+grammar|The meeting starts ____ 9 a.m.|at|on|in|by
+grammar|The product will launch ____ May.|in|on|at|to
+grammar|Please send the plan ____ Friday. (trước / muộn nhất)|by|until|since|for
+tip|"Despite / Because of" + …|Danh từ / cụm danh từ|Mệnh đề (S + V)|Động từ nguyên mẫu|Trạng từ
+tip|"Although / Because" + …|Mệnh đề (S + V)|Chỉ danh từ|V-ing|to V
+colloc|We need to attract more ____.|customers|customs|customer|customize

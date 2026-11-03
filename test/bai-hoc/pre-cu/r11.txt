@@ -1,0 +1,31 @@
+# title: Reading Unit 11: Subjunctive Mood
+# group: Reading
+# src: summary-old/docs/reading/unit-11-subjunctive-mood.html
+v|Regular (adj)|Thường xuyên, đều đặn
+v|Basis (n)|Cơ sở, nền tảng
+v|Injury (n)|Sự tổn thương, thương tích
+v|Return (v)|Trở lại, quay về; trả lại
+v|Assistant (n)|Trợ lý, trợ tá
+v|Coordinator (n)|Người phối hợp, điều phối viên
+v|Check (v)|Kiểm tra, kiểm soát
+v|Survey (n/v)|Khảo sát, điều tra
+v|Conduct (v)|Tiến hành, thực hiện (conduct a survey = tiến hành khảo sát)
+v|Host (v)|Tổ chức, chủ trì (sự kiện); dẫn (chương trình)
+v|Regard (n/v)|Coi là, xem như (v); sự quan tâm (n)
+v|Eligible (adj)|Đủ điều kiện, đủ tư cách
+v|Suppose (v)|Giả sử, cho rằng
+v|Technician (n)|Kỹ thuật viên, thợ kỹ thuật
+v|Settle (v)|Giải quyết (vấn đề); thanh toán (hóa đơn)
+v|Dispatch (v)|Gửi đi, điều (người) đến
+# hand
+grammar|If you heat ice, it ____.|melts|melted|would melt|had melted
+grammar|If it rains tomorrow, we ____ the event.|will postpone|postponed|would postpone|had postponed
+grammar|If I ____ you, I would accept the offer.|were|am|will be|had been
+grammar|If she had studied, she ____ the test.|would have passed|will pass|passed|would pass
+grammar|If we ____ more staff, we could finish faster.|had|have|will have|had had
+grammar|If he had left earlier, he ____ here now.|would be|would have been|will be|is
+grammar|Unless you hurry, you ____ the bus.|will miss|miss|would miss|missed
+tip|Câu điều kiện loại 0 nói về…|Sự thật, quy luật luôn đúng|Chuyện không có thật ở quá khứ|Giả định hiện tại|Tương lai có thể xảy ra
+tip|Câu điều kiện loại 3: If + had V3, …|would have + V3|would + V|will + V|had + V3
+tip|Câu điều kiện loại 2 nói về…|Điều không có thật ở hiện tại|Sự thật hiển nhiên|Chuyện đã xảy ra|Kế hoạch chắc chắn
+colloc|We will conduct a ____ next month.|survey|surveyed|surveying|surveys it

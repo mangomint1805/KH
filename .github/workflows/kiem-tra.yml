@@ -15,6 +15,8 @@ jobs:
         run: node -e "JSON.parse(require('fs').readFileSync('firebase/database.rules.quiz.json','utf8'))"
       - name: Đoạn luật để dán khớp với file luật gốc
         run: node test/build-rules.js && git diff --exit-code firebase/dan-vao-rtdb.txt
+      - name: Ngân hàng câu hỏi theo bài học khớp với nguồn và qua bộ kiểm tra
+        run: node test/build-bai-hoc.js && git diff --exit-code data/bai-hoc && test -z "$(git status --porcelain data/bai-hoc)"
       - name: Bộ đọc câu hỏi
         run: node test/parse.test.js
       - name: Không lộ email trong code chạy trên trình duyệt
