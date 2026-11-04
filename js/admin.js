@@ -459,10 +459,10 @@ function summary() {
   $('sum').innerHTML = !cur.qs.length ? '' : (bad.length ? '<div class="card" style="border-color:var(--red);background:var(--red-soft)"><b class="err">' + bad.length + ' câu cần sửa trước khi lưu:</b> câu ' + bad.join(', ') + '</div>' : '<div class="card" style="background:var(--ok-soft);border-color:#bfe0b2">✓ ' + cur.qs.length + ' câu hợp lệ' + (warn.length ? ' · câu ' + warn.join(', ') + ' dài hơn giới hạn của Kahoot (vẫn chơi được ở đây)' : '') + '</div>');
 }
 
-function clean(qs) { return qs.map((q) => Object.assign({ t: QP.str(q.t), o: q.o.map((x) => QP.str(x)), c: q.c.slice(), time: q.time, pts: q.pts }, q.img ? { img: q.img } : {})); }
+function clean(qs) { return qs.map((q) => Object.assign({ t: QP.str(q.t), o: q.o.map((x) => QP.str(x)), c: q.c.slice(), time: q.time, pts: q.pts }, q.img ? { img: q.img } : {}, q.aud ? { aud: String(q.aud).slice(0, 300) } : {}, Array.isArray(q.tr) ? { tr: q.tr } : {})); }
 async function save(q) {
   const F = FX.F, ref = q.id ? F.doc(FX.db, 'quizzes', q.id) : F.doc(F.collection(FX.db, 'quizzes'));
-  await F.setDoc(ref, { title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', lop: String(q.lop || '').slice(0, 20), qs: clean(q.qs), upd: Date.now(), at: F.serverTimestamp() });
+  await F.setDoc(ref, { title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', lop: String(q.lop || '').slice(0, 20), qs: clean(q.qs), ...(q.exam ? { exam: true } : {}), upd: Date.now(), at: F.serverTimestamp() });
   return ref.id;
 }
 const imgsOf = (qs) => new Set((qs || []).map((y) => y.img).filter(Boolean));

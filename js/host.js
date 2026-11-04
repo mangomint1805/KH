@@ -26,6 +26,23 @@ function zoomOpen(src) {
   if (im.complete) fit(); else im.onload = fit;
 }
 function zoomClose() { const d = document.getElementById('qzbox'); if (d) d.remove(); }
+// ---------- audio câu nghe (Q.aud) + chế độ thi thật (quiz.exam: ẩn chữ câu hỏi/đáp án tới lúc chữa) ----------
+let qAud = null;
+const isEx = (Q) => !!(Q && Q.aud && quiz && quiz.exam);
+function audStop() { if (qAud) { qAud.onended = null; qAud.onerror = null; try { qAud.pause(); } catch (e) {} qAud = null; } }
+function audPlay(Q, q, onEnd) {
+  audStop();
+  const a = new Audio(Q.aud); a.preload = 'auto'; qAud = a;
+  const st = (t) => { const el = $('audst'); if (el) el.textContent = t; };
+  a.onended = () => { if (qAud !== a) return; st('✓ Nghe xong'); if (onEnd) onEnd(); };
+  a.onerror = () => { if (qAud !== a) return; st('⚠ Không tải được audio, bấm ▶ Phát lại hoặc ⏭ Cho trả lời'); };
+  const p = a.play(); if (p && p.catch) p.catch(() => { if (qAud === a) st('Bấm ▶ Phát lại để nghe'); });
+  st('🔊 Đang phát…');
+}
+function trHtml(Q) {
+  if (!Array.isArray(Q.tr) || !Q.tr.length) return '';
+  return '<div class="trbox"><div class="trh">📜 Transcript</div>' + Q.tr.map((l) => '<div class="trl' + (l.ok ? ' ok' : '') + '"><b class="trk">' + esc(l.k || '') + '</b><div><div class="tren">' + esc(l.en || '') + (l.ok ? ' <span class="trok">✔</span>' : '') + '</div>' + (l.vi ? '<div class="trvi">' + esc(l.vi) + '</div>' : '') + '</div></div>').join('') + '</div>';
+}
 function curImgSrc() { const i = main && main.querySelector('.qimg'); return i ? i.src : (quiz && state && quiz.qs[state.q] && IMGS[quiz.qs[state.q].img]) || ''; }
 document.addEventListener('click', (e) => {
   const t = e.target.closest && e.target.closest('.qzoom, .qimg, #bZoom');
@@ -297,12 +314,12 @@ function start() {
 
 // ---------- câu hỏi ----------
 async function goShow(q) {
-  clearTimeout(autoT); clearInterval(timer); stopAns();
+  clearTimeout(autoT); clearInterval(timer); stopAns(); audStop();
   const Q = quiz.qs[q];
   await Promise.race([imgP, new Promise((ok) => setTimeout(ok, 4000))]);
   try {
     await D.update(r(), {
-      ['qpub/' + q]: { t: String(Q.t).slice(0, 1000), o: Q.o.map((x) => String(x || '').slice(0, 500)), time: Q.time, pts: Q.pts },
+      ['qpub/' + q]: isEx(Q) ? { t: '🎧 Câu ' + (q + 1) + ': nghe rồi chọn đáp án đúng nhất', o: Q.o.map((x, i) => (x ? 'Đáp án ' + LETTERS[i] : '')), time: Q.time, pts: Q.pts } : { t: String(Q.t).slice(0, 1000), o: Q.o.map((x) => String(x || '').slice(0, 500)), time: Q.time, pts: Q.pts },
       state: { phase: 'show', q, qs: String(q) },
     });
   } catch (e) { return fail(e); }
@@ -312,6 +329,15 @@ async function goShow(q) {
   main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext' + qlen(Q.t) + '" style="flex:1;display:flex;align-items:center;justify-content:center">' + qtHtml(Q.t) + '</div>') +
     (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
     '<div class="prog"><i id="pg"></i></div>';
+  if (Q.aud) {
+    const pr = main.querySelector('.prog'); if (pr) pr.remove();
+    if (isEx(Q)) { const qt = main.querySelector('.qtext'); if (qt) qt.innerHTML = '🎧 Câu ' + (q + 1) + '<div style="font-size:.55em;opacity:.75;margin-top:8px">Nghe và chọn câu trả lời đúng nhất</div>'; }
+    main.insertAdjacentHTML('beforeend', '<div class="audbar"><span id="audst">🔊 Đang tải audio…</span><span class="sp"></span><button class="btn big" id="bRe">▶ Phát lại</button> <button class="btn big pri" id="bGo">⏭ Cho trả lời</button></div>');
+    $('bRe').onclick = () => audPlay(Q, q, () => { autoT = setTimeout(() => goAnswer(q), 800); });
+    $('bGo').onclick = () => { audStop(); goAnswer(q); };
+    audPlay(Q, q, () => { autoT = setTimeout(() => goAnswer(q), 800); });
+    return;
+  }
   requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
   autoT = setTimeout(() => goAnswer(q), SHOW_MS);
 }
@@ -320,7 +346,7 @@ const qlen = (t) => { const n = String(t || '').length; return n > 170 ? ' xlong
 function qHead(q) { return '<div class="qmeta"><span>Câu ' + (q + 1) + '/' + quiz.qs.length + '</span><span class="muted">PIN ' + PIN + '</span></div>'; }
 
 async function goAnswer(q) {
-  clearTimeout(autoT);
+  clearTimeout(autoT); if (qAud && !qAud.ended) audStop();
   const Q = quiz.qs[q], startAt = Math.round(now()) + 300, endAt = startAt + Q.time * 1000;
   try { await D.set(r('state'), { phase: 'answer', q, qs: String(q), startAt, endAt }); } catch (e) { return fail(e); }
   state = { phase: 'answer', q, qs: String(q), startAt, endAt };
@@ -331,9 +357,10 @@ function answerView(q, still) {
   const Q = quiz.qs[q];
   if (!still) Sound.mode('q');
   const C = 2 * Math.PI * 58;
-  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div>' +
+  const ex = isEx(Q);
+  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + (ex ? '' : qlen(Q.t)) + '">' + (ex ? '🎧 Câu ' + (q + 1) + ': chọn A, B hay C?' : qtHtml(Q.t)) + '</div>' +
     '<div class="mid"><div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + Q.time + '</div></div><div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
-    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
+    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + (ex ? LETTERS[i] : esc(o)) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
   $('bPause').onclick = () => pause();
   stopAns();
@@ -401,7 +428,7 @@ let revealing = -1;
 async function goReveal(q) {
   if (revealing === q) return;
   revealing = q;
-  clearInterval(timer); stopAns(); Sound.mode(null); closePause();
+  clearInterval(timer); stopAns(); Sound.mode(null); closePause(); audStop();
   const wasOpen = state.phase === 'answer' || isPaused();
   if (isPaused()) { const t = Math.round(now()), from = PZ.cur ? PZ.cur.at : t; (PZ[q] = PZ[q] || []).push([from, t]); delete PZ.cur; pzSave(); }
   const Q = quiz.qs[q];
@@ -447,9 +474,10 @@ function revealView(q) {
   const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
   main.innerHTML = qHead(q) + '<div class="qtext' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
-    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' +
-    '<div style="text-align:right">' + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
-  $('bNext').onclick = next;
+    (trHtml(Q) || '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>') +
+    '<div style="text-align:right">' + (Q.aud ? '<button class="btn big" id="bAud" title="Nghe lại audio câu này (phím R)">🔁 Nghe lại</button> ' : '') + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
+  $('bNext').onclick = () => { audStop(); next(); };
+  if ($('bAud')) $('bAud').onclick = () => { if (qAud) { audStop(); } else audPlay(Q, q, null); };
   if ($('bZoom')) $('bZoom').dataset.src = IMGS[Q.img];
   requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
 }
@@ -629,6 +657,7 @@ document.addEventListener('keydown', (e) => {
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
   if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if (document.getElementById('qzbox')) { if (/^( |Enter|Escape|z|Z)$/.test(e.key)) { e.preventDefault(); zoomClose(); } return; }
+  if ((e.key === 'r' || e.key === 'R') && $('bAud')) { e.preventDefault(); $('bAud').click(); return; }
   if ((e.key === 'z' || e.key === 'Z') && main && (main.querySelector('.qimg') || $('bZoom'))) { e.preventDefault(); const b = $('bZoom'); zoomOpen(b ? b.dataset.src : curImgSrc()); return; }
   if ((e.key === ' ' || e.key === 'Enter') && PIN && state.phase && state.phase !== 'end') {
     e.preventDefault();
