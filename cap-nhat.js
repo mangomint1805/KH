@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.19', d: '2026-11-04', items: [
+      '🎧 Câu nghe có audio: câu hỏi nào gắn audio thì màn chiếu tự phát khi hiện câu. Nghe xong đồng hồ mới bắt đầu chạy. Có nút ▶ Phát lại và ⏭ Cho trả lời luôn.',
+      '📝 Chế độ thi thật: bộ câu hỏi bật chế độ này sẽ ẩn chữ của câu hỏi và đáp án, cả trên màn chiếu lẫn điện thoại, chỉ còn A, B, C như lúc đi thi.',
+      '📜 Lúc chữa bài, câu có transcript sẽ hiện transcript kèm nghĩa tiếng Việt, đáp án đúng được tô vàng. Bấm 🔁 Nghe lại hoặc phím R để nghe lại câu đó.'
+    ] },
     { v: '1.18', d: '2026-11-04', items: [
       '📚 Tạo từ bài học: ở trang Bộ câu hỏi bấm "📚 Tạo từ bài học", chọn khoá (Pre mới, A mới, Pre cũ) rồi chọn bài (Unit hoặc Weekly Revision), có ngay bản nháp câu hỏi soạn theo đúng nội dung bài đó.',
       'Mỗi bài có sẵn khoảng 20–30 câu: nghĩa từ vựng (Anh → Việt và Việt → Anh), loại từ, cụm từ đi kèm, ngữ pháp kiểu Part 5 và mẹo làm bài nghe / đọc. Chọn số câu (10, 15, 20 hoặc tất cả), loại câu, thời gian mỗi câu, có trộn câu và trộn đáp án.',
