@@ -20,9 +20,12 @@ Cài đặt Firebase lần đầu: xem [FIREBASE.md](FIREBASE.md).
 
    Hoặc bấm **📚 Tạo từ bài học**: chọn khoá (Pre mới / A mới / Pre cũ), chọn bài, số câu, loại câu (từ vựng, loại từ, cụm từ, ngữ pháp, mẹo làm bài), thời gian, trộn câu / đáp án → bản nháp mở ngay trong trang soạn, xem lại rồi Lưu như bộ thường.
 
+   **📦 Nhóm câu (Part 3/4/6/7):** bấm **📦 Gộp với câu trên** ở các câu liền nhau, khung nhóm hiện phía trên: đoạn văn chung, hình, âm thanh (file ≤ 6 MB hoặc link mp3), **Số câu trên đề** (vd. 32 → hiện 32, 33, 34). Tối đa 5 câu một nhóm; **✂ Tách** đưa câu ra khỏi nhóm, **Bỏ nhóm** để bỏ cả nhóm. Excel: cột I `Nhóm` (câu liền nhau ghi cùng tên), cột J `Đoạn văn` (ghi ở câu đầu nhóm), cột A là số câu trên đề. Văn bản đề: `Questions 147-149 refer to…` + đoạn văn tự thành nhóm 147–149.
+
    File chỉ được đọc trên máy của thầy, không gửi lên đâu. Sau khi đọc, sửa trực tiếp trong bảng: nội dung, đáp án đúng, thời gian (5–240 giây), điểm (thường / gấp đôi / không tính). Câu lỗi được tô đỏ, sửa xong mới lưu được. Có thể thêm, xoá, đổi thứ tự, nhân đôi câu, nhân bản cả bộ, xuất ngược ra Excel mẫu Kahoot.
 2. **Tạo phòng** (`host.html`): chọn bộ, bấm **Tạo phòng**. Màn hình hiện PIN 6 số và QR.
 3. **Chơi:** bấm **Bắt đầu**. Mỗi câu: hiện câu hỏi 3 giây, mở 2–4 ô màu (theo số đáp án của câu) kèm đồng hồ. Hết giờ, cả lớp đã trả lời, hoặc bấm **Bỏ qua** thì khoá và công bố đáp án kèm biểu đồ. Sau đó là bảng xếp hạng top 5.
+   **Nhóm câu:** màn chiếu hiện nội dung chung bên trái, cả nhóm câu bên phải, một đồng hồ chung (tổng thời gian các câu); có âm thanh thì tự phát khi mở giờ (▶ / ↺, phím **A**). Điện thoại hiện đoạn văn + cả nhóm câu, bấm **Nộp bài** một lần (hết giờ tự nộp câu đã chọn). Hết giờ thì chữa từng câu (Space: Câu 32 → 33 → 34), rồi mới tới bảng xếp hạng.
 4. **Cuối game:** bục top 3, nút **Tải kết quả CSV** (tên, điểm từng câu, đúng/sai, thời gian trả lời). Bảng điểm (tên, điểm, hạng, số câu đúng) tự lưu vào **Lịch sử kết quả**.
 5. **Lịch sử kết quả** (`ket-qua.html`): xem lại từng buổi, tải CSV, xoá buổi. Thẻ **Cộng dồn** cộng điểm nhiều buổi theo tên học sinh (tổng điểm, trung bình, số lần top 1 / top 3, số câu đúng). Tên khác dấu hoặc chữ hoa tự gộp; tên gõ khác hẳn thì tick rồi bấm **Gộp**.
 6. **⛏️ Đào vàng cả lớp**: lúc tạo phòng chọn chế độ Đào vàng (hoặc nút ⛏️ ở bộ câu hỏi). Mỗi bạn tự trả lời liên tục trên điện thoại (`vang.html`), đúng được 10 vàng × hệ số chuỗi (×1.5 / ×2 / ×3 từ chuỗi 3 / 5 / 10); màn chiếu hiện đồng hồ và bảng vàng. Cần luật RTDB mới (FIREBASE.md).
@@ -63,7 +66,7 @@ firebase/           luật Realtime Database và Firestore để dán vào Conso
 test/               kiểm thử (bộ đọc câu hỏi, chơi thử cả trận trên Firebase Emulator)
 ```
 
-Dữ liệu Realtime Database, nhánh `quiz/{pin}/`: `meta`, `state`, `qpub/{câu}` (câu hỏi, không có đáp án), `key/{câu}` (đáp án, chỉ ghi khi công bố), `players/{uid}`, `answers/{câu}/{uid}`, `scores/{uid}`, `kick/{uid}`. Bộ câu hỏi lưu ở Firestore `quizzes/{id}`, bảng điểm từng ván ở `quizResults/{ngày-PIN}` (tên gộp lưu ở `quizResults/_gop`). Cả hai chỉ tài khoản giáo viên đọc/ghi.
+Dữ liệu Realtime Database, nhánh `quiz/{pin}/`: `meta`, `state`, `qpub/{câu}` (câu hỏi, không có đáp án; câu trong nhóm có thêm `g` câu đầu nhóm, `no` số câu trên đề, câu đầu nhóm có `gn` số câu và `p` đoạn văn), `key/{câu}` (đáp án, chỉ ghi khi công bố), `players/{uid}`, `answers/{câu}/{uid}`, `scores/{uid}`, `kick/{uid}`. Nhóm câu khi chơi: `state.q`/`state.qs` là câu đầu nhóm lúc mở giờ, học sinh ghi cả nhóm vào `answers/{từng câu}/{uid}` trong một lần ghi; lúc chữa, `state.q` là câu đang chữa. Bộ câu hỏi lưu ở Firestore `quizzes/{id}` (câu trong nhóm có `g`, nội dung nhóm ở `groups/{g}` = `p`, `no`, `img`, `au`/`aurl`; âm thanh chia phần ở `quizImg/{id}` + `quizImg/{id}_{i}`), bảng điểm từng ván ở `quizResults/{ngày-PIN}` (tên gộp lưu ở `quizResults/_gop`). Cả hai chỉ tài khoản giáo viên đọc/ghi.
 
 Thư viện tải từ CDN, có ghi phiên bản: Firebase 10.12.2, SheetJS 0.18.5, mammoth 1.6.0, pdf.js 3.11.174, qrcode-generator 1.4.4.
 
@@ -77,6 +80,7 @@ cd test/emu && npx firebase-tools emulators:start --project minto-english
 node test/server.js                           # cửa sổ khác: http://127.0.0.1:8000/KH/
 node test/e2e.js "Kahoot - ….xlsx"            # chơi thử cả trận: 1 host + 4 người chơi (hình, tạm dừng, thanh tham gia…)
 node test/e2e-board.js "Kahoot - ….xlsx"      # 7 người, xem hiệu ứng bảng xếp hạng (lội ngược dòng)
+node test/e2e-nhom.js                         # 📦 nhóm câu: 3 người chơi, nộp cả nhóm, chữa từng câu, bộ cũ, bài về nhà
 ```
 
 `test/server.js` thay `/acc.js` bằng `test/mock-acc.js` để nối vào Emulator.

@@ -56,7 +56,10 @@ r = QP.fromText('1. Q one\n(A) a (B) b (C) c (D) d\n2. Q two\n(A) a (B) b (C) c 
 assert.deepStrictEqual(r.qs.map((q) => q.c[0]), [1, 2, 0, 3, 1]);
 assert.strictEqual(r.qs[2].o[3], 'z');
 assert.strictEqual(r.qs[4].t, 'A man is standing by the door.');
-assert.strictEqual(r.skipped, 1);
+// đoạn văn dẫn có số câu ("Questions 2-3 refer to…") giờ thành nhóm câu, giữ đoạn văn
+assert.strictEqual(r.skipped, 0);
+assert.ok(r.qs[3].g && r.qs[3].g === r.qs[4].g && !r.qs[2].g);
+assert.deepStrictEqual(r.groups[r.qs[3].g], { p: 'The store will be closed on Monday.', no: 2 });
 // quá 1000 / 500 ký tự: chặn lưu (Firebase không nhận)
 assert.ok(QP.check({ t: 'x'.repeat(1001), o: ['a', 'b', '', ''], c: [0] }).err.length === 1);
 assert.ok(QP.check({ t: 'x', o: ['a'.repeat(501), 'b', '', ''], c: [1] }).err.length === 1);
@@ -70,4 +73,47 @@ const C = { points: (ok, ms, T, m) => (!ok || !m ? 0 : Math.round(1000 * (1 - Ma
 assert.strictEqual(C.points(true, 0, 20, 1), 1000);
 assert.strictEqual(C.points(true, 20000, 20, 1), 500);
 assert.strictEqual(C.points(true, 10000, 20, 2), 1500);
+// ---------- 📦 nhóm câu ----------
+// File cũ (không có cột nhóm) không có nhóm nào
+assert.deepStrictEqual(QP.fromRows(rows).groups, {});
+assert.ok(QP.fromRows(rows).qs.every((q) => !q.g));
+// Excel có cột I "Nhóm", J "Đoạn văn"; cột A là số câu trên đề
+const gRows = [[], ['', 'Quiz template'], ['', 'Part 7'], [], [], [], [],
+  ['', 'Question', 'A1', 'A2', 'A3', 'A4', 'Time', 'Correct', 'Nhóm', 'Đoạn văn'],
+  [1, 'Normal one', 'a', 'b', 'c', 'd', 20, 1],
+  [147, 'What is the email about?', 'a', 'b', 'c', 'd', 30, 2, 'E1', 'Dear Ms. Lee,\nThank you for your order.'],
+  [148, 'When will it arrive?', 'a', 'b', 'c', 'd', 30, 3, 'E1', ''],
+  [149, 'Who is Ms. Lee?', 'a', 'b', 'c', 'd', 30, 4, 'E1'],
+  [150, 'Lone group', 'a', 'b', '', '', 20, 1, 'E2', 'x'],
+  [151, 'Again E1 but not next to the others', 'a', 'b', '', '', 20, 1, 'E1'],
+  [152, 'Pair', 'a', 'b', '', '', 20, 1, 'E1']];
+r = QP.fromRows(gRows);
+assert.strictEqual(r.qs.length, 7);
+const g1 = r.qs[1].g;
+assert.ok(g1 && r.qs[2].g === g1 && r.qs[3].g === g1 && !r.qs[0].g);
+assert.deepStrictEqual(r.groups[g1], { p: 'Dear Ms. Lee,\nThank you for your order.', no: 147 });
+assert.ok(!r.qs[4].g, 'nhóm chỉ 1 câu thì bỏ nhóm');
+assert.ok(r.qs[5].g && r.qs[5].g === r.qs[6].g && r.qs[5].g !== g1, 'cùng tên nhưng không liền nhau là nhóm khác');
+assert.strictEqual(Object.keys(r.groups).length, 2);
+// CSV không có tiêu đề: 2 cột sau cột đáp án đúng là nhóm, đoạn văn
+r = QP.fromRows(QP.parseCSV('32;Where are they?;a;b;c;d;20;1;A;\n33;Who is she?;a;b;c;d;20;2;A;\n34;What next?;a;b;c;d;20;3;A;\n'));
+assert.ok(r.qs.every((q) => q.g === r.qs[0].g) && r.qs[0].g);
+assert.strictEqual(r.groups[r.qs[0].g].no, 32);
+// Xuất ra Excel rồi đọc lại: giữ nhóm, đoạn văn, số câu
+r = QP.fromRows(gRows);
+const back2 = QP.fromRows(QP.toRows('Part 7', r.qs, r.groups));
+assert.deepStrictEqual(back2.qs.map((q) => !!q.g), r.qs.map((q) => !!q.g));
+assert.deepStrictEqual(Object.values(back2.groups), Object.values(r.groups));
+assert.strictEqual(QP.toRows('T', QP.fromRows(rows).qs)[7].length, 8, 'bộ không có nhóm: xuất đúng mẫu Kahoot 8 cột');
+// Văn bản đề Part 7: đoạn văn nhiều dòng thành nhóm
+r = QP.fromText('Questions 147-148 refer to the following e-mail.\nTo: Ms. Lee\nYour order has shipped.\n147. Why was the e-mail sent?\n(A) a (B) b (C) c (D) d\n148. What is included?\n(A) a (B) b (C) c (D) d\n149. Single question\n(A) a (B) b\nĐáp án\n147A 148B 149A\n');
+assert.strictEqual(r.qs.length, 3);
+assert.ok(r.qs[0].g && r.qs[1].g === r.qs[0].g && !r.qs[2].g);
+assert.deepStrictEqual(r.groups[r.qs[0].g], { p: 'To: Ms. Lee\nYour order has shipped.', no: 147 });
+assert.deepStrictEqual(r.qs.map((q) => q.c[0]), [0, 1, 0]);
+// kiểm tra nhóm: tối đa 5 câu, đoạn văn tối đa 6000 ký tự
+assert.strictEqual(QP.checkGroup({ p: 'x' }, 3).length, 0);
+assert.strictEqual(QP.checkGroup({ p: 'x' }, 6).length, 1);
+assert.strictEqual(QP.checkGroup({ p: 'x'.repeat(6001) }, 2).length, 1);
+
 console.log('✔ parse.test.js: tất cả đều qua');

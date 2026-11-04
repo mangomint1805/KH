@@ -1,10 +1,11 @@
 /* Minto Quiz — đọc bộ câu hỏi từ Excel mẫu Kahoot, CSV, hoặc văn bản dạng đề.
    Chạy được cả trên trình duyệt (window.QP) lẫn Node (module.exports) để kiểm thử.
-   Câu hỏi: { t: nội dung, o: [4 đáp án], c: [chỉ số đáp án đúng 0-3], time: giây, pts: 1 | 2 | 0 } */
+   Câu hỏi: { t: nội dung, o: [4 đáp án], c: [chỉ số đáp án đúng 0-3], time: giây, pts: 1 | 2 | 0, g?: mã nhóm }
+   Nhóm câu (Part 3/4/6/7): các câu LIỀN NHAU cùng g; nội dung chung ở groups[g] = { p: đoạn văn, no: số câu đầu trên đề } */
 (function (root) {
   'use strict';
   var TIMES = [5, 10, 20, 30, 60, 90, 120, 240];
-  var MAXQ = 120, MAXA = 75;
+  var MAXQ = 120, MAXA = 75, GMAX = 5, PMAX = 6000;
 
   function str(v) { return v == null ? '' : String(v).replace(/ /g, ' ').replace(/\s+/g, ' ').trim(); }
   function snapTime(v, def) {
@@ -66,7 +67,9 @@
       }
       if (off >= 0) break;
     }
-    var qs = [], errs = [];
+    var qs = [], errs = [], groups = {}, gCol = -1, pCol = -1, lastG = null, nG = 0;
+    // cột nhóm: theo tiêu đề ("Nhóm"/"Group", "Đoạn văn"/"Passage"), không có tiêu đề thì là 2 cột ngay sau cột đáp án đúng
+    if (start > 0) rows[start - 1].forEach(function (c, j) { var h = str(c); if (/^(nhóm|nhom|group)/i.test(h)) gCol = j; if (/^(đoạn văn|doan van|passage|bài đọc)/i.test(h)) pCol = j; });
     for (var k = start; k < rows.length; k++) {
       var row = rows[k], o = off;
       if (!row.some(function (c) { return str(c); })) continue;
@@ -78,12 +81,24 @@
       q.c = parseCorrect(row[o + 6]);
       if (!q.t && !q.o.some(Boolean)) continue;
       q.row = k + 1;
+      var gc = gCol >= 0 ? gCol : o + 7, pc = pCol >= 0 ? pCol : o + 8, gv = str(row[gc]), pv = String(row[pc] == null ? '' : row[pc]).replace(/\r/g, '').trim();
+      if (gv) {
+        if (!lastG || lastG.v !== gv || lastG.i !== qs.length - 1) { nG++; lastG = { v: gv, key: 'x' + nG }; groups[lastG.key] = { p: '', no: o > 0 && /^\d{1,3}$/.test(str(row[o - 1])) ? +str(row[o - 1]) : 0 }; }
+        lastG.i = qs.length; q.g = lastG.key;
+        if (pv && !groups[q.g].p) groups[q.g].p = pv;
+      } else lastG = null;
       qs.push(q);
     }
+    tidyGroups(qs, groups);
     var title = '';
     for (var t = 0; t < Math.min(rows.length, 6); t++) if (/^quiz template$/i.test(str(rows[t][1])) && rows[t + 1]) { title = str(rows[t + 1][1]); break; }
     if (!qs.length) errs.push('Không tìm thấy câu hỏi nào. File cần theo mẫu Kahoot: cột B câu hỏi, C–F đáp án, G thời gian, H đáp án đúng.');
-    return { qs: qs, errs: errs, title: title };
+    return { qs: qs, errs: errs, title: title, groups: groups };
+  }
+  // nhóm chỉ có 1 câu thì bỏ nhóm; bỏ nhóm không còn câu nào
+  function tidyGroups(qs, groups) {
+    qs.forEach(function (q, i) { if (q.g && !((qs[i - 1] && qs[i - 1].g === q.g) || (qs[i + 1] && qs[i + 1].g === q.g))) delete q.g; });
+    Object.keys(groups).forEach(function (k) { if (!qs.some(function (q) { return q.g === k; })) delete groups[k]; else if (!groups[k].no) delete groups[k].no; });
   }
 
   // ---------- văn bản dạng đề ----------
@@ -118,10 +133,10 @@
   // dòng bảng đáp án: chỉ gồm các cặp "số + chữ", ví dụ "1B 2A 3D", "1-B, 2-A", "4. C"
   var RE_KEYLINE = /^\s*(\d{1,3}\s*[.\-:)]?\s*\(?[A-Da-d]\)?[\s,;.]*)+$/;
   // mở đầu đoạn văn dẫn (Part 6/7): "Questions 3-4 refer to…", "Read the following…"
-  var RE_PASSAGE = /^\s*(questions?\s+\d{1,3}\s*(-|–|—|and|to|&)\s*\d{1,3}|read the following|refer to the following)/i;
+  var RE_PASSAGE = /^\s*(questions?\s+(\d{1,3})\s*(?:-|–|—|and|to|&)\s*(\d{1,3})|read the following|refer to the following)/i;
   function fromText(text) {
     var lines = String(text || '').replace(/\r/g, '').replace(/ /g, ' ').split('\n');
-    var qs = [], cur = null, keyMode = false, keys = null, errs = [], sections = [], secFrom = 0, skip = false, skipped = 0;
+    var qs = [], cur = null, keyMode = false, keys = null, errs = [], sections = [], secFrom = 0, skip = false, skipped = 0, groups = {}, pas = null, nG = 0;
     function push() { if (cur) qs.push(cur); cur = null; }
     function letterIdx(L) { return L.toUpperCase().charCodeAt(0) - 65; }
     for (var i = 0; i < lines.length; i++) {
@@ -145,14 +160,18 @@
         cur.c = parseCorrect(am[1].replace(/[()]/g, ' ').replace(/và/g, ','));
         continue;
       }
-      if (RE_PASSAGE.test(line)) { push(); skip = true; skipped++; continue; } // đoạn văn dẫn: bỏ qua tới câu hỏi kế tiếp
+      // đoạn văn dẫn "Questions 147-149 refer to…": giữ đoạn văn làm nội dung chung của nhóm câu 147–149
+      var pm = RE_PASSAGE.exec(line);
+      if (pm) { push(); skip = true; pas = pm[2] ? { from: +pm[2], to: +pm[3], lines: [], key: 'p' + (++nG), used: false } : null; if (!pas) skipped++; else groups[pas.key] = { p: '', no: +pm[2] }; continue; }
       var qm = RE_Q.exec(line);
       if (qm) {
         push(); skip = false;
         cur = blank(); cur.num = +qm[1]; cur.row = i + 1; cur.optStarted = false;
+        if (pas && cur.num >= pas.from && cur.num <= pas.to) { cur.g = pas.key; pas.used = true; } else pas = null;
         line = qm[2];
         if (!line.trim()) continue;
       }
+      if (skip && pas) { pas.lines.push(str(line)); groups[pas.key].p = pas.lines.join('\n').slice(0, PMAX); continue; }
       if (!cur || skip) continue;
       var sp = splitOptions(line);
       // "Mr. A. Smith…": chỉ một nhãn đáp án, đứng giữa câu hỏi -> là chữ của câu hỏi
@@ -173,8 +192,9 @@
       delete q.optStarted; delete q.last;
       q.time = 30;
     });
+    tidyGroups(qs, groups);
     if (!qs.length) errs.push('Không nhận ra câu hỏi nào. Mỗi câu cần bắt đầu bằng số thứ tự, ví dụ "1. …", rồi các đáp án (A) … (B) …');
-    return { qs: qs, errs: errs, skipped: skipped };
+    return { qs: qs, errs: errs, skipped: skipped, groups: groups };
   }
 
   // ---------- kiểm tra ----------
@@ -192,8 +212,19 @@
     return { err: err, warn: warn };
   }
 
+  // nhóm câu: n = số câu liền nhau của nhóm
+  function checkGroup(G, n) {
+    var err = [];
+    if (n > GMAX) err.push('Nhóm có ' + n + ' câu, tối đa ' + GMAX + ' câu (tách bớt thành nhóm khác)');
+    if (G && str(G.p).length > PMAX) err.push('Đoạn văn dài ' + str(G.p).length + ' ký tự, tối đa ' + PMAX);
+    return err;
+  }
+
   // ---------- xuất ra mẫu Kahoot ----------
-  function toRows(title, qs) {
+  // có nhóm câu thì thêm 2 cột I "Nhóm", J "Đoạn văn"; cột A ghi số câu trên đề (vd. 32) cho câu trong nhóm
+  function toRows(title, qs, groups) {
+    groups = groups || {};
+    var hasG = qs.some(function (q) { return q.g; }), nG = 0, name = '', no = 0, at = 0;
     var rows = [
       [], ['', 'Quiz template'], ['', title || ''],
       ['', 'Add questions, at least two answer alternatives, time limit and choose correct answers (at least one). Have fun creating your awesome quiz!'],
@@ -202,13 +233,22 @@
       ['', "And remember,  if you're not using Excel you need to export to .xlsx format before you upload to Kahoot!"],
       ['', 'Question - max 120 characters', 'Answer 1 - max 75 characters', 'Answer 2 - max 75 characters', 'Answer 3 - max 75 characters', 'Answer 4 - max 75 characters', 'Time limit (sec) – 5, 10, 20, 30, 60, 90, 120, or 240 secs', 'Correct answer(s) - choose at least one']
     ];
+    if (hasG) rows[7].push('Nhóm (câu cùng nhóm ghi cùng tên, liền nhau)', 'Đoạn văn của nhóm (ghi ở câu đầu nhóm)');
     qs.forEach(function (q, i) {
-      rows.push([i + 1, q.t, q.o[0] || '', q.o[1] || '', q.o[2] || '', q.o[3] || '', q.time, q.c.map(function (x) { return x + 1; }).join(',')]);
+      var r = [i + 1, q.t, q.o[0] || '', q.o[1] || '', q.o[2] || '', q.o[3] || '', q.time, q.c.map(function (x) { return x + 1; }).join(',')];
+      if (hasG) {
+        var first = q.g && !(qs[i - 1] && qs[i - 1].g === q.g), G = groups[q.g] || {};
+        if (!q.g) name = '';
+        else if (first) { name = 'Nhóm ' + (++nG); no = +G.no || 0; at = i; }
+        if (q.g && no > 0) r[0] = no + (i - at);
+        r.push(name, first ? String(G.p || '') : '');
+      }
+      rows.push(r);
     });
     return rows;
   }
 
-  var QP = { TIMES: TIMES, MAXQ: MAXQ, MAXA: MAXA, str: str, snapTime: snapTime, blank: blank, parseCorrect: parseCorrect, parseCSV: parseCSV, fromRows: fromRows, fromText: fromText, check: check, toRows: toRows };
+  var QP = { TIMES: TIMES, MAXQ: MAXQ, MAXA: MAXA, GMAX: GMAX, PMAX: PMAX, checkGroup: checkGroup, str: str, snapTime: snapTime, blank: blank, parseCorrect: parseCorrect, parseCSV: parseCSV, fromRows: fromRows, fromText: fromText, check: check, toRows: toRows };
   if (typeof module === 'object' && module.exports) module.exports = QP;
   else root.QP = QP;
 })(typeof window !== 'undefined' ? window : this);

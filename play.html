@@ -7,7 +7,7 @@
 <title>Minto Quiz</title>
 <link rel="icon" type="image/png" href="/fav-64.png?v=3">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=VT323&family=Rajdhani:wght@600;700&family=M+PLUS+Rounded+1c:wght@700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/quiz.css?v=28">
+<link rel="stylesheet" href="css/quiz.css?v=29">
 </head>
 <body class="play">
   <div class="top"><span class="serif logo" style="color:var(--brand-ink)">Minto Quiz</span><span id="who"></span></div>
@@ -34,6 +34,13 @@
       <div id="aGrid" class="pgrid"></div>
     </section>
 
+    <section id="sGrp" data-screen class="grp" hidden>
+      <div class="qmeta" style="font-size:16px"><span id="gNum"></span><span id="gTime"></span></div>
+      <details id="gPass" class="gpass" open><summary>📄 Đoạn văn (bấm để thu gọn)</summary><div id="gPT" class="gpt"></div></details>
+      <div id="gList" style="display:grid;gap:10px"></div>
+      <div class="gsub"><div id="gHint" class="gh" role="status"></div><button id="gGo" class="btn pri" type="button">Nộp bài</button></div>
+    </section>
+
     <section id="sRes" data-screen class="center" hidden>
       <div id="rBox" class="res"></div>
       <div style="display:flex;gap:28px;justify-content:center">
@@ -45,6 +52,6 @@
   </main>
 <canvas id="fx"></canvas>
 <script src="/acc.js?v=9"></script>
-<script type="module" src="js/play.js?v=25"></script>
+<script type="module" src="js/play.js?v=26"></script>
 </body>
 </html>

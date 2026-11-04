@@ -48,6 +48,13 @@ Sau khi dán `quizMusic`: mở trang **Bộ câu hỏi**, kéo xuống mục **�
 >
 > Chưa dán thì nút "📝 Giao về nhà" sẽ báo lỗi quyền kèm hướng dẫn, các phần khác vẫn chạy.
 
+> **Cập nhật 04/11 (📦 Nhóm câu Part 3/4/6/7):** luật Realtime Database có thêm 4 trường trong `qpub` (`g` câu đầu nhóm, `gn` số câu, `no` số câu trên đề, `p` đoạn văn tối đa 6000 ký tự) và điều kiện ghi `answers` cho phép học sinh nộp **cả nhóm** khi câu đầu nhóm đang mở (vẫn mỗi câu một lần, vẫn trong giờ). Cách dán:
+> 1. Mở **Realtime Database** → thẻ **Rules**.
+> 2. Xoá đoạn `"quiz": { … },` cũ (từ dòng `"quiz": {` tới dấu `},` đóng của nó, ngay trước `"online"` hoặc nhánh kế tiếp).
+> 3. Dán vào đúng chỗ đó **toàn bộ** nội dung mới của [`firebase/dan-vao-rtdb.txt`](firebase/dan-vao-rtdb.txt) rồi bấm **Publish**.
+>
+> Chưa dán thì vẫn chơi được: màn chờ báo "Luật Firebase chưa có nhóm câu", các câu trong nhóm chạy từng câu một (màn chiếu vẫn hiện đoạn văn / hình / âm thanh). Firestore không cần đổi (âm thanh của nhóm lưu chung chỗ với hình, `quizImg`).
+
 ## 4. Bật GitHub Pages cho repo KH
 
 1. Vào repo `KH` trên GitHub → **Settings** → **Pages**.

@@ -2,6 +2,14 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.20', d: '2026-11-04', items: [
+      '📦 Nhóm câu cho Part 3, 4, 6, 7: các câu liền nhau (ví dụ 32–34) làm thành một nhóm có đoạn văn, hình và/hoặc âm thanh dùng chung. Trong trang soạn bấm "📦 Gộp với câu trên" ở câu thứ hai, thứ ba… rồi điền đoạn văn, thêm hình hoặc âm thanh (file mp3 hoặc dán link) và "Số câu trên đề" (ví dụ 32) ở khung nhóm.',
+      'Nhập Excel: thêm cột I "Nhóm" (các câu cùng nhóm ghi cùng một tên, ví dụ P7-1) và cột J "Đoạn văn" (ghi ở câu đầu nhóm); cột A ghi số câu trên đề (32, 33, 34). Nhập văn bản đề / Word / PDF: đoạn "Questions 147-149 refer to…" giờ được giữ lại làm đoạn văn của nhóm 147–149. File cũ vẫn đọc như trước.',
+      'Trên lớp: màn chiếu hiện đoạn văn / hình / âm thanh bên trái và cả nhóm câu bên phải, một đồng hồ chung (cộng thời gian từng câu); nhóm có âm thanh tự phát khi mở giờ (nút ▶ / ↺ hoặc phím A để phát lại), nhạc nền tự tắt. Điện thoại học sinh hiện đoạn văn và cả nhóm câu trên một màn, chọn xong bấm "Nộp bài" một lần (đổi được trước khi nộp, hết giờ tự nộp các câu đã chọn).',
+      'Chữa bài: sau nhóm, thầy bấm Space để chữa lần lượt Câu 32 → 33 → 34 (biểu đồ + đáp án đúng từng câu), đoạn văn / hình vẫn để bên trái, có nút 🖼 Xem lại ảnh. Bảng xếp hạng hiện sau cả nhóm. Điểm từng câu tính như cũ, tốc độ tính theo lúc nộp nhóm.',
+      'Bài về nhà: mỗi nhóm một màn kèm đoạn văn, "Câu tiếp" sang nhóm sau (không kèm hình, âm thanh). Đào vàng: câu trong nhóm có đoạn văn hiện đoạn văn phía trên câu hỏi; nhóm câu nghe (có âm thanh) không đưa vào Đào vàng.',
+      'Cần dán lại luật Realtime Database (FIREBASE.md, mục Nhóm câu). Chưa dán thì vẫn chơi được: các câu trong nhóm chạy từng câu một như trước, màn chiếu vẫn hiện đoạn văn / hình / âm thanh.'
+    ] },
     { v: '1.19', d: '2026-11-04', items: [
       '🎧 Câu nghe có audio: câu hỏi nào gắn audio thì màn chiếu tự phát khi hiện câu. Nghe xong đồng hồ mới bắt đầu chạy. Có nút ▶ Phát lại và ⏭ Cho trả lời luôn.',
       '📝 Chế độ thi thật: bộ câu hỏi bật chế độ này sẽ ẩn chữ của câu hỏi và đáp án, cả trên màn chiếu lẫn điện thoại, chỉ còn A, B, C như lúc đi thi.',

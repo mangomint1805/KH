@@ -1,7 +1,10 @@
 /* Minto Quiz — 📝 bài về nhà (màn học sinh, hw.html?id=…).
    Đề ở Firestore quizHW/{id} (không kèm đáp án). Học sinh làm theo tốc độ của mình, nộp một lần vào quizHWSub/{id}_{uid};
    nộp xong mới đọc được đáp án quizHWKey/{id} để xem điểm và xem lại từng câu. */
-import { $, esc, qtHtml, show, player, bgfx, confetti, SDK, SHAPES, LETTERS, CLASSES, classLabel } from './common.js?v=18';
+import { $, esc, qtHtml, show, player, bgfx, confetti, SDK, SHAPES, LETTERS, CLASSES, classLabel, groupRuns, qLabel } from './common.js?v=19';
+// 📦 nhóm câu (Part 6/7…): cả nhóm trên một màn kèm đoạn văn; bài về nhà không có hình / âm thanh (chỉ thầy đọc được)
+let RUNS = [];
+const lbl = (i) => qLabel(RUNS, H.groups, i);
 
 const ID = (new URLSearchParams(location.search).get('id') || '').replace(/[^\w-]/g, '').slice(0, 40);
 const LS = { get: (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { localStorage.removeItem(k); } catch (e) {} } };
@@ -26,6 +29,7 @@ async function boot() {
     const d = await F.getDoc(F.doc(db, 'quizHW', ID));
     if (!d.exists()) return msg('🔍', 'Không tìm thấy bài này', 'Link có thể bị sai hoặc thầy đã xoá bài.');
     H = d.data();
+    RUNS = groupRuns(H.qs || []);
   } catch (e) { console.error(e); return msg('😵', 'Không mở được bài', errText(e)); }
   document.title = H.title + ' · Bài về nhà';
   // đã nộp rồi: xem lại kết quả
@@ -57,8 +61,38 @@ function form() {
 }
 function keep() { LS.set(pk(), JSON.stringify({ who, a, ms, cur, t0 })); }
 
+function askGroup(R) {
+  const ids = Array.from({ length: R.n }, (_, i) => R.f + i), G = (H.groups || {})[R.id] || {};
+  show('sQ'); qAt = Date.now();
+  $('qNum').textContent = 'Câu ' + lbl(R.f) + '–' + lbl(R.l) + ' (' + (R.f + 1) + '–' + (R.l + 1) + '/' + H.n + ')';
+  $('qQ').hidden = true;
+  const g = $('qGrid'); g.className = 'grp';
+  g.innerHTML = (G.p ? '<details class="gpass" open><summary>📄 Đoạn văn (bấm để thu gọn)</summary><div class="gpt">' + qtHtml(G.p) + '</div></details>' : '') +
+    ids.map((i) => '<div class="gq"><div class="st"><b>' + lbl(i) + '.</b> ' + qtHtml(H.qs[i].t) + '</div><div class="gopts">' +
+      (H.qs[i].o || []).map((o, k) => o ? '<button type="button" class="gopt' + (a[i] === k ? ' chosen' : '') + '" data-q="' + i + '" data-a="' + k + '"><span class="lt k' + k + '">' + SHAPES[k] + ' ' + LETTERS[k] + '</span><span class="tx">' + esc(o) + '</span></button>' : '').join('') + '</div></div>').join('');
+  g.querySelectorAll('.gopt').forEach((b) => { b.onclick = () => {
+    const i = +b.dataset.q; a[i] = +b.dataset.a; keep();
+    g.querySelectorAll('.gopt[data-q="' + i + '"]').forEach((x) => x.classList.toggle('chosen', x === b));
+  }; });
+  $('bPrev').hidden = H.timed || R.f === 0;
+  $('bPrev').onclick = () => { leave(); cur = R.f - 1; keep(); ask(); };
+  $('bNext').textContent = R.l + 1 === H.n ? 'Nộp bài ✓' : 'Câu tiếp →';
+  $('bNext').onclick = next;
+  $('qBar').style.width = ((R.l + 1) / H.n * 100) + '%';
+  $('qTime').textContent = '';
+  window.scrollTo(0, 0);
+  if (H.timed) {
+    const lim = ids.reduce((t, i) => t + (H.qs[i].time || 20), 0) * 1000;
+    const tick = () => { const left = Math.max(0, lim - (Date.now() - qAt)); $('qTime').textContent = '⏱ ' + Math.ceil(left / 1000) + 's'; if (!left) { clearInterval(tmr); next(); } };
+    tick(); tmr = setInterval(tick, 250);
+  }
+}
+// rời màn nhóm: chia đều thời gian đã làm cho các câu trong nhóm
+function leave() { const R = RUNS[cur]; if (!R) return; const el = Date.now() - qAt; for (let i = R.f; i <= R.l; i++) ms[i] += el / R.n; qAt = Date.now(); cur = R.l; }
 function ask() {
   clearInterval(tmr);
+  if (RUNS[cur]) { cur = RUNS[cur].f; return askGroup(RUNS[cur]); }
+  $('qQ').hidden = false; $('qGrid').className = 'pgrid';
   const q = H.qs[cur];
   show('sQ'); qAt = Date.now();
   $('qNum').textContent = 'Câu ' + (cur + 1) + '/' + H.n;
@@ -86,7 +120,8 @@ function ask() {
 }
 function next() {
   clearInterval(tmr);
-  if (a[cur] < 0) ms[cur] += Date.now() - qAt;
+  if (RUNS[cur]) leave();
+  else if (a[cur] < 0) ms[cur] += Date.now() - qAt;
   if (cur + 1 < H.n) { cur++; keep(); return ask(); }
   const miss = a.filter((x) => x < 0).length;
   if (!H.timed && miss && !confirm('Còn ' + miss + ' câu chưa chọn. Nộp bài luôn?')) return;
@@ -123,8 +158,9 @@ async function result(sub, fresh) {
   const pct = n ? sc / n : 0;
   $('rM').textContent = (pct >= 0.9 ? 'Xuất sắc luôn 🤩' : pct >= 0.7 ? 'Làm tốt lắm 👏' : pct >= 0.5 ? 'Ổn áp, xem lại mấy câu sai nha 💪' : 'Xem lại đáp án bên dưới rồi ôn thêm nha 📚') + ' · Nộp lúc ' + new Date(sub.at).toLocaleString('vi-VN');
   $('rv').innerHTML = H.qs.map((q, i) => {
-    const v = A[i], right = (C[i] || []).map((k) => LETTERS[k] + '. ' + esc(q.o[k] || '')).join(' / ');
-    return '<div class="it ' + (ok[i] ? 'ok' : 'no') + '"><b>' + (i + 1) + '.</b> ' + qtHtml(q.t) + '<div class="muted" style="margin-top:4px">' +
+    const v = A[i], right = (C[i] || []).map((k) => LETTERS[k] + '. ' + esc(q.o[k] || '')).join(' / '), R = RUNS[i], G = R && (H.groups || {})[R.id];
+    return (R && R.f === i && G && G.p ? '<details class="gp"><summary><b>📄 Đoạn văn câu ' + lbl(R.f) + '–' + lbl(R.l) + '</b></summary><div>' + qtHtml(G.p) + '</div></details>' : '') +
+      '<div class="it ' + (ok[i] ? 'ok' : 'no') + '"><b>' + lbl(i) + '.</b> ' + qtHtml(q.t) + '<div class="muted" style="margin-top:4px">' +
       (ok[i] ? '✅ ' + right : (v >= 0 ? '❌ Em chọn: ' + LETTERS[v] + '. ' + esc(q.o[v] || '') : '⏭ Em chưa chọn') + '<br>✅ Đáp án: ' + right) + '</div></div>';
   }).join('');
   if (fresh && pct >= 0.7) confetti($('fx'), 4000);

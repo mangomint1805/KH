@@ -1,5 +1,5 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack, CLASSES, quizClass, classLabel, byClass } from './common.js?v=18';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack, CLASSES, quizClass, classLabel, byClass, fetchAudio, AU_PART } from './common.js?v=19';
 
 const QP = window.QP;
 const LIB = {
@@ -66,8 +66,8 @@ async function showList() {
     : '<div class="card muted">Chưa có bộ câu hỏi nào. Bấm <b>+ Bộ mới</b> rồi tải file lên.</div>';
   app.querySelectorAll('[data-lf]').forEach((b) => { b.onclick = () => { filt = b.dataset.lf; try { localStorage.setItem('qz.lop', filt); } catch (e) {} showList(); }; });
   const by = (id) => list.find((x) => x.id === id);
-  app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, lop: quizClass(q), qs: JSON.parse(JSON.stringify(q.qs || [])) }); }; });
-  app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', lop: quizClass(q), qs: q.qs || [] }).catch(err); showList(); }; });
+  app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, lop: quizClass(q), qs: JSON.parse(JSON.stringify(q.qs || [])), groups: JSON.parse(JSON.stringify(q.groups || {})) }); }; });
+  app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', lop: quizClass(q), qs: q.qs || [], groups: q.groups || {} }).catch(err); showList(); }; });
   app.querySelectorAll('[data-hw]').forEach((b) => { b.onclick = () => hwDialog(by(b.dataset.hw)); });
   app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; try { await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)); } catch (e) { return err(e); } await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
 }
@@ -168,7 +168,7 @@ function hwDialog(q) {
   const d = new Date(Date.now() + 7 * 864e5); d.setHours(23, 59, 0, 0);
   const pad = (n) => String(n).padStart(2, '0'), iso = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T23:59';
   const ov = document.createElement('div'); ov.className = 'overlay hwov';
-  ov.innerHTML = '<div class="card" style="max-width:520px;width:calc(100% - 32px);color:var(--ink)"><h2 style="margin-top:0">📝 Giao về nhà</h2><p class="muted">' + esc(q.title || '') + ' · ' + q.qs.length + ' câu' + (q.qs.some((x) => x.img) ? ' · <b>bài về nhà không kèm hình</b>' : '') + '</p>' +
+  ov.innerHTML = '<div class="card" style="max-width:520px;width:calc(100% - 32px);color:var(--ink)"><h2 style="margin-top:0">📝 Giao về nhà</h2><p class="muted">' + esc(q.title || '') + ' · ' + q.qs.length + ' câu' + (q.qs.some((x) => x.img) || Object.values(q.groups || {}).some((G) => G.img || G.au || G.aurl) ? ' · <b>bài về nhà không kèm hình và âm thanh</b> (nhóm câu vẫn hiện đoạn văn)' : '') + '</p>' +
     '<label>Hạn nộp<br><input type="datetime-local" id="hwDue" value="' + iso + '" style="font:inherit;padding:6px"></label>' +
     '<label style="display:flex;gap:8px;align-items:center;margin:12px 0"><input type="checkbox" id="hwTimed"> Tính giờ từng câu (theo số giây đã đặt cho mỗi câu)</label>' +
     '<div id="hwOut"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn" id="hwX">Đóng</button><button class="btn pri" id="hwGo">Tạo link</button></div></div>';
@@ -182,7 +182,8 @@ function hwDialog(q) {
       const F = FX.F, ref = F.doc(F.collection(FX.db, 'quizHW')), qs = q.qs.slice(0, 500);
       await F.setDoc(F.doc(FX.db, 'quizHWKey', ref.id), { c: qs.map((x) => ({ c: (x.c || []).slice(0, 4) })) });
       await F.setDoc(ref, { title: String(q.title || 'Bài về nhà').slice(0, 120), qz: q.id, lop: quizClass(q), due, timed: ov.querySelector('#hwTimed').checked, n: qs.length,
-        qs: qs.map((x) => ({ t: String(x.t || '').slice(0, 1000), o: (x.o || []).map((o) => String(o || '').slice(0, 500)), time: x.time || 20 })), at: Date.now() });
+        qs: qs.map((x) => Object.assign({ t: String(x.t || '').slice(0, 1000), o: (x.o || []).map((o) => String(o || '').slice(0, 500)), time: x.time || 20 }, x.g && q.groups && q.groups[x.g] ? { g: x.g } : {})),
+        groups: hwGroups(q), at: Date.now() });
       const url = new URL('hw.html?id=' + ref.id, location.href).href;
       ov.querySelector('#hwOut').innerHTML = '<p>✅ Đã tạo. Gửi link này cho học sinh (hạn ' + esc(new Date(due).toLocaleString('vi-VN')) + '):</p><div class="hwlink"><input readonly value="' + esc(url) + '"><button class="btn sm pri" id="hwCp">Chép</button></div><p class="muted">Xem bài nộp ở <a href="ket-qua.html#hw">Kết quả → Bài về nhà</a>.</p>';
       ov.querySelector('#hwCp').onclick = () => { navigator.clipboard.writeText(url).then(() => toast('Đã chép link'), () => ov.querySelector('.hwlink input').select()); };
@@ -192,6 +193,11 @@ function hwDialog(q) {
       ov.querySelector('#hwOut').innerHTML = '<p class="err">' + (/permission/i.test(x.code || x.message || '') ? 'Firestore chưa cho phép bài về nhà: thầy dán luật mới trong firebase/firestore.rules.quiz.txt (khối quizHW, quizHWKey, quizHWSub) vào Firebase Console → Firestore → Rules rồi thử lại.' : 'Lỗi: ' + esc(x.code || x.message)) + '</p>';
     }
   };
+}
+// bài về nhà chỉ mang đoạn văn và số câu của nhóm (hình, âm thanh chỉ thầy đọc được)
+function hwGroups(q) {
+  const out = {}; (q.qs || []).forEach((x) => { const G = x.g && q.groups && q.groups[x.g]; if (G && !out[x.g]) out[x.g] = Object.assign({ p: String(G.p || '').slice(0, QP.PMAX) }, +G.no > 0 ? { no: +G.no } : {}); });
+  return out;
 }
 // ---------- 📚 tạo bản nháp từ bài học ----------
 // Ngân hàng câu soạn sẵn theo từng bài (data/bai-hoc/, sinh bằng test/build-bai-hoc.js). Bản nháp mở trong trang soạn như bộ mới, thầy xem lại rồi Lưu như thường.
@@ -283,7 +289,7 @@ function err(e) { console.error(e); toast('Lỗi: ' + ((e && (e.code || e.messag
 
 // ---------- soạn ----------
 function edit(q) {
-  cur = q; cur.imgs0 = imgsOf(q.qs); tpl('tEdit');
+  cur = q; cur.groups = cur.groups || {}; cur.imgs0 = imgsOf(q); tpl('tEdit');
   $('title').value = q.title || '';
   $('title').oninput = () => { cur.title = $('title').value; dirty = true; if (!cur.lop) { const k = quizClass({ title: cur.title }); if (k) { cur.lop = k; paintLop(); } } };
   if (typeof cur.lop !== 'string') cur.lop = quizClass(cur);
@@ -357,30 +363,108 @@ function addParsed(res, src) {
     else if (confirm('Thay TOÀN BỘ ' + cur.qs.length + ' câu cũ bằng ' + res.qs.length + ' câu mới?\nCâu cũ sẽ mất khi bấm Lưu.\n\n(Huỷ = không nhập gì)')) mode = 'replace';
     else { $('imp').textContent = 'Đã huỷ, không nhập câu nào.'; return; }
   }
-  if (mode === 'replace') cur.qs = [];
-  res.qs.forEach((q) => { q.src = q.row ? 'dòng ' + q.row + ' · ' + src : src; delete q.row; cur.qs.push(q); });
+  if (mode === 'replace') { cur.qs = []; cur.groups = {}; }
+  const gmap = {}, RG = res.groups || {};
+  res.qs.forEach((q) => {
+    q.src = q.row ? 'dòng ' + q.row + ' · ' + src : src; delete q.row; delete q.num;
+    if (q.g && RG[q.g]) { if (!gmap[q.g]) { gmap[q.g] = newGid(); cur.groups[gmap[q.g]] = Object.assign({ p: '' }, RG[q.g]); } q.g = gmap[q.g]; } else delete q.g;
+    cur.qs.push(q);
+  });
+  normGroups();
   if (!cur.title && res.title) { cur.title = res.title; $('title').value = cur.title; }
   if (!cur.title && /\.(xlsx|xls|csv|txt|docx|pdf)$/i.test(src)) { cur.title = src.replace(/\.[^.]+$/, '').replace(/^Kahoot\s*-\s*/i, ''); $('title').value = cur.title; }
   dirty = true;
-  $('imp').textContent = '✓ Đã đọc ' + res.qs.length + ' câu từ ' + src + '.' + (res.skipped ? ' Đã bỏ qua ' + res.skipped + ' đoạn văn dẫn (đoạn văn dài nên chụp thành hình rồi thêm vào câu).' : '') + ' Kiểm tra lại bên dưới rồi bấm Lưu.';
+  const ng = Object.keys(gmap).length;
+  $('imp').textContent = '✓ Đã đọc ' + res.qs.length + ' câu từ ' + src + '.' + (ng ? ' Có ' + ng + ' nhóm câu (📦) kèm đoạn văn.' : '') + (res.skipped ? ' Đã bỏ qua ' + res.skipped + ' đoạn văn dẫn (đoạn văn dài nên chụp thành hình rồi thêm vào câu).' : '') + ' Kiểm tra lại bên dưới rồi bấm Lưu.';
   renderQs();
 }
 
+// ---------- 📦 nhóm câu: các câu liền nhau cùng q.g, nội dung chung ở cur.groups[g] ----------
+const newGid = () => 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+// các đoạn câu liền nhau cùng nhóm (không giới hạn số câu, để báo lỗi nhóm quá 5 câu)
+function edRuns() {
+  const L = cur.qs, out = []; let i = 0;
+  while (i < L.length) { let j = i; if (L[i].g) while (j + 1 < L.length && L[j + 1].g === L[i].g) j++; if (j > i) out.push({ f: i, l: j, n: j - i + 1, id: L[i].g }); i = j + 1; }
+  return out;
+}
+// sau mỗi lần sửa: nhóm 1 câu thì bỏ, nhóm bị tách rời thì phần sau thành nhóm mới (chép nội dung chung), xoá nhóm không còn câu
+function normGroups() {
+  const L = cur.qs, seen = {}; cur.groups = cur.groups || {};
+  for (let i = 0; i < L.length;) {
+    if (!L[i].g) { i++; continue; }
+    let j = i; while (j + 1 < L.length && L[j + 1].g === L[i].g) j++;
+    const id = L[i].g;
+    if (j === i) delete L[i].g;
+    else if (seen[id] || !cur.groups[id]) { const nid = newGid(); cur.groups[nid] = Object.assign({ p: '' }, cur.groups[id] || {}); for (let k = i; k <= j; k++) L[k].g = nid; seen[nid] = 1; }
+    else seen[id] = 1;
+    i = j + 1;
+  }
+  Object.keys(cur.groups).forEach((k) => { if (!L.some((q) => q.g === k)) delete cur.groups[k]; });
+}
+const gTime = (R) => cur.qs.slice(R.f, R.l + 1).reduce((t, q) => t + (q.time || 20), 0);
+function geHtml(R) {
+  const G = cur.groups[R.id] || {}, er = QP.checkGroup(G, R.n), no = +G.no || 0;
+  return '<div class="ge' + (er.length ? ' bad' : '') + '" data-g="' + esc(R.id) + '"><div class="hd"><b>📦 Nhóm câu ' + (R.f + 1) + '–' + (R.l + 1) + '</b><span class="muted">· ' + R.n + ' câu làm chung một màn, nộp một lần · cả nhóm ' + gTime(R) + ' giây (cộng thời gian từng câu)</span><span style="flex:1"></span>' +
+    '<label class="muted">Số câu trên đề <input type="number" min="1" max="999" data-gf="no" value="' + (no || '') + '" placeholder="vd. 32" title="Câu đầu nhóm là câu số mấy trong đề (32 → hiện 32, 33, 34)"></label><button class="btn sm danger" data-ga="ungroup" title="Bỏ nhóm, các câu thành câu lẻ">Bỏ nhóm</button></div>' +
+    '<textarea data-gf="p" rows="4" placeholder="Đoạn văn chung (Part 6/7), không bắt buộc. Part 3/4 thì thêm âm thanh hoặc hình bên dưới.">' + esc(G.p || '') + '</textarea>' +
+    '<div class="imgrow">' + (G.img ? '<img class="qthumb" data-img="' + esc(G.img) + '" alt="Hình của nhóm"' + (IMGS[G.img] ? ' src="' + IMGS[G.img] + '"' : '') + '><button class="btn sm danger" data-ga="noimg">Bỏ hình</button><label class="btn sm">Đổi hình<input type="file" accept="image/*" data-gf="img" hidden></label>'
+      : '<label class="btn sm">🖼 Thêm hình (bảng, biểu đồ…)<input type="file" accept="image/*" data-gf="img" hidden></label>') + '<span class="muted imgst"></span></div>' +
+    '<div class="imgrow">' + (G.au ? '<audio controls preload="none" data-au="' + esc(G.au) + '"></audio><button class="btn sm danger" data-ga="noau">Bỏ âm thanh</button>'
+      : '<label class="btn sm">🔊 Thêm âm thanh (Part 3/4)<input type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav" data-gf="au" hidden></label><input type="url" data-gf="aurl" placeholder="hoặc dán link file mp3" value="' + esc(G.aurl || '') + '">') + '<span class="muted aust"></span></div>' +
+    '<div class="muted" style="font-size:13.5px">Âm thanh và hình chỉ phát / hiện trên màn chiếu. Điện thoại học sinh thấy đoạn văn và các câu của nhóm.</div>' +
+    '<div class="msg">' + er.map((e) => '<div class="err">⚠ ' + esc(e) + '</div>').join('') + '</div></div>';
+}
+function bindGe(el) {
+  const id = el.dataset.g, G = cur.groups[id] = cur.groups[id] || { p: '' };
+  const msg = () => { const R = edRuns().find((x) => x.id === id), er = QP.checkGroup(G, R ? R.n : 0); el.classList.toggle('bad', !!er.length); el.querySelector('.msg').innerHTML = er.map((e) => '<div class="err">⚠ ' + esc(e) + '</div>').join(''); summary(); };
+  el.querySelector('[data-gf=p]').oninput = (e) => { G.p = e.target.value; dirty = true; msg(); };
+  el.querySelector('[data-gf=no]').oninput = (e) => { const v = Math.round(+e.target.value); if (v >= 1 && v <= 999) G.no = v; else delete G.no; dirty = true; };
+  const u = el.querySelector('[data-gf=aurl]');
+  if (u) u.onchange = () => { const v = u.value.trim(); if (v && !/^https?:\/\//i.test(v)) { toast('Link âm thanh cần bắt đầu bằng http:// hoặc https://'); return; } if (v) G.aurl = v.slice(0, 500); else delete G.aurl; dirty = true; };
+  const fi = el.querySelector('[data-gf=img]');
+  if (fi) fi.onchange = async (e) => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    const st = el.querySelector('.imgst'); st.textContent = 'Đang tải hình lên…';
+    try { G.img = await uploadImg(f); dirty = true; renderQs(); toast('✓ Đã thêm hình cho nhóm. Nhớ bấm Lưu.'); }
+    catch (x) { console.error(x); st.textContent = '⚠ ' + (x.ui ? x.message : 'Chưa tải được hình (' + (x.code || x.message || 'lỗi') + ')'); }
+  };
+  const fa = el.querySelector('[data-gf=au]');
+  if (fa) fa.onchange = async (e) => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    const st = el.querySelector('.aust');
+    try { G.au = await uploadAudio(f, (t) => { st.textContent = t; }); delete G.aurl; dirty = true; renderQs(); toast('✓ Đã thêm âm thanh cho nhóm. Nhớ bấm Lưu.'); }
+    catch (x) { console.error(x); st.textContent = '⚠ ' + (x.ui ? x.message : 'Chưa tải được âm thanh (' + (x.code || x.message || 'lỗi') + ')'); }
+  };
+  const au = el.querySelector('audio[data-au]');
+  if (au) { const st = el.querySelector('.aust'); st.textContent = 'Đang tải âm thanh…'; fetchAudio(au.dataset.au).then((src) => { if (src) { au.src = src; st.textContent = ''; } else st.textContent = '⚠ Không tìm thấy âm thanh'; }).catch(() => { st.textContent = '⚠ Không tải được âm thanh'; }); }
+  el.querySelectorAll('[data-ga]').forEach((b) => { b.onclick = () => {
+    const a = b.dataset.ga;
+    if (a === 'ungroup') { if (!confirm('Bỏ nhóm này? Các câu vẫn giữ nguyên, chỉ không làm chung một màn nữa (đoạn văn, hình, âm thanh của nhóm sẽ bỏ).')) return; cur.qs.forEach((q) => { if (q.g === id) delete q.g; }); }
+    if (a === 'noimg') delete G.img;
+    if (a === 'noau') delete G.au;
+    normGroups(); dirty = true; renderQs();
+  }; });
+}
 function renderQs() {
   const box = $('qs');
-  box.innerHTML = cur.qs.map((q, i) => qHtml(q, i)).join('') || '<div class="card muted">Chưa có câu nào. Tải file lên hoặc bấm + Thêm câu.</div>';
+  normGroups();
+  const runs = edRuns(), head = {}; runs.forEach((R) => { head[R.f] = R; });
+  box.innerHTML = cur.qs.map((q, i) => (head[i] ? geHtml(head[i]) : '') + qHtml(q, i)).join('') || '<div class="card muted">Chưa có câu nào. Tải file lên hoặc bấm + Thêm câu.</div>';
   box.querySelectorAll('.qe').forEach((el) => bindQ(el, +el.dataset.i));
+  box.querySelectorAll('.ge').forEach(bindGe);
   summary();
   loadThumbs();
 }
 function qHtml(q, i) {
   const ck = QP.check(q);
-  return '<div class="qe' + (ck.err.length ? ' bad' : '') + '" data-i="' + i + '"><div class="hd"><span class="num">' + (i + 1) + '.</span>' +
+  const ing = !!q.g;
+  const grpBtn = ing ? '<button class="btn sm" data-a="split" title="Tách câu này ra khỏi nhóm">✂ Tách</button>' : i > 0 ? '<button class="btn sm" data-a="join" title="Gộp câu này với câu trên thành nhóm (Part 3/4/6/7: làm chung một màn, nộp một lần)">📦 Gộp với câu trên</button>' : '';
+  return '<div class="qe' + (ck.err.length ? ' bad' : '') + (ing ? ' ing' : '') + '" data-i="' + i + '"><div class="hd"><span class="num">' + (i + 1) + '.</span>' +
     '<select data-f="time" title="Thời gian">' + QP.TIMES.map((t) => '<option value="' + t + '"' + (t === q.time ? ' selected' : '') + '>' + t + ' giây</option>').join('') + '</select>' +
     '<select data-f="pts" title="Điểm"><option value="1"' + (q.pts === 1 ? ' selected' : '') + '>Điểm thường</option><option value="2"' + (q.pts === 2 ? ' selected' : '') + '>Gấp đôi</option><option value="0"' + (q.pts === 0 ? ' selected' : '') + '>Không tính điểm</option></select>' +
     (q.src ? '<small class="muted">' + esc(q.src) + '</small>' : '') + '<span style="flex:1"></span>' +
     '<button class="btn sm" data-a="up" title="Lên"' + (i ? '' : ' disabled') + '>↑</button><button class="btn sm" data-a="dn" title="Xuống"' + (i < cur.qs.length - 1 ? '' : ' disabled') + '>↓</button>' +
-    '<button class="btn sm" data-a="dup" title="Nhân đôi câu này">⧉</button><button class="btn sm danger" data-a="del" title="Xoá câu">🗑</button></div>' +
+    grpBtn + '<button class="btn sm" data-a="dup" title="Nhân đôi câu này">⧉</button><button class="btn sm danger" data-a="del" title="Xoá câu">🗑</button></div>' +
     '<textarea data-f="t" rows="2" placeholder="Nội dung câu hỏi"' + (q.t.length > QP.MAXQ ? ' class="long"' : '') + '>' + esc(q.t) + '</textarea>' +
     '<div class="imgrow">' + (q.img ? '<img class="qthumb" data-img="' + esc(q.img) + '" alt="Hình câu ' + (i + 1) + '"' + (IMGS[q.img] ? ' src="' + IMGS[q.img] + '"' : '') + '><button class="btn sm danger" data-a="noimg">Bỏ hình</button><label class="btn sm">Đổi hình<input type="file" accept="image/*" data-f="img" hidden></label>'
       : '<label class="btn sm">🖼 Thêm hình (ví dụ Part 1)<input type="file" accept="image/*" data-f="img" hidden></label>') + '<span class="muted imgst"></span></div>' +
@@ -405,8 +489,21 @@ function bindQ(el, i) {
   el.querySelectorAll('[data-a]').forEach((b) => {
     b.onclick = () => {
       const a = b.dataset.a, L = cur.qs;
-      if (a === 'up' && i > 0) [L[i - 1], L[i]] = [L[i], L[i - 1]];
-      if (a === 'dn' && i < L.length - 1) [L[i + 1], L[i]] = [L[i], L[i + 1]];
+      if (a === 'up' || a === 'dn') {
+        const j = a === 'up' ? i - 1 : i + 1;
+        if (j < 0 || j >= L.length) return;
+        if (q.g && L[j].g !== q.g) delete q.g; // ra tới mép nhóm: bấm lần đầu là tách khỏi nhóm
+        else if (!q.g && L[j].g) { // câu lẻ đi qua cả nhóm, không chen vào giữa
+          let k = j; while (L[k + (a === 'up' ? -1 : 1)] && L[k + (a === 'up' ? -1 : 1)].g === L[j].g) k += a === 'up' ? -1 : 1;
+          L.splice(i, 1); L.splice(k, 0, q);
+        } else [L[j], L[i]] = [L[i], L[j]];
+      }
+      if (a === 'join' && i > 0) { const P = L[i - 1]; if (!P.g) { P.g = newGid(); cur.groups[P.g] = { p: '' }; } q.g = P.g; }
+      if (a === 'split') {
+        const id = q.g; delete q.g;
+        // tách câu giữa nhóm: các câu phía dưới thành nhóm mới (chép đoạn văn / hình / âm thanh), xem normGroups
+        if (L[i + 1] && L[i + 1].g === id && L[i - 1] && L[i - 1].g === id) toast('Đã tách thành 2 nhóm, nhóm dưới chép lại nội dung chung.');
+      }
       if (a === 'dup') L.splice(i + 1, 0, JSON.parse(JSON.stringify(q)));
       if (a === 'del') { if (!confirm('Xoá câu ' + (i + 1) + '?')) return; L.splice(i, 1); }
       if (a === 'noimg') delete q.img;
@@ -447,37 +544,75 @@ async function uploadImg(file) {
   IMGS[ref.id] = d;
   return ref.id;
 }
-// xoá hình của bộ vừa xoá, trừ hình bộ khác còn dùng (bộ nhân bản dùng chung hình)
-async function dropImgs(q, others) {
-  const used = new Set(); others.forEach((x) => (x.qs || []).forEach((y) => { if (y.img) used.add(y.img); }));
-  const ids = [...new Set((q.qs || []).map((y) => y.img).filter((x) => x && !used.has(x)))];
-  await Promise.all(ids.map((id) => FX.F.deleteDoc(FX.F.doc(FX.db, 'quizImg', id)).catch(() => {})));
-}
-function summary() {
-  const bad = [], warn = [];
-  cur.qs.forEach((q, i) => { const c = QP.check(q); if (c.err.length) bad.push(i + 1); else if (c.warn.length) warn.push(i + 1); });
-  $('sum').innerHTML = !cur.qs.length ? '' : (bad.length ? '<div class="card" style="border-color:var(--red);background:var(--red-soft)"><b class="err">' + bad.length + ' câu cần sửa trước khi lưu:</b> câu ' + bad.join(', ') + '</div>' : '<div class="card" style="background:var(--ok-soft);border-color:#bfe0b2">✓ ' + cur.qs.length + ' câu hợp lệ' + (warn.length ? ' · câu ' + warn.join(', ') + ' dài hơn giới hạn của Kahoot (vẫn chơi được ở đây)' : '') + '</div>');
-}
-
-function clean(qs) { return qs.map((q) => Object.assign({ t: QP.str(q.t), o: q.o.map((x) => QP.str(x)), c: q.c.slice(), time: q.time, pts: q.pts }, q.img ? { img: q.img } : {}, q.aud ? { aud: String(q.aud).slice(0, 300) } : {}, Array.isArray(q.tr) ? { tr: q.tr } : {})); }
-async function save(q) {
-  const F = FX.F, ref = q.id ? F.doc(FX.db, 'quizzes', q.id) : F.doc(F.collection(FX.db, 'quizzes'));
-  await F.setDoc(ref, { title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', lop: String(q.lop || '').slice(0, 20), qs: clean(q.qs), ...(q.exam ? { exam: true } : {}), upd: Date.now(), at: F.serverTimestamp() });
+// âm thanh của nhóm câu (Part 3/4): chia phần < 1MB, lưu cùng chỗ với hình (quizImg, chỉ thầy đọc được)
+// quizImg/{id} = { au: 1, n, type, size, name, at }, phần base64 ở quizImg/{id}_{i}
+async function uploadAudio(file, msg) {
+  if (file.size > 6 * 1048576) throw uiErr('File âm thanh lớn quá (tối đa 6 MB). Thầy cắt riêng đoạn hội thoại của nhóm này rồi thử nha.');
+  if (file.size < 1000) throw uiErr('File này không phải âm thanh đọc được.');
+  msg('Đang đọc file…');
+  const u8 = new Uint8Array(await file.arrayBuffer()); let bin = '';
+  for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  const b64 = btoa(bin), parts = [];
+  for (let i = 0; i < b64.length; i += AU_PART) parts.push(b64.slice(i, i + AU_PART));
+  const F = FX.F, ref = F.doc(F.collection(FX.db, 'quizImg'));
+  let done = 0;
+  try {
+    for (let i = 0; i < parts.length; i++) { msg('Đang tải âm thanh lên… ' + Math.round(i / parts.length * 100) + '%'); await F.setDoc(F.doc(FX.db, 'quizImg', ref.id + '_' + i), { d: parts[i] }); done++; }
+    await F.setDoc(ref, { au: 1, n: parts.length, type: file.type || 'audio/mpeg', size: file.size, name: file.name.slice(0, 120), at: Date.now() });
+  } catch (e) { await Promise.all(Array.from({ length: done }, (_, i) => F.deleteDoc(F.doc(FX.db, 'quizImg', ref.id + '_' + i)).catch(() => {}))); throw e; }
+  msg('');
   return ref.id;
 }
-const imgsOf = (qs) => new Set((qs || []).map((y) => y.img).filter(Boolean));
+// hình + âm thanh của một bộ (câu hỏi và nhóm câu)
+function assetsOf(q) {
+  const S = new Set(); (q.qs || []).forEach((y) => { if (y.img) S.add(y.img); });
+  const G = q.groups || {}; Object.keys(G).forEach((k) => { if (G[k] && G[k].img) S.add(G[k].img); if (G[k] && G[k].au) S.add(G[k].au); });
+  return S;
+}
+async function dropAsset(id) {
+  const F = FX.F, ref = F.doc(FX.db, 'quizImg', id);
+  try { const d = await F.getDoc(ref); const n = d.exists() && d.data().au ? Math.min(12, d.data().n | 0) : 0; await F.deleteDoc(ref); await Promise.all(Array.from({ length: n }, (_, i) => F.deleteDoc(F.doc(FX.db, 'quizImg', id + '_' + i)).catch(() => {}))); } catch (e) {}
+}
+// xoá hình / âm thanh của bộ vừa xoá, trừ thứ bộ khác còn dùng (bộ nhân bản dùng chung)
+async function dropImgs(q, others) {
+  const used = new Set(); others.forEach((x) => assetsOf(x).forEach((id) => used.add(id)));
+  const ids = [...(q.ids || assetsOf(q))].filter((x) => x && !used.has(x));
+  await Promise.all(ids.map(dropAsset));
+}
+const groupErrs = () => edRuns().filter((R) => QP.checkGroup(cur.groups[R.id], R.n).length);
+function summary() {
+  const bad = [], warn = [], gb = groupErrs(), ng = edRuns().length;
+  cur.qs.forEach((q, i) => { const c = QP.check(q); if (c.err.length) bad.push(i + 1); else if (c.warn.length) warn.push(i + 1); });
+  $('sum').innerHTML = !cur.qs.length ? '' : (bad.length || gb.length ? '<div class="card" style="border-color:var(--red);background:var(--red-soft)"><b class="err">' + (bad.length ? bad.length + ' câu cần sửa trước khi lưu:</b> câu ' + bad.join(', ') : 'Nhóm câu cần sửa trước khi lưu:</b>') + (gb.length ? ' · nhóm câu ' + gb.map((R) => (R.f + 1) + '–' + (R.l + 1)).join(', ') : '') + '</div>' : '<div class="card" style="background:var(--ok-soft);border-color:#bfe0b2">✓ ' + cur.qs.length + ' câu hợp lệ' + (ng ? ' · ' + ng + ' nhóm câu 📦' : '') + (warn.length ? ' · câu ' + warn.join(', ') + ' dài hơn giới hạn của Kahoot (vẫn chơi được ở đây)' : '') + '</div>');
+}
+
+function clean(qs) { return qs.map((q) => Object.assign({ t: QP.str(q.t), o: q.o.map((x) => QP.str(x)), c: q.c.slice(), time: q.time, pts: q.pts }, q.img ? { img: q.img } : {}, q.aud ? { aud: String(q.aud).slice(0, 300) } : {}, Array.isArray(q.tr) ? { tr: q.tr } : {}, q.g ? { g: q.g } : {})); }
+// nhóm câu còn dùng, chỉ giữ các trường cần (đoạn văn giữ nguyên xuống dòng)
+function cleanGroups(q) {
+  const out = {}, G = q.groups || {};
+  (q.qs || []).forEach((x) => { const g = x.g && G[x.g]; if (!g || out[x.g]) return; const o = { p: String(g.p || '').replace(/\r/g, '').trim().slice(0, QP.PMAX) }; if (+g.no > 0) o.no = +g.no; ['img', 'au', 'aurl'].forEach((k) => { if (g[k]) o[k] = String(g[k]); }); out[x.g] = o; });
+  return out;
+}
+async function save(q) {
+  const F = FX.F, ref = q.id ? F.doc(FX.db, 'quizzes', q.id) : F.doc(F.collection(FX.db, 'quizzes'));
+  const groups = cleanGroups(q), qs = clean(q.qs).map((x) => { if (x.g && !groups[x.g]) delete x.g; return x; });
+  await F.setDoc(ref, Object.assign({ title: QP.str(q.title) || 'Bộ câu hỏi chưa đặt tên', lop: String(q.lop || '').slice(0, 20), qs, ...(q.exam ? { exam: true } : {}), upd: Date.now(), at: F.serverTimestamp() }, Object.keys(groups).length ? { groups } : {}));
+  return ref.id;
+}
+const imgsOf = (q) => assetsOf(q);
 let saving = false;
 async function doSave(play) {
   if (saving) return;
   const bad = cur.qs.filter((q) => QP.check(q).err.length).length;
   if (!cur.qs.length) return toast('Chưa có câu hỏi nào.');
   if (bad) { toast('Còn ' + bad + ' câu lỗi, sửa xong rồi lưu nhé.'); const el = document.querySelector('.qe.bad'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  if (groupErrs().length) { toast('Có nhóm câu cần sửa (tối đa ' + QP.GMAX + ' câu một nhóm, đoạn văn tối đa ' + QP.PMAX + ' ký tự).'); const el = document.querySelector('.ge.bad'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   saving = true; ['bSave', 'bPlay'].forEach((id) => { if ($(id)) $(id).disabled = true; });
   try {
     cur.id = await save(cur); dirty = false;
     // hình đã bỏ khỏi bộ này và không bộ nào khác dùng: xoá cho đỡ chật
-    const now = imgsOf(cur.qs), gone = [...(cur.imgs0 || [])].filter((id) => !now.has(id));
-    if (gone.length) await dropImgs({ qs: gone.map((img) => ({ img })) }, list.filter((x) => x.id !== cur.id));
+    const now = imgsOf(cur), gone = [...(cur.imgs0 || [])].filter((id) => !now.has(id));
+    if (gone.length) await dropImgs({ ids: gone }, list.filter((x) => x.id !== cur.id));
     cur.imgs0 = now;
     toast('✓ Đã lưu');
     if (play) location.href = 'host.html?quiz=' + encodeURIComponent(cur.id);
@@ -488,8 +623,8 @@ async function doSave(play) {
 async function exportXlsx() {
   try {
     await lib('xlsx');
-    const X = window.XLSX, ws = X.utils.aoa_to_sheet(QP.toRows(cur.title, clean(cur.qs)));
-    ws['!cols'] = [{ wch: 4 }, { wch: 60 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 14 }, { wch: 14 }];
+    const X = window.XLSX, ws = X.utils.aoa_to_sheet(QP.toRows(cur.title, clean(cur.qs), cur.groups));
+    ws['!cols'] = [{ wch: 4 }, { wch: 60 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 60 }];
     const wb = X.utils.book_new(); X.utils.book_append_sheet(wb, ws, 'Sheet1');
     X.writeFile(wb, 'Kahoot - ' + (QP.str(cur.title) || 'quiz').replace(/[\\/:*?"<>|]/g, '') + '.xlsx');
   } catch (e) { err(e); }

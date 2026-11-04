@@ -1,5 +1,5 @@
 /* Minto Quiz — màn học sinh */
-import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=18';
+import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, countUp, simWeak, COLORS, SHAPES, LETTERS, applyTheme } from './common.js?v=19';
 
 const SS = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { sessionStorage.removeItem(k); } catch (e) {} } };
 const LSget = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
@@ -149,6 +149,8 @@ async function draw() {
   }
   const Q = await getQ(q); if (my !== seq) return;
   if (!Q) return msg('⏳', 'Câu ' + (q + 1) + '/' + n, 'Đang tải câu hỏi…');
+  // 📦 nhóm câu: cả nhóm trên một màn, nộp một lần
+  if (Q.gn && +Q.g === q && (st.phase === 'show' || st.phase === 'answer')) return drawGroup(my, st, q, Q);
   if (st.phase === 'show' && st.endAt) { // thầy bấm tạm dừng giữa câu
     const a = sending ? null : await getMine(q); if (my !== seq) return; // đang gửi dở: chưa chắc đã lưu
     return msg('⏸', 'Thầy tạm dừng xíu nha', a != null ? 'Em chọn ' + LETTERS[a] + ' rồi, chờ thầy bấm tiếp tục nha.' : 'Đồng hồ đang dừng, chờ thầy bấm tiếp tục rồi chọn đáp án nha.', Q.t);
@@ -222,6 +224,113 @@ async function pick(q, i) {
   clearTimeout(slow);
 }
 
+// ---------- 📦 nhóm câu (Part 3/4/6/7) ----------
+// Thầy đưa cả nhóm lên qpub (câu đầu có gn = số câu, p = đoạn văn; mỗi câu có g = câu đầu, no = số câu trên đề).
+// Em chọn hết rồi bấm Nộp bài: ghi câu trả lời từng câu vào answers/{câu}/{uid} trong MỘT lần ghi (cùng giờ nộp). Hết giờ tự nộp những câu đã chọn.
+const lblOf = (q) => (qpub[q] && qpub[q].no) || q + 1;
+const gpKey = (f) => 'qz.gp.' + PIN + '.' + f;
+const gpGet = (f) => { try { return JSON.parse(SS.get(gpKey(f)) || '{}') || {}; } catch (e) { return {}; } };
+const gpSet = (f, v) => SS.set(gpKey(f), JSON.stringify(v));
+const gBusy = {};
+let gOn = '';
+async function drawGroup(my, st, f, Q0) {
+  const ids = Array.from({ length: Q0.gn }, (_, i) => f + i);
+  const QS = await Promise.all(ids.map(getQ)); if (my !== seq) return;
+  const title = 'Câu ' + lblOf(f) + '–' + lblOf(ids[ids.length - 1]);
+  if (QS.some((x) => !x)) return msg('⏳', title, 'Đang tải câu hỏi…');
+  if (st.phase === 'show' && st.endAt) {
+    const sent = gBusy[f] ? false : (await Promise.all(ids.map(getMine))).some((a) => a != null); if (my !== seq) return;
+    return msg('⏸', 'Thầy tạm dừng xíu nha', sent ? 'Em nộp bài rồi, chờ thầy bấm tiếp tục nha.' : 'Đồng hồ đang dừng, đáp án em đã chọn vẫn còn đó. Chờ thầy bấm tiếp tục rồi làm tiếp nha.');
+  }
+  if (st.phase === 'show') {
+    msg('📦', title, 'Nhóm ' + ids.length + ' câu: ' + (Q0.p ? 'đọc đoạn văn' : 'nhìn lên bảng / nghe') + ' rồi làm cả nhóm trên một màn, nộp một lần nha 👀');
+    $('mS').insertAdjacentHTML('afterend', '<div class="loadbar x" id="lb"><i></i></div>');
+    return;
+  }
+  const sent = gBusy[f] || (await Promise.all(ids.map(getMine))).some((a) => a != null); if (my !== seq) return;
+  if (sent) return gWaiting(f, ids);
+  if (now() > st.endAt) return msg('⌛', 'Hết giờ mất rồi 😭', 'Chờ thầy chữa từng câu nha.');
+  groupScreen(f, ids, QS, st);
+}
+function groupScreen(f, ids, QS, st) {
+  const key = f + ':' + st.endAt;
+  if (gOn !== key || $('sGrp').hidden) {
+    gOn = key; show('sGrp'); bg('');
+    $('gNum').textContent = 'Câu ' + lblOf(f) + '–' + lblOf(ids[ids.length - 1]) + ' · nộp một lần';
+    const p = QS[0].p || '';
+    $('gPass').hidden = !p; $('gPT').innerHTML = qtHtml(p);
+    $('gList').innerHTML = ids.map((q, k) => '<div class="gq" data-q="' + q + '"><div class="st"><b>' + lblOf(q) + '.</b> ' + qtHtml(QS[k].t) + '</div><div class="gopts">' +
+      (QS[k].o || []).map((o, i) => o ? '<button type="button" class="gopt" data-q="' + q + '" data-a="' + i + '"><span class="lt k' + i + '">' + SHAPES[i] + ' ' + LETTERS[i] + '</span><span class="tx">' + esc(o) + '</span></button>' : '').join('') + '</div></div>').join('');
+    $('gList').querySelectorAll('.gopt').forEach((b) => { b.onclick = () => {
+      const v = gpGet(f); v[b.dataset.q] = +b.dataset.a; gpSet(f, v); $('gHint').textContent = '';
+      try { navigator.vibrate && navigator.vibrate(25); } catch (e) {}
+      paintG(f, ids);
+    }; });
+    $('gGo').onclick = () => gSubmit(f, ids, false);
+    $('gHint').textContent = '';
+  }
+  paintG(f, ids);
+  const tickT = () => {
+    const ms = st.endAt - now(), s = Math.max(0, Math.ceil(ms / 1000));
+    $('gTime').textContent = '⏱ ' + s + 's';
+    // sắp hết giờ: tự nộp những câu đã chọn (luật cho trễ tối đa 1,5 giây)
+    if (ms <= 700) { clearInterval(tmr); if (state === st) gSubmit(f, ids, true); }
+  };
+  clearInterval(tmr); tickT(); tmr = setInterval(tickT, 250);
+}
+function paintG(f, ids) {
+  const v = gpGet(f), done = ids.filter((q) => v[q] != null).length;
+  $('gList').querySelectorAll('.gopt').forEach((b) => b.classList.toggle('chosen', v[b.dataset.q] === +b.dataset.a));
+  $('gList').querySelectorAll('.gq').forEach((el) => el.classList.remove('miss'));
+  $('gGo').textContent = 'Nộp bài (' + done + '/' + ids.length + ' câu)';
+}
+async function gSubmit(f, ids, auto) {
+  if (gBusy[f]) return;
+  const v = gpGet(f), ch = ids.filter((q) => v[q] != null), miss = ids.length - ch.length;
+  if (!ch.length) {
+    if (auto) return msg('⌛', 'Hết giờ mất rồi 😭', 'Em chưa chọn câu nào trong nhóm này. Chờ thầy chữa từng câu nha.');
+    $('gHint').textContent = 'Chọn đáp án rồi mới nộp được nha 😝'; return;
+  }
+  if (!auto && miss) {
+    const first = $('gList').querySelector('.gq[data-q="' + ids.find((q) => v[q] == null) + '"]');
+    if (!$('gGo').dataset.warn) {
+      $('gGo').dataset.warn = '1';
+      $('gList').querySelectorAll('.gq').forEach((el) => el.classList.toggle('miss', v[el.dataset.q] == null));
+      $('gHint').textContent = 'Còn ' + miss + ' câu chưa chọn (khung vàng). Bấm Nộp bài lần nữa để nộp luôn.';
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { delete $('gGo').dataset.warn; }, 6000);
+      return;
+    }
+  }
+  delete $('gGo').dataset.warn;
+  gBusy[f] = 1; clearInterval(tmr); sending = 1;
+  ch.forEach((q) => { mine[q] = v[q]; });
+  try { navigator.vibrate && navigator.vibrate(40); } catch (e) {}
+  gWaiting(f, ids);
+  const slow = setTimeout(() => sendSt('Mạng yếu, đang gửi lại…'), 2500);
+  const mk = (at) => { const up = {}; ch.forEach((q) => { up['answers/' + q + '/' + P.uid] = { a: v[q], at }; }); return up; };
+  try {
+    // giờ nộp (giờ máy chủ ước lượng); bị từ chối vì tới muộn thì gửi lại bằng giờ máy chủ
+    try { await P.D.update(r(), mk(Math.round(now()) - 100)); }
+    catch (e1) { const s0 = await P.D.get(r('answers/' + ch[0] + '/' + P.uid)).catch(() => null); if (s0 && s0.exists()) throw 0; await P.D.update(r(), mk(P.D.serverTimestamp())); }
+    sending = 0; sendSt('✓ Đã nộp');
+  } catch (e) {
+    sending = 0;
+    if (e === 0) sendSt('✓ Đã nộp');
+    else {
+      ch.forEach((q) => { delete mine[q]; });
+      const a = await getMine(ch[0]).catch(() => null);
+      if (a == null) { gBusy[f] = 0; gOn = ''; if (state && state.phase === 'answer' && now() > state.endAt) msg('📶', 'Mạng lag quá, nộp không kịp 😭', 'Bài tới sau khi hết giờ mất rồi. Nhóm sau gỡ nha!'); else render(); }
+      else sendSt('✓ Đã nộp');
+    }
+  }
+  clearTimeout(slow);
+}
+function gWaiting(f, ids) {
+  msg('✅', 'Nộp bài rồi nha', 'Em chọn ' + ids.map((q) => lblOf(q) + '-' + (mine[q] != null ? LETTERS[mine[q]] : '–')).join(' · ') + '. ' + say(L.wait, 'g' + f));
+  $('mS').insertAdjacentHTML('afterend', '<div class="spin x"></div><div class="sendst x" id="sendst">' + (sending ? 'Đang gửi…' : '✓ Đã nộp') + '</div>');
+}
+
 let shownRes = '';
 // nhớ kết quả từng câu trong phiên để biết câu trước đúng hay sai, chuỗi và hạng câu trước
 function hist() { try { return JSON.parse(SS.get('qz.h.' + PIN) || '{}'); } catch (e) { return {}; } }
@@ -241,6 +350,7 @@ function result(q, Q, a) {
     h = '<div class="ic">✔</div><h2>' + say(t, sd) + '</h2>' + (score.p ? '<div class="pts">+<span id="rp">' + score.p + '</span></div>' : '<div>Câu này hông tính điểm nha</div>');
   } else h = '<div class="ic">✘</div><h2>' + say(pv && pv.k >= 3 ? L.broken : L.no, sd) + '</h2><div>Đáp án đúng là <b>' + esc((score.c || []).map((x) => LETTERS[x]).join(', ')) + '</b> nè. ' + say(L.noSub, sd + 'n') + '</div>';
   if (score.k >= 2) h += '<div style="margin-top:10px;font-weight:600"><span class="flame">🔥</span> Chuỗi ' + score.k + ' câu đúng' + (score.b ? ' (+' + score.b + ')' : '') + ', ' + say(L.streak, sd + 'k') + '</div>';
+  if (Q.g != null) h = '<div class="rlbl">Câu ' + lblOf(q) + '</div>' + h;
   box.innerHTML = h;
   const fresh = shownRes !== key; shownRes = key;
   if (fresh) { countUp($('rp'), 0, score.p || 0, 700); countUp($('rScore'), Math.max(0, score.s - (score.p || 0)), score.s, 900); try { navigator.vibrate && navigator.vibrate(ok ? [40, 60, 40] : 200); } catch (e) {} }

@@ -1,10 +1,11 @@
 /* Minto Quiz — ⛏️ Đào vàng cả lớp (màn học sinh).
    Mỗi bạn tự trả lời liên tục tới khi hết giờ, không chờ cả lớp. Đúng: 10 vàng × hệ số chuỗi (×1.5 từ 3, ×2 từ 5, ×3 từ 10).
    Sai: hiện đáp án đúng vài giây, chuỗi về 0. Tiến độ ghi vào quiz/$pin/gold/$uid để máy chiếu hiện bảng vàng. */
-import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, Sound, SHAPES, LETTERS, applyTheme } from './common.js?v=18';
+import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, Sound, SHAPES, LETTERS, applyTheme } from './common.js?v=19';
 
 const SS = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} } };
 const PIN = (new URLSearchParams(location.search).get('pin') || SS.get('qz.pin') || '').replace(/\D/g, '').slice(0, 6);
+let PAS = {}; // 📦 đoạn văn của nhóm câu (Part 6/7), theo câu đầu nhóm; nhóm câu nghe không đưa vào Đào vàng
 let P = null, now = () => Date.now(), meta = {}, state = {}, Q = [], K = [], me = { g: 0, n: 0, c: 0, s: 0 }, order = [], pos = 0, busy = false, tmr = 0, ended = false, sndOn = false;
 const r = (p) => P.D.ref(P.db, 'quiz/' + PIN + (p ? '/' + p : ''));
 const mult = (s) => (s >= 10 ? 3 : s >= 5 ? 2 : s >= 3 ? 1.5 : 1);
@@ -51,7 +52,8 @@ async function load() {
   const ids = Object.keys(qv).map(Number).sort((a, b) => a - b);
   // RTDB có thể trả mảng hoặc object {0:…,1:…}: đổi hết về mảng
   const arr = (x) => (Array.isArray(x) ? x : x && typeof x === 'object' ? Object.keys(x).sort((a, b) => a - b).reduce((o, k) => { o[+k] = x[k]; return o; }, []) : []);
-  Q = ids.map((i) => ({ ...qv[i], o: arr(qv[i].o) })); K = ids.map((i) => arr(kv[i] && kv[i].c).map(Number));
+  Q = ids.map((i) => ({ ...qv[i], o: arr(qv[i].o) }));
+  PAS = {}; ids.forEach((i) => { if (qv[i].p) PAS[i] = qv[i].p; }); K = ids.map((i) => arr(kv[i] && kv[i].c).map(Number));
   const Lc = (() => { try { return JSON.parse(SS.get(LSK()) || 'null'); } catch (e) { return null; } })();
   const server = gs && gs.exists() ? gs.val() : null;
   if (Lc && Lc.at === state.startAt && Lc.order && Lc.order.length === Q.length) { me = Lc.me; order = Lc.order; pos = Lc.pos; }
@@ -81,7 +83,12 @@ function ask() {
   if (pos >= order.length) { order = shuffle(Q.map((_, i) => i)); pos = 0; } // hết bộ thì làm lại từ đầu (đảo thứ tự)
   const qi = order[pos], q = Q[qi];
   show('sQ'); $('qFb').hidden = true;
-  $('qQ').innerHTML = qtHtml(q.t); $('qQ').classList.toggle('long', String(q.t || '').length > 100);
+  let pe = $('qP');
+  if (!pe) { pe = document.createElement('details'); pe.id = 'qP'; pe.className = 'gpass'; pe.open = true; $('qQ').parentNode.insertBefore(pe, $('qQ')); }
+  const ps = q.g != null && PAS[+q.g];
+  pe.hidden = !ps;
+  if (ps) pe.innerHTML = '<summary>📄 Đoạn văn' + (q.no ? ' · câu ' + q.no : '') + '</summary><div class="gpt">' + qtHtml(ps) + '</div>';
+  $('qQ').innerHTML = (ps && q.no ? '<b>' + q.no + '.</b> ' : '') + qtHtml(q.t); $('qQ').classList.toggle('long', String(q.t || '').length > 100);
   const g = $('qGrid'); g.innerHTML = '';
   (q.o || []).forEach((txt, i) => {
     if (!txt) return;

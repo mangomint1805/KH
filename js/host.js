@@ -1,6 +1,6 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack, quizClass, classLabel, byClass } from './common.js?v=18';
+import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack, quizClass, classLabel, byClass, groupRuns, qLabel, fetchAudio, PMAX } from './common.js?v=19';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
@@ -10,11 +10,75 @@ let unsub = [], ansOff = null, timer = 0, autoT = 0, wake = null;
 // hình của câu hỏi (Firestore quizImg/{id}), tải sẵn lúc tạo phòng
 const IMGS = {}; let imgP = Promise.resolve();
 function loadImgs() {
-  const ids = [...new Set(quiz.qs.map((Q) => Q.img).filter(Boolean))];
+  const G = quiz.groups || {}, gs = [...new Set(quiz.qs.map((Q) => Q.g).filter((g) => g && G[g]))].map((g) => G[g]);
+  gs.forEach((x) => { if (x.au && !AUD[x.au]) fetchAudio(x.au).then((u) => { if (u) { AUD[x.au] = u; audPaint(); } }).catch((e) => console.warn('audio', x.au, e)); });
+  const ids = [...new Set(quiz.qs.map((Q) => Q.img).concat(gs.map((x) => x.img)).filter(Boolean))];
   if (!ids.length) return Promise.resolve();
   return window.MACC.fs().then((x) => Promise.all(ids.map((id) => x.F.getDoc(x.F.doc(x.db, 'quizImg', id)).then((d) => { if (d.exists()) IMGS[id] = d.data().d; }).catch((e) => console.warn('img', id, e)))));
 }
 function imgTag(Q, cls) { return Q.img && IMGS[Q.img] ? '<span class="qzw"><img class="' + cls + '" src="' + IMGS[Q.img] + '" alt="Hình câu hỏi" title="Bấm để phóng to"><button type="button" class="qzoom" title="Phóng to (phím Z)" aria-label="Phóng to hình">🔍</button></span>' : ''; }
+// ---------- 📦 nhóm câu (Part 3/4/6/7) ----------
+// SR: nhóm theo dữ liệu bộ câu (để hiện đoạn văn / hình / âm thanh chung). RUN: nhóm được CHƠI chung (cả nhóm một màn, nộp một lần)
+// — chỉ khi luật RTDB đã có qpub/g (GRP); luật cũ thì các câu trong nhóm chơi từng câu một nhưng vẫn hiện nội dung chung.
+let SR = [], RUN = [], GRP = false;
+const AUD = {};
+const grpOf = (q) => RUN[q] || null;
+const gData = (q) => (SR[q] && quiz.groups && quiz.groups[SR[q].id]) || null;
+const lbl = (q) => qLabel(SR, quiz.groups, q);
+const span = (q) => { const R = grpOf(q); return R ? Array.from({ length: R.n }, (_, i) => R.f + i) : [q]; };
+const pk = (q) => (grpOf(q) ? grpOf(q).f : q); // khoá tạm dừng: cả nhóm dùng chung khoảng dừng của câu đầu
+function limitOf(q) { return span(q).reduce((t, i) => t + (quiz.qs[i].time || 20), 0); }
+function setRuns() { SR = groupRuns(quiz.qs); RUN = GRP && meta.mode !== 'gold' ? SR : quiz.qs.map(() => null); }
+const hasGroups = () => SR.some(Boolean);
+// luật RTDB đã có trường nhóm chưa: thử ghi một câu mẫu có g rồi xoá
+async function probeGrp() {
+  if (!hasGroups()) return false;
+  const k = 'qz.grp.' + PIN; try { const v = localStorage.getItem(k); if (v) return v === '1'; } catch (e) {}
+  let ok = true;
+  try { await D.set(r('qpub/999'), { t: 'thử luật nhóm câu', o: ['x', 'y'], time: 5, pts: 0, g: '999', gn: 2, no: 1, p: 'x' }); await D.remove(r('qpub/999')).catch(() => {}); }
+  catch (e) { ok = false; console.warn('Luật RTDB chưa có nhóm câu (xem FIREBASE.md)', e); }
+  try { localStorage.setItem(k, ok ? '1' : '0'); } catch (e) {}
+  return ok;
+}
+function qpubOf(i, plain) {
+  const Q = quiz.qs[i], o = !plain && isEx(Q) ? { t: '🎧 Câu ' + (i + 1) + ': nghe rồi chọn đáp án đúng nhất', o: Q.o.map((x, k) => (x ? 'Đáp án ' + LETTERS[k] : '')), time: Q.time || 20, pts: Q.pts == null ? 1 : Q.pts } : { t: String(Q.t).slice(0, 1000), o: Q.o.map((x) => String(x || '').slice(0, 500)), time: Q.time || 20, pts: Q.pts == null ? 1 : Q.pts };
+  const R = GRP && SR[i]; if (!R) return o;
+  const G = gData(i) || {};
+  o.g = String(R.f); o.no = Math.max(1, Math.min(999, lbl(i)));
+  if (i === R.f) { o.gn = R.n; if (G.p) o.p = String(G.p).slice(0, PMAX); }
+  return o;
+}
+// âm thanh nhóm (Part 3/4): một máy phát dùng chung cho cả màn, đổi màn không bị ngắt
+const aud = new Audio(); aud.preload = 'auto';
+const audSrc = (G) => (G ? (G.au ? AUD[G.au] || '' : G.aurl || '') : '');
+const mmss = (t) => { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+function audPaint() {
+  const b = main && main.querySelector('.gaud'); if (!b) return;
+  const G = gData(+b.dataset.q), src = audSrc(G);
+  if (src && aud.dataset.src !== src) { aud.src = src; aud.dataset.src = src; }
+  b.classList.toggle('wait', !src);
+  const p = b.querySelector('[data-au=play]'); if (p) p.textContent = !src ? '⏳ Đang tải âm thanh' : aud.paused ? '▶ Phát' : '⏸ Dừng';
+  const t = b.querySelector('.aut'); if (t) t.textContent = src ? mmss(aud.currentTime) + ' / ' + mmss(aud.duration) : '';
+  const f = b.querySelector('.auf'); if (f) f.style.width = (aud.duration ? aud.currentTime / aud.duration * 100 : 0) + '%';
+}
+['play', 'pause', 'timeupdate', 'loadedmetadata', 'ended'].forEach((ev) => aud.addEventListener(ev, audPaint));
+function gAudPlay(fromStart) { const b = main.querySelector('.gaud'); if (!b) return; audPaint(); if (!aud.src) return; if (fromStart) aud.currentTime = 0; Sound.mode(null); aud.play().catch((e) => console.warn('audio', e)); }
+function gAudStop() { if (!aud.paused) aud.pause(); }
+function gAudToggle() { if (aud.paused) gAudPlay(aud.ended); else gAudStop(); }
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('[data-au]'); if (!b) return;
+  if (b.dataset.au === 'play') gAudToggle(); else if (b.dataset.au === 're') gAudPlay(true);
+});
+// khung nội dung chung của nhóm: âm thanh + hình + đoạn văn (đoạn dài tự cuộn)
+function stimHtml(q) {
+  const G = gData(q); if (!G) return '';
+  const au = !!(G.au || G.aurl), im = G.img && IMGS[G.img];
+  return '<div class="gstim">' + (au ? '<div class="gaud" data-q="' + q + '"><button type="button" class="btn" data-au="play">▶ Phát</button><button type="button" class="btn" data-au="re" title="Phát lại từ đầu">↺</button><span class="aub"><i class="auf"></i></span><span class="aut"></span></div>' : '') +
+    (im ? '<span class="qzw"><img class="qimg gimg" src="' + IMGS[G.img] + '" alt="Hình của nhóm câu" title="Bấm để phóng to"><button type="button" class="qzoom" title="Phóng to (phím Z)" aria-label="Phóng to hình">🔍</button></span>' : '') +
+    (G.p ? '<div class="gp">' + qtHtml(G.p) + '</div>' : '') + (!im && !G.p && !au ? '<div class="gp muted">(Nhóm này chưa có đoạn văn, hình hay âm thanh)</div>' : '') + '</div>';
+}
+const optsHtml = (Q, rev) => '<div class="gop">' + Q.o.map((o, i) => o ? '<span class="k' + i + (rev ? (Q.c.includes(i) ? ' win' : ' dim') : '') + '"><i>' + SHAPES[i] + ' ' + LETTERS[i] + '</i>' + esc(o) + (rev && Q.c.includes(i) ? ' ✔' : '') + '</span>' : '').join('') + '</div>';
+const gqHtml = (i, withOpts) => '<div class="gq"><div class="st"><b>' + lbl(i) + '.</b> ' + qtHtml(quiz.qs[i].t) + '</div>' + (withOpts ? optsHtml(quiz.qs[i]) : '') + '</div>';
 // phóng to hình câu hỏi: bấm vào hình / nút 🔍 / phím Z; bấm bất kỳ đâu, Esc, Space hoặc Enter để đóng
 function zoomOpen(src) {
   if (!src) return; zoomClose();
@@ -43,7 +107,7 @@ function trHtml(Q) {
   if (!Array.isArray(Q.tr) || !Q.tr.length) return '';
   return '<div class="trbox"><div class="trh">📜 Transcript</div>' + Q.tr.map((l) => '<div class="trl' + (l.ok ? ' ok' : '') + '"><b class="trk">' + esc(l.k || '') + '</b><div><div class="tren">' + esc(l.en || '') + (l.ok ? ' <span class="trok">✔</span>' : '') + '</div>' + (l.vi ? '<div class="trvi">' + esc(l.vi) + '</div>' : '') + '</div></div>').join('') + '</div>';
 }
-function curImgSrc() { const i = main && main.querySelector('.qimg'); return i ? i.src : (quiz && state && quiz.qs[state.q] && IMGS[quiz.qs[state.q].img]) || ''; }
+function curImgSrc() { const i = main && main.querySelector('.qimg'); const G = quiz && state && gData(state.q); return i ? i.src : (quiz && state && quiz.qs[state.q] && IMGS[quiz.qs[state.q].img]) || (G && IMGS[G.img]) || ''; }
 document.addEventListener('click', (e) => {
   const t = e.target.closest && e.target.closest('.qzoom, .qimg, #bZoom');
   if (!t) return;
@@ -210,6 +274,7 @@ async function create(q) {
     catch (e2) { return fail(e2); }
   }
   meta.at = Date.now();
+  setRuns(); GRP = await probeGrp(); setRuns();
   try { localStorage.setItem(LS_KEY, PIN); } catch (e) {}
   history.replaceState(null, '', location.pathname);
   attach();
@@ -229,6 +294,7 @@ async function resume(pin) {
   quiz.qs = quiz.qs.slice(0, meta.n);
   if (quiz.qs.length < meta.n) return false;
   keys = room.key || {}; answers = room.answers || {};
+  setRuns(); GRP = await probeGrp(); setRuns();
   imgP = loadImgs(); pzLoad();
   await imgP;
   attach();
@@ -279,6 +345,7 @@ function lobby() {
     '<button class="btn big pri" id="bStart" disabled>Bắt đầu ▶</button></div><div class="names" id="names"></div>' +
     '<p class="hint" id="hint">Đang chờ học sinh vào phòng<span class="waitdots"></span> Bấm × để mời một bạn ra (ví dụ tên không phù hợp).</p></div>';
   $('bStart').onclick = () => start();
+  if (hasGroups() && !GRP) $('hint').insertAdjacentHTML('beforebegin', '<p class="hint ghint">⚠ Luật Firebase chưa có <b>nhóm câu</b>: các nhóm sẽ chơi từng câu một (vẫn hiện đoạn văn, hình, âm thanh). Dán luật mới theo FIREBASE.md (mục Nhóm câu) để cả nhóm làm chung một màn, nộp một lần.</p>');
   if (meta.mode === 'gold') $('hint').insertAdjacentHTML('beforebegin', '<p class="hint ghint">⛏️ <b>Đào vàng cả lớp</b> · ' + goldMin() + ' phút · mỗi bạn tự trả lời trên điện thoại, đúng liên tiếp được nhân vàng (×1.5 từ chuỗi 3, ×2 từ chuỗi 5, ×3 từ chuỗi 10)</p>');
   lobbyNames();
 }
@@ -317,15 +384,23 @@ async function goShow(q) {
   clearTimeout(autoT); clearInterval(timer); stopAns(); audStop();
   const Q = quiz.qs[q];
   await Promise.race([imgP, new Promise((ok) => setTimeout(ok, 4000))]);
-  try {
-    await D.update(r(), {
-      ['qpub/' + q]: isEx(Q) ? { t: '🎧 Câu ' + (q + 1) + ': nghe rồi chọn đáp án đúng nhất', o: Q.o.map((x, i) => (x ? 'Đáp án ' + LETTERS[i] : '')), time: Q.time, pts: Q.pts } : { t: String(Q.t).slice(0, 1000), o: Q.o.map((x) => String(x || '').slice(0, 500)), time: Q.time, pts: Q.pts },
-      state: { phase: 'show', q, qs: String(q) },
-    });
-  } catch (e) { return fail(e); }
+  // nhóm câu: đưa cả nhóm lên cùng lúc (điện thoại hiện hết các câu trên một màn)
+  const up = { state: { phase: 'show', q, qs: String(q) } };
+  span(q).forEach((i) => { up['qpub/' + i] = qpubOf(i); });
+  try { await D.update(r(), up); } catch (e) { return fail(e); }
   if (state.q !== q || state.phase !== 'show') state = { phase: 'show', q, qs: String(q) };
   clearBoardT();
   Sound.mode(null); Sound.whoosh();
+  if (gData(q) && aud.dataset.src !== audSrc(gData(q))) gAudStop();
+  if (gData(q)) {
+    const R = grpOf(q);
+    main.innerHTML = qHead(q) + '<div class="qbanner">' + (R ? '📦 Câu ' + lbl(R.f) + '–' + lbl(R.l) + ' · làm cả nhóm rồi nộp một lần' : 'Câu ' + lbl(q)) + '</div>' +
+      '<div class="gwrap">' + stimHtml(q) + '<div class="gqs">' + span(q).map((i) => gqHtml(i)).join('') + '</div></div><div class="prog"><i id="pg"></i></div>';
+    audPaint();
+    requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
+    autoT = setTimeout(() => goAnswer(q), SHOW_MS);
+    return;
+  }
   main.innerHTML = qHead(q) + '<div class="qbanner">' + (q + 1 === quiz.qs.length && quiz.qs.length > 1 ? hsay(HL.lastQ, PIN) : 'Câu ' + (q + 1) + ' / ' + quiz.qs.length) + '</div>' + (imgTag(Q, 'qimg big') ? '<div class="qtext sm' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div><div class="qimgbox">' + imgTag(Q, 'qimg big') + '</div>' : '<div class="qtext' + qlen(Q.t) + '" style="flex:1;display:flex;align-items:center;justify-content:center">' + qtHtml(Q.t) + '</div>') +
     (Q.pts === 2 ? '<div class="tag2">⭐ Câu điểm gấp đôi</div>' : Q.pts === 0 ? '<div class="tag2" style="background:#fff;color:var(--dim)">Câu này không tính điểm</div>' : '') +
     '<div class="prog"><i id="pg"></i></div>';
@@ -343,42 +418,53 @@ async function goShow(q) {
 }
 // câu dài thì chữ nhỏ lại để 4 ô đáp án vẫn nằm trọn màn hình
 const qlen = (t) => { const n = String(t || '').length; return n > 170 ? ' xlong' : n > 100 ? ' long' : ''; };
-function qHead(q) { return '<div class="qmeta"><span>Câu ' + (q + 1) + '/' + quiz.qs.length + '</span><span class="muted">PIN ' + PIN + '</span></div>'; }
+function qHead(q, one) {
+  const R = !one && grpOf(q), n = quiz.qs.length;
+  const t = R ? 'Câu ' + lbl(R.f) + '–' + lbl(R.l) + ' <small class="muted">· ' + (R.f + 1) + '–' + (R.l + 1) + '/' + n + '</small>' : lbl(q) !== q + 1 ? 'Câu ' + lbl(q) + ' <small class="muted">· ' + (q + 1) + '/' + n + '</small>' : 'Câu ' + (q + 1) + '/' + n;
+  return '<div class="qmeta"><span>' + t + '</span><span class="muted">PIN ' + PIN + '</span></div>';
+}
 
 async function goAnswer(q) {
   clearTimeout(autoT); if (qAud && !qAud.ended) audStop();
-  const Q = quiz.qs[q], startAt = Math.round(now()) + 300, endAt = startAt + Q.time * 1000;
+  const startAt = Math.round(now()) + 300, endAt = startAt + limitOf(q) * 1000;
   try { await D.set(r('state'), { phase: 'answer', q, qs: String(q), startAt, endAt }); } catch (e) { return fail(e); }
   state = { phase: 'answer', q, qs: String(q), startAt, endAt };
   answerView(q);
+  if (gData(q) && main.querySelector('.gaud')) gAudPlay(true); // Part 3/4: tự phát đoạn nghe khi mở giờ
 }
 
 function answerView(q, still) {
-  const Q = quiz.qs[q];
-  if (!still) Sound.mode('q');
+  const Q = quiz.qs[q], G = gData(q), T = limitOf(q);
+  if (!still) Sound.mode(G && (G.au || G.aurl) ? null : 'q'); // nhóm có đoạn nghe: tắt nhạc nền
   const C = 2 * Math.PI * 58;
   const ex = isEx(Q);
-  main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + (ex ? '' : qlen(Q.t)) + '">' + (ex ? '🎧 Câu ' + (q + 1) + ': chọn A, B hay C?' : qtHtml(Q.t)) + '</div>' +
-    '<div class="mid"><div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + Q.time + '</div></div><div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
-    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + (ex ? LETTERS[i] : esc(o)) + '</div>' : '<div></div>').join('') + '</div>';
+  const ring = '<div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + T + '</div></div>';
+  if (G) {
+    main.innerHTML = qHead(q) + '<div class="gwrap">' + stimHtml(q) + '<div class="gqs">' + span(q).map((i) => gqHtml(i, true)).join('') + '</div></div>' +
+      '<div class="gbot"><span style="flex:1"></span>' + ring + '<div class="answered"><b id="na">0</b>' + (grpOf(q) ? 'đã nộp' : 'đã trả lời') + '</div><button class="btn" id="bPause" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip">Bỏ qua ⏭</button></div>';
+    audPaint();
+  } else main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + (ex ? '' : qlen(Q.t)) + '">' + (ex ? '🎧 Câu ' + (q + 1) + ': chọn A, B hay C?' : qtHtml(Q.t)) + '</div>' +
+    '<div class="mid">' + ring + '<div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
+    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
   $('bPause').onclick = () => pause();
   stopAns();
   let heard = -1, lastBeep = 0;
-  ansOff = D.onValue(r('answers/' + q), (s) => {
-    answers[q] = s.val() || {};
-    const n = Object.keys(answers[q]).filter((k) => players[k]).length;
+  // nhóm câu: nghe câu trả lời của mọi câu trong nhóm, đếm số bạn đã nộp
+  ansOff = span(q).map((i) => D.onValue(r('answers/' + i), (s) => {
+    answers[i] = s.val() || {};
+    const n = answeredBy(q).size;
     // lần đầu là dữ liệu có sẵn (vd. tải lại trang): không kêu; lớp đông bấm dồn: cách nhau ít nhất 120ms
     if (heard >= 0 && n > heard && state.phase === 'answer' && Date.now() - lastBeep > 120) { Sound.answer(n); lastBeep = Date.now(); }
     heard = n;
     updAnswered();
-  });
+  }));
   let last = -1;
   clearInterval(timer);
   if (still) return;
   timer = setInterval(() => {
-    const ms = Math.max(0, state.endAt - now()), left = Math.min(Q.time, Math.ceil(ms / 1000)), tm = $('tm');
-    if (tm) { tm.textContent = left; $('ring').classList.toggle('low', left <= 5); $('arc').style.strokeDashoffset = (C * (1 - Math.min(1, ms / (Q.time * 1000)))).toFixed(1); }
+    const ms = Math.max(0, state.endAt - now()), left = Math.min(T, Math.ceil(ms / 1000)), tm = $('tm');
+    if (tm) { tm.textContent = left; $('ring').classList.toggle('low', left <= 5); $('arc').style.strokeDashoffset = (C * (1 - Math.min(1, ms / (T * 1000)))).toFixed(1); }
     if (left !== last && left <= 5 && left > 0) { Sound.tick(); Sound.hurry(true); }
     last = left;
     if (now() > state.endAt + 500) goReveal(q);
@@ -388,7 +474,7 @@ let pauseOv = null;
 async function pause() {
   if (state.phase !== 'answer') return;
   const q = state.q, at = Math.round(now());
-  clearInterval(timer); Sound.mode(null);
+  clearInterval(timer); Sound.mode(null); gAudStop();
   PZ.cur = { q, at }; pzSave();
   const st = { phase: 'show', q, qs: String(q), startAt: state.startAt, endAt: state.endAt };
   try { await D.set(r('state'), st); } catch (e) { delete PZ.cur; pzSave(); answerView(q); return fail(e); }
@@ -413,16 +499,17 @@ async function unpause() {
   const dur = Math.max(0, t - from);
   const st = { phase: 'answer', q, qs: String(q), startAt: state.startAt, endAt: state.endAt + dur };
   try { await D.set(r('state'), st); } catch (e) { return fail(e); }
-  (PZ[q] = PZ[q] || []).push([from, t]); delete PZ.cur; pzSave();
+  (PZ[pk(q)] = PZ[pk(q)] || []).push([from, t]); delete PZ.cur; pzSave();
   state = st; closePause();
   answerView(q);
 }
+function answeredBy(q) { const S = new Set(); span(q).forEach((i) => Object.keys(answers[i] || {}).forEach((k) => { if (players[k]) S.add(k); })); return S; }
 function updAnswered() {
-  const q = state.q, a = answers[q] || {}, n = Object.keys(a).filter((k) => players[k]).length, total = Object.keys(players).length;
+  const q = state.q, n = answeredBy(q).size, total = Object.keys(players).length;
   const el = $('na'); if (el) el.textContent = n + '/' + total;
   if (state.phase === 'answer' && total && n >= total) goReveal(q);
 }
-function stopAns() { if (ansOff) { ansOff(); ansOff = null; } }
+function stopAns() { if (ansOff) { [].concat(ansOff).forEach((f) => f()); ansOff = null; } }
 
 let revealing = -1;
 async function goReveal(q) {
@@ -430,13 +517,14 @@ async function goReveal(q) {
   revealing = q;
   clearInterval(timer); stopAns(); Sound.mode(null); closePause(); audStop();
   const wasOpen = state.phase === 'answer' || isPaused();
-  if (isPaused()) { const t = Math.round(now()), from = PZ.cur ? PZ.cur.at : t; (PZ[q] = PZ[q] || []).push([from, t]); delete PZ.cur; pzSave(); }
+  if (isPaused()) { const t = Math.round(now()), from = PZ.cur ? PZ.cur.at : t; (PZ[pk(q)] = PZ[pk(q)] || []).push([from, t]); delete PZ.cur; pzSave(); }
   const Q = quiz.qs[q];
+  if (wasOpen) gAudStop();
   let ov = null;
   if (wasOpen) {
     Sound.timeup();
     ov = document.createElement('div'); ov.className = 'overlay';
-    const all = Object.keys(answers[q] || {}).filter((k) => players[k]).length >= Object.keys(players).length;
+    const all = answeredBy(q).size >= Object.keys(players).length;
     ov.innerHTML = '<div class="timesup">' + (all ? "Everyone's locked in! ✅" : 'Hết giờ! ⏰') + '</div>';
     document.body.appendChild(ov);
   }
@@ -444,10 +532,13 @@ async function goReveal(q) {
   try {
     if (wasOpen) await D.update(r('state'), { phase: 'reveal' });
     state.phase = 'reveal';
-    const s = await D.get(r('answers/' + q)); answers[q] = s.val() || {};
+    // nhóm câu: đọc câu trả lời cả nhóm; chữa từng câu một (state.q = câu đang chữa)
+    const S = await Promise.all(span(q).map((i) => D.get(r('answers/' + i))));
+    span(q).forEach((i, k) => { answers[i] = S[k].val() || {}; });
     if (!keys[q]) keys[q] = { c: Q.c.slice(), s: state.startAt, e: state.endAt };
     const res = compute();
     const up = { ['key/' + q]: keys[q] };
+    if (state.q !== q) { up['state/q'] = q; state.q = q; }
     Object.keys(players).forEach((uid) => {
       const x = res.by[uid], it = x.q[q] || {};
       up['scores/' + uid] = { s: x.s, k: x.k, r: x.r, n: res.n, q, p: it.pts || 0, b: it.b || 0, ok: !!it.ok, c: Q.c.slice() };
@@ -468,6 +559,7 @@ const HL = {
 };
 const hsay = (arr, seed) => arr[String(seed).split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 9973, 7) % arr.length];
 function revealView(q) {
+  if (gData(q)) return gRevealView(q);
   const Q = quiz.qs[q], a = answers[q] || {}, cnt = [0, 0, 0, 0];
   Object.keys(a).forEach((k) => { if (players[k] && a[k] && cnt[a[k].a] != null) cnt[a[k].a]++; });
   const mx = Math.max(1, ...cnt), tot = cnt.reduce((x, y) => x + y, 0), right = Q.c.reduce((x, i) => x + (cnt[i] || 0), 0);
@@ -482,7 +574,28 @@ function revealView(q) {
   requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
 }
 
+// nhóm câu: chữa từng câu, nội dung chung (đoạn văn / hình / âm thanh) vẫn để bên trái
+function gRevealView(q) {
+  const Q = quiz.qs[q], a = answers[q] || {}, cnt = [0, 0, 0, 0], R = grpOf(q), G = gData(q);
+  Object.keys(a).forEach((k) => { if (players[k] && a[k] && cnt[a[k].a] != null) cnt[a[k].a]++; });
+  const mx = Math.max(1, ...cnt), tot = cnt.reduce((x, y) => x + y, 0), right = Q.c.reduce((x, i) => x + (cnt[i] || 0), 0);
+  const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
+  const more = R && q < R.l;
+  main.innerHTML = qHead(q, true) + '<div class="gwrap rev">' + stimHtml(q) + '<div class="grev">' +
+    (R ? '<div class="gdots">' + span(q).map((i) => '<span class="' + (i === q ? 'on' : i < q ? 'done' : '') + '">' + lbl(i) + '</span>').join('') + '</div>' : '') +
+    '<div class="gq cur"><div class="st"><b>' + lbl(q) + '.</b> ' + qtHtml(Q.t) + '</div></div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
+    '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
+    '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div></div></div>' +
+    '<div style="text-align:right">' + (G.img && IMGS[G.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của nhóm (phím Z)">🖼 Xem lại ảnh</button> ' : '') +
+    '<button class="btn big pri" id="bNext">' + (more ? 'Câu ' + lbl(q + 1) + ' ▶' : q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
+  $('bNext').onclick = next;
+  if ($('bZoom')) $('bZoom').dataset.src = IMGS[G.img];
+  audPaint();
+  requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
+}
+
 async function goBoard(q) {
+  gAudStop();
   try { await D.update(r('state'), { phase: 'board' }); } catch (e) { return fail(e); }
   state.phase = 'board';
   boardView(q);
@@ -493,8 +606,10 @@ function boardView(q) {
   clearBoardT();
   Sound.mode(null); // bảng xếp hạng: không nhạc nền
   const res = compute(), H = 74, TOP = 5;
+  // điểm vừa được ở câu này (nhóm câu: cộng cả nhóm)
+  const gain = (x) => span(q).reduce((t, i) => t + ((x.q[i] && x.q[i].pts) || 0), 0);
   // thứ hạng trước câu này (theo điểm trước câu) để biết ai lên, ai xuống
-  const prev = res.list.map((x) => ({ x, ps: x.s - ((x.q[q] && x.q[q].pts) || 0) })).sort((a, b) => b.ps - a.ps || a.x.name.localeCompare(b.x.name));
+  const prev = res.list.map((x) => ({ x, ps: x.s - gain(x) })).sort((a, b) => b.ps - a.ps || a.x.name.localeCompare(b.x.name));
   const prevRank = {}; prev.forEach((p, i) => { prevRank[p.x.uid] = i; });
   const top = res.list.slice(0, TOP);
   const anim = q > 0;
@@ -512,7 +627,7 @@ function boardView(q) {
     '<div class="lead" id="lead"></div>' +
     '<div class="board2" id="bd" style="height:' + (Math.max(1, top.length) * H) + 'px">' +
     (rows.length ? rows.map((x) => {
-      const it = x.q[q] || {}, ni = res.list.indexOf(x), up = anim ? prevRank[x.uid] - ni : 0, out = ni >= TOP, c = climb(x);
+      const it = { pts: gain(x) }, ni = res.list.indexOf(x), up = anim ? prevRank[x.uid] - ni : 0, out = ni >= TOP, c = climb(x);
       return '<div class="r' + (x.r === 1 && !out ? ' first' : '') + (c ? ' cl' : '') + (out ? ' out' : '') + '" data-u="' + esc(x.uid) + '" data-to="' + (out ? TOP * H + 10 : ni * H) + '" style="top:' + startTop(x) + 'px">' +
         '<span class="rk" data-r="' + x.r + '">' + (anim ? prevRank[x.uid] + 1 : x.r) + '</span><span class="nm">' + esc(x.name) + '</span>' +
         (c ? '<span class="badge">🚀 Lội ngược dòng ▲' + up + '</span>' : '') +
@@ -540,7 +655,7 @@ function boardView(q) {
 }
 
 async function goEnd() {
-  clearInterval(timer); stopAns(); clearBoardT();
+  clearInterval(timer); stopAns(); clearBoardT(); gAudStop();
   try { await D.update(r('state'), { phase: 'end' }); } catch (e) { return fail(e); }
   state.phase = 'end';
   endView(true);
@@ -605,7 +720,7 @@ function step1() {
   if (p === 'gold') return; // đang đào vàng: chỉ kết thúc bằng nút trên màn hình
   if (p === 'show') return isPaused() ? unpause() : goAnswer(q);
   if (p === 'answer') return goReveal(q);
-  if (p === 'reveal') return q + 1 < quiz.qs.length ? goBoard(q) : goEnd();
+  if (p === 'reveal') { const R = grpOf(q); if (R && q < R.l) return goReveal(q + 1); return q + 1 < quiz.qs.length ? goBoard(q) : goEnd(); }
   if (p === 'board') return goShow(q + 1);
 }
 
@@ -622,8 +737,8 @@ function compute() {
       // giờ bấm sớm hơn lúc mở câu là khai gian (luật đã chặn, đây là lớp chặn thứ hai): không tính
       if (an && an.at < K.s - 1500) an = null;
       const ok = !!(an && K.c.includes(an.a));
-      const ms = an ? an.at - K.s - pausedMs(q, an.at) : null;
-      let pts = points(ok, ms, Q.time, Q.pts), b = 0;
+      const ms = an ? an.at - K.s - pausedMs(pk(q), an.at) : null;
+      let pts = points(ok, ms, limitOf(q), Q.pts), b = 0;
       if (Q.pts) { x.k = ok ? x.k + 1 : 0; if (ok && meta.streak) b = streakBonus(x.k); }
       pts += b; x.s += pts; if (ok) x.ok++;
       x.q[q] = { a: an ? an.a : null, ok, pts, b, ms };
@@ -637,7 +752,7 @@ function compute() {
 function csv() {
   const res = compute(), qs = quiz.qs;
   const head = ['Hạng', 'Tên', 'Tổng điểm', 'Số câu đúng'];
-  qs.forEach((Q, i) => { head.push('Câu ' + (i + 1) + ' chọn', 'Câu ' + (i + 1) + ' đúng/sai', 'Câu ' + (i + 1) + ' điểm', 'Câu ' + (i + 1) + ' thời gian (giây)'); });
+  qs.forEach((Q, i) => { const c = 'Câu ' + lbl(i); head.push(c + ' chọn', c + ' đúng/sai', c + ' điểm', c + ' thời gian (giây)'); });
   const rows = [head];
   res.list.forEach((x) => {
     const row = [x.r, x.name, x.s, x.ok];
@@ -664,6 +779,7 @@ document.addEventListener('keydown', (e) => {
     if (state.phase === 'lobby' && !Object.keys(players).length) return;
     next();
   }
+  if ((e.key === 'a' || e.key === 'A') && main.querySelector('.gaud')) { e.preventDefault(); gAudToggle(); return; }
   if (e.key === 'f' || e.key === 'F') full();
   if (e.key === 't' || e.key === 'T') nextTheme();
   if ((e.key === 'p' || e.key === 'P') && PIN && !busy && revealing === -1) { if (state.phase === 'answer') pause(); else if (isPaused()) unpause(); }
@@ -676,7 +792,7 @@ const setPref = (k, v) => { try { localStorage.setItem(k, v ? '1' : '0'); } catc
 function paintCtl() { $('bMusic').style.opacity = Sound.music && Sound.musicVol > 0 ? 1 : 0.4; $('bSfx').style.opacity = Sound.sfx ? 1 : 0.4; }
 Sound.setSfx(pref('qz.sfx', true));
 const musicWanted = pref('qz.music', true);
-function musicFor() { const p = state.phase; Sound.mode(p === 'lobby' && !starting ? 'lobby' : p === 'answer' || p === 'gold' ? 'q' : null); }
+function musicFor() { const p = state.phase, G = quiz && p === 'answer' && gData(state.q), lis = !!(G && (G.au || G.aurl)); Sound.mode(p === 'lobby' && !starting ? 'lobby' : (p === 'answer' && !lis) || p === 'gold' ? 'q' : null); }
 function setMusicOn(v) { Sound.setMusic(v); if (v) musicFor(); setPref('qz.music', v); paintCtl(); }
 // bảng âm lượng: bấm 🎵 để mở / đóng
 const numPref = (k, d) => { try { const v = localStorage.getItem(k); return v == null || isNaN(+v) ? d : +v; } catch (e) { return d; } };
@@ -713,8 +829,12 @@ function goldMinSet(m) { try { localStorage.setItem('qz.gmin.' + PIN, String(m))
 let gTimer = 0, gRows = {}, gTop = '';
 async function goldStart() {
   const up = {}, n = meta.n;
-  quiz.qs.slice(0, n).forEach((Q, q) => {
-    up['qpub/' + q] = { t: String(Q.t).slice(0, 1000), o: Q.o.map((x) => String(x || '').slice(0, 500)), time: Q.time || 20, pts: Q.pts == null ? 1 : Q.pts };
+  // nhóm câu nghe (có âm thanh) cần loa lớp: bỏ khỏi Đào vàng; nhóm đoạn văn thì điện thoại hiện đoạn văn phía trên câu hỏi
+  const listen = (q) => { const G = gData(q); return !!(G && (G.au || G.aurl)); };
+  const use = quiz.qs.slice(0, n).map((Q, q) => q).filter((q) => !listen(q));
+  (use.length ? use : quiz.qs.slice(0, n).map((Q, q) => q)).forEach((q) => {
+    const Q = quiz.qs[q];
+    up['qpub/' + q] = qpubOf(q, true);
     up['key/' + q] = { c: (Q.c || []).slice(0, 4), s: 0, e: 0 };
   });
   const startAt = Math.round(now()) + 500, endAt = startAt + goldMin() * 60000;

@@ -471,3 +471,38 @@ export function simWeak(D, db, label) {
   })();
   return true;
 }
+
+// ---------- 📦 nhóm câu (Part 3/4/6/7): các câu LIỀN NHAU có cùng q.g là một nhóm, nội dung chung ở quiz.groups[g] ----------
+// groups[g] = { p: đoạn văn, img: id hình (quizImg), au: id âm thanh (quizImg, chia phần), aurl: link âm thanh, no: số câu đầu trên đề (vd. 32) }
+export const GMAX = 5, PMAX = 6000;
+// trả về mảng theo từng câu: null (câu lẻ) hoặc { f: câu đầu, l: câu cuối, n: số câu, id }
+export function groupRuns(qs) {
+  const out = (qs || []).map(() => null);
+  for (let i = 0; i < out.length;) {
+    const g = qs[i] && qs[i].g; let j = i;
+    if (g) while (j + 1 < out.length && qs[j + 1] && qs[j + 1].g === g && j + 1 - i < GMAX) j++;
+    if (j > i) { const R = { f: i, l: j, n: j - i + 1, id: g }; for (let k = i; k <= j; k++) out[k] = R; }
+    i = j + 1;
+  }
+  return out;
+}
+// số câu hiển thị: câu trong nhóm có "số câu trên đề" thì theo đề (32, 33, 34), còn lại theo thứ tự trong bộ
+export function qLabel(runs, groups, i) {
+  const R = runs && runs[i], G = R && groups && groups[R.id], no = G && +G.no;
+  return no > 0 ? no + (i - R.f) : i + 1;
+}
+// âm thanh của nhóm: quizImg/{id} = { au: 1, n, type, size, name, at }, phần base64 ở quizImg/{id}_{i} (mỗi phần < 1MB)
+export const AU_PART = 900000;
+const auCache = {};
+export function fetchAudio(id) {
+  if (!auCache[id]) auCache[id] = (async () => {
+    const x = await window.MACC.fs(), F = x.F;
+    const m = await F.getDoc(F.doc(x.db, 'quizImg', id)); if (!m.exists()) return '';
+    const M = m.data(), n = M.n | 0; if (!M.au || !n || n > 12) return '';
+    const parts = await Promise.all(Array.from({ length: n }, (_, i) => F.getDoc(F.doc(x.db, 'quizImg', id + '_' + i))));
+    if (parts.some((p) => !p.exists() || typeof p.data().d !== 'string')) throw new Error('thiếu phần âm thanh');
+    const bytes = parts.map((p) => { const b = atob(p.data().d), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; });
+    return URL.createObjectURL(new Blob(bytes, { type: M.type || 'audio/mpeg' }));
+  })().catch((e) => { delete auCache[id]; throw e; });
+  return auCache[id];
+}
