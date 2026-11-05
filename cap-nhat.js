@@ -2,6 +2,13 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.21', d: '2026-11-05', items: [
+      '📌 Nhớ đề đã dùng với lớp nào: ở trang Bộ câu hỏi, dưới tên mỗi bộ có nhãn xanh ghi lớp đã làm bộ đó, ngày và cách làm (▶ trên lớp, ⛏️ Đào vàng, 📝 về nhà, ✋ đánh dấu tay). Rê chuột vào nhãn để xem đủ các lần. Nhãn vàng "≈ trùng 9/12" nghĩa là bộ này trùng nhiều câu với một bộ khác lớp đó đã làm (so theo nội dung câu hỏi và đáp án, nên bộ nhập lại câu ETS cũ cũng nhận ra).',
+      'Tạo phòng: màn chọn bộ có thêm ô "Lớp" (mặc định theo lớp của bộ câu hỏi, hoặc lớp đang lọc). Nếu lớp đó đã làm bộ này hoặc một bộ trùng nhiều câu, máy hiện cảnh báo kiểu "Lớp TOA117110 đã làm bộ này ngày 05/11 (▶ trên lớp)". Không chặn: bấm "Vẫn dùng" là tạo phòng bình thường.',
+      'Giao về nhà: hộp giao bài có ô "Giao cho lớp", chọn lớp nào thì cảnh báo ngay nếu lớp đó đã làm. Link bài về nhà tự chọn sẵn lớp đó cho học sinh.',
+      'Nút "📌 Đã dùng" ở mỗi bộ: xem lớp nào đã làm, và tự đánh dấu "đã dùng với lớp …" cho lần làm trên giấy hoặc kiểm tra ngoài app (chọn lớp, ngày, ghi chú). Bấm "✕ Bỏ" để bỏ đánh dấu.',
+      'Ván chơi cũ chưa ghi lớp thì máy đoán theo mã lớp trong tên bộ hoặc lớp của bộ (có dấu "?"), không đoán được thì ghi "chưa rõ lớp". Lịch sử kết quả giờ cũng hiện lớp của từng ván mới. Không cần dán thêm luật Firebase.'
+    ] },
     { v: '1.20.2', d: '2026-11-05', items: [
       '📜 Chữa nhóm câu nghe (Part 3, 4) giờ cũng hiện transcript song ngữ như chữa câu lẻ: dòng đáp án đúng ở trên, rồi tới lời thoại tiếng Anh kèm tiếng Việt. Khung transcript tự cuộn nếu dài.'
     ] },

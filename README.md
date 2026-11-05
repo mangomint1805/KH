@@ -30,6 +30,7 @@ Cài đặt Firebase lần đầu: xem [FIREBASE.md](FIREBASE.md).
 5. **Lịch sử kết quả** (`ket-qua.html`): xem lại từng buổi, tải CSV, xoá buổi. Thẻ **Cộng dồn** cộng điểm nhiều buổi theo tên học sinh (tổng điểm, trung bình, số lần top 1 / top 3, số câu đúng). Tên khác dấu hoặc chữ hoa tự gộp; tên gõ khác hẳn thì tick rồi bấm **Gộp**.
 6. **⛏️ Đào vàng cả lớp**: lúc tạo phòng chọn chế độ Đào vàng (hoặc nút ⛏️ ở bộ câu hỏi). Mỗi bạn tự trả lời liên tục trên điện thoại (`vang.html`), đúng được 10 vàng × hệ số chuỗi (×1.5 / ×2 / ×3 từ chuỗi 3 / 5 / 10); màn chiếu hiện đồng hồ và bảng vàng. Cần luật RTDB mới (FIREBASE.md).
 7. **📝 Bài về nhà**: nút 📝 ở bộ câu hỏi tạo link `hw.html?id=…` có hạn nộp; học sinh làm, nộp một lần, xem điểm + đáp án; thầy xem bảng ở `ket-qua.html` thẻ Bài về nhà. Cần luật Firestore mới (FIREBASE.md).
+8. **📌 Đề đã dùng với lớp nào**: nhãn dưới mỗi bộ (lớp, ngày, ▶ trên lớp / ⛏️ Đào vàng / 📝 về nhà / ✋ đánh dấu tay; nhãn vàng ≈ khi trùng nhiều câu với bộ lớp đó đã làm, so theo nội dung câu + đáp án). Tạo phòng (ô **Lớp**) và Giao về nhà (ô **Giao cho lớp**) cảnh báo nếu lớp đã làm, bấm **Vẫn dùng** để tiếp. Nút **📌 Đã dùng** để tự đánh dấu / bỏ đánh dấu.
 
 Phím tắt trên màn host: **Space / Enter** sang bước tiếp, **F** toàn màn hình. Góc trái dưới có nút bật/tắt nhạc nền và âm báo (âm thanh tự tạo bằng WebAudio).
 
@@ -60,13 +61,14 @@ vang.html           học sinh Đào vàng   js/vang.js
 hw.html             học sinh bài về nhà js/hw.js
 js/parse.js         đọc Excel / CSV / văn bản đề
 js/common.js        Firebase, đồng hồ máy chủ, âm thanh, tính điểm
+js/dadung.js        📌 đề đã dùng với lớp nào, so trùng câu
 cap-nhat.js         mục "Có gì mới"
 data/bai-hoc/       ngân hàng câu theo bài học (sinh từ test/bai-hoc/*.txt bằng node test/build-bai-hoc.js, đừng sửa tay)
 firebase/           luật Realtime Database và Firestore để dán vào Console
 test/               kiểm thử (bộ đọc câu hỏi, chơi thử cả trận trên Firebase Emulator)
 ```
 
-Dữ liệu Realtime Database, nhánh `quiz/{pin}/`: `meta`, `state`, `qpub/{câu}` (câu hỏi, không có đáp án; câu trong nhóm có thêm `g` câu đầu nhóm, `no` số câu trên đề, câu đầu nhóm có `gn` số câu và `p` đoạn văn), `key/{câu}` (đáp án, chỉ ghi khi công bố), `players/{uid}`, `answers/{câu}/{uid}`, `scores/{uid}`, `kick/{uid}`. Nhóm câu khi chơi: `state.q`/`state.qs` là câu đầu nhóm lúc mở giờ, học sinh ghi cả nhóm vào `answers/{từng câu}/{uid}` trong một lần ghi; lúc chữa, `state.q` là câu đang chữa. Bộ câu hỏi lưu ở Firestore `quizzes/{id}` (câu trong nhóm có `g`, nội dung nhóm ở `groups/{g}` = `p`, `no`, `img`, `au`/`aurl`; âm thanh chia phần ở `quizImg/{id}` + `quizImg/{id}_{i}`), bảng điểm từng ván ở `quizResults/{ngày-PIN}` (tên gộp lưu ở `quizResults/_gop`). Cả hai chỉ tài khoản giáo viên đọc/ghi.
+Dữ liệu Realtime Database, nhánh `quiz/{pin}/`: `meta`, `state`, `qpub/{câu}` (câu hỏi, không có đáp án; câu trong nhóm có thêm `g` câu đầu nhóm, `no` số câu trên đề, câu đầu nhóm có `gn` số câu và `p` đoạn văn), `key/{câu}` (đáp án, chỉ ghi khi công bố), `players/{uid}`, `answers/{câu}/{uid}`, `scores/{uid}`, `kick/{uid}`. Nhóm câu khi chơi: `state.q`/`state.qs` là câu đầu nhóm lúc mở giờ, học sinh ghi cả nhóm vào `answers/{từng câu}/{uid}` trong một lần ghi; lúc chữa, `state.q` là câu đang chữa. Bộ câu hỏi lưu ở Firestore `quizzes/{id}` (câu trong nhóm có `g`, nội dung nhóm ở `groups/{g}` = `p`, `no`, `img`, `au`/`aurl`; âm thanh chia phần ở `quizImg/{id}` + `quizImg/{id}_{i}`), bảng điểm từng ván ở `quizResults/{ngày-PIN}` (có `lop` lớp chơi, `fp` mã từng câu; tên gộp lưu ở `quizResults/_gop`, đánh dấu tay "đã dùng" ở `quizResults/_dadung`). Cả hai chỉ tài khoản giáo viên đọc/ghi.
 
 Thư viện tải từ CDN, có ghi phiên bản: Firebase 10.12.2, SheetJS 0.18.5, mammoth 1.6.0, pdf.js 3.11.174, qrcode-generator 1.4.4.
 

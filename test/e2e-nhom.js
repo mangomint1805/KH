@@ -195,7 +195,12 @@ const CSV = 'Số;Question;A1;A2;A3;A4;Time;Correct;Nhóm;Đoạn văn\n' +
   await ad.goto(BASE + 'admin.html'); await ad.waitForSelector('[data-hw="' + doc.id + '"]');
   const nw = await ad.$('text=Đã hiểu'); if (nw) await nw.click();
   await ad.click('[data-hw="' + doc.id + '"]');
-  await ad.click('#hwGo'); await ad.waitForSelector('.hwlink input');
+  await ad.waitForTimeout(1500); // 📌 chờ đọc lịch sử dùng đề
+  await ad.click('#hwGo');
+  // 📌 bộ vừa chơi trên lớp với cùng lớp → hỏi lại "Vẫn dùng"
+  await ad.waitForSelector('.hwlink input, .dduov', { timeout: 15000 });
+  const dd = await ad.$('.dduov'); check(!!dd, '📌 giao về nhà bộ lớp vừa chơi: hiện cảnh báo đã dùng');
+  if (dd) { await ad.click('.dduov [data-a="1"]'); await ad.waitForSelector('.hwlink input'); }
   const hwUrl = await ad.$eval('.hwlink input', (e) => e.value);
   const H = await mk(null, phone);
   await H.goto(hwUrl); await H.waitForSelector('#go'); await H.fill('#name', 'Lan Anh'); await H.selectOption('#lop', { index: 1 }); await H.click('#go');

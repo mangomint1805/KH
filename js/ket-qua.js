@@ -47,7 +47,7 @@ async function load() {
   try {
     const F = FX.F, s = await F.getDocs(F.collection(FX.db, COL));
     all = []; gop = {};
-    s.forEach((d) => { if (d.id === GOP) gop = (d.data() || {}).map || {}; else all.push({ id: d.id, ...d.data() }); });
+    s.forEach((d) => { if (d.id === GOP) gop = (d.data() || {}).map || {}; else if (!d.id.startsWith('_')) all.push({ id: d.id, ...d.data() }); });
     all.sort((a, b) => (b.at || 0) - (a.at || 0));
     if (!pick) pick = new Set(all.map((x) => x.id));
     render();
@@ -75,7 +75,7 @@ function sessions() {
   $('body').innerHTML = '<div class="qlist">' + all.map((x) => {
     const d = day(x.at), P = x.players || [], top = P.filter((p) => p.r <= 3).slice(0, 3);
     const h = d !== last ? '<h3 style="margin:14px 0 2px">' + d + '</h3>' : ''; last = d;
-    return h + '<div class="card"><div class="qrow"><div class="t"><b>' + esc(x.title || 'Minto Quiz') + '</b><span class="muted">' + time(x.at) + ' · ' + P.length + ' bạn · ' + (x.nq || 0) + ' câu' +
+    return h + '<div class="card"><div class="qrow"><div class="t"><b>' + esc(x.title || 'Minto Quiz') + '</b><span class="muted">' + (typeof x.lop === 'string' ? (x.lop ? 'Lớp ' + esc(x.lop) : 'Chưa rõ lớp') + ' · ' : '') + time(x.at) + ' · ' + P.length + ' bạn · ' + (x.nq || 0) + ' câu' +
       (top.length ? ' · 🏆 ' + top.map((p) => esc(p.name)).join(', ') : '') + '</span></div>' +
       '<button class="btn sm" data-open="' + esc(x.id) + '">' + (open[x.id] ? 'Thu gọn' : 'Xem') + '</button></div>' +
       (open[x.id] ? table(x) : '') + '</div>';

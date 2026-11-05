@@ -1,11 +1,17 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
 import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack, quizClass, classLabel, byClass, groupRuns, qLabel, fetchAudio, PMAX } from './common.js?v=19';
+import { loadUses, badges, confirmUse, lopOptions, fps } from './dadung.js?v=1';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
 let PIN = '', meta = null, quiz = null, state = {}, players = {}, answers = {}, keys = {};
 let golds = {};
+// 📌 lớp đang chơi (chỉ lưu trên máy thầy + Firestore quizResults, không ghi lên Realtime Database)
+let LOP = '', LOPG = false;
+const LOPKEY = 'qz.host.lop';
+function lopSave() { try { localStorage.setItem(LOPKEY, JSON.stringify({ pin: PIN, lop: LOP, g: LOPG })); } catch (e) {} }
+function lopLoad() { try { const o = JSON.parse(localStorage.getItem(LOPKEY) || 'null'); if (o && o.pin === PIN) { LOP = o.lop || ''; LOPG = !!o.g; return true; } } catch (e) {} return false; }
 let unsub = [], ansOff = null, timer = 0, autoT = 0, wake = null;
 // hình của câu hỏi (Firestore quizImg/{id}), tải sẵn lúc tạo phòng
 const IMGS = {}; let imgP = Promise.resolve();
@@ -231,7 +237,7 @@ async function cleanup() {
 // ---------- chọn bộ câu hỏi ----------
 const goldPicked = () => { const x = document.querySelector('[name=qmode]:checked'); return !!(x && x.value === 'gold'); };
 async function pick(want, wantMode) {
-  main.innerHTML = '<div class="wrap" style="width:100%"><h1>Chọn bộ câu hỏi</h1><div id="qs" class="qlist"><div class="muted">Đang tải…</div></div>' +
+  main.innerHTML = '<div class="wrap" style="width:100%"><h1>Chọn bộ câu hỏi</h1><div class="modes lopsel" style="margin:0 0 14px"><b>Lớp:</b><label><select id="optLop"><option value="@">Theo lớp của bộ câu hỏi</option>' + lopOptions('@') + '</select></label><span>để nhớ lớp nào đã làm bộ nào</span></div><div id="qs" class="qlist"><div class="muted">Đang tải…</div></div>' +
     '<div class="modes"><b>Chế độ:</b><label><input type="radio" name="qmode" value="" checked> Cổ điển · cả lớp cùng câu</label><label><input type="radio" name="qmode" value="gold"> ⛏️ Đào vàng cả lớp · mỗi bạn tự làm trên điện thoại</label>' +
     '<label id="gMin" hidden>Thời gian <select id="optMin">' + [3, 5, 7, 10, 15].map((m) => '<option' + (m === 5 ? ' selected' : '') + '>' + m + '</option>').join('') + '</select> phút</label></div>' +
     '<label id="lStreak" style="display:flex;gap:8px;align-items:center;margin-top:18px"><input type="checkbox" id="optStreak" checked> Thưởng chuỗi trả lời đúng liên tiếp (+100 mỗi câu, tối đa +500)</label>' +
@@ -248,15 +254,19 @@ async function pick(want, wantMode) {
     const L = []; qs.forEach((d) => L.push({ id: d.id, ...d.data() }));
     L.sort((a, b) => (b.upd || 0) - (a.upd || 0));
     const G = byClass(L); let lf = '*'; try { lf = localStorage.getItem('qz.lop') || '*'; } catch (e) {}
+    let U = null; const uP = loadUses(x.F, x.db, L).then((u) => { U = u; draw(); }).catch((e) => console.warn('dadung', e));
+    if (lf !== '*' && lf && $('optLop').querySelector('option[value="' + lf + '"]')) $('optLop').value = lf;
+    const lopOf = (q) => { const v = $('optLop').value; return v === '@' ? { lop: quizClass(q), g: false } : { lop: v, g: false }; };
+    const go = async (q) => { if (!q) return; await Promise.race([uP, new Promise((ok) => setTimeout(ok, 4000))]); const o = lopOf(q); if (!(await confirmUse(U, q, o.lop, goldPicked() ? 'Đào vàng' : 'tạo phòng'))) return; LOP = o.lop; LOPG = o.g; create(q); };
     const draw = () => {
       if (lf !== '*' && !G.some((g) => g[0] === lf)) lf = '*';
       $('qs').innerHTML = L.length ? '<div class="loptabs"><button type="button" class="thm' + (lf === '*' ? ' on' : '') + '" data-lf="*">Tất cả · ' + L.length + '</button>' + G.map((g) => '<button type="button" class="thm' + (lf === g[0] ? ' on' : '') + '" data-lf="' + esc(g[0]) + '">' + esc(g[0] || 'Dùng chung') + ' · ' + g[1].length + '</button>').join('') + '</div>' +
-        G.filter((g) => lf === '*' || g[0] === lf).map((g) => '<h3 class="lophd">' + esc(classLabel(g[0])) + '</h3>' + g[1].map((q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu</span></div><button class="btn pri" data-id="' + esc(q.id) + '">Tạo phòng</button></div>').join('')).join('') : '<div class="muted">Chưa có bộ câu hỏi nào.</div>';
-      $('qs').querySelectorAll('[data-id]').forEach((b) => { b.onclick = () => create(L.find((q) => q.id === b.dataset.id)); });
+        G.filter((g) => lf === '*' || g[0] === lf).map((g) => '<h3 class="lophd">' + esc(classLabel(g[0])) + '</h3>' + g[1].map((q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu</span><span class="usedw">' + badges(U, q) + '</span></div><button class="btn pri" data-id="' + esc(q.id) + '">Tạo phòng</button></div>').join('')).join('') : '<div class="muted">Chưa có bộ câu hỏi nào.</div>';
+      $('qs').querySelectorAll('[data-id]').forEach((b) => { b.onclick = () => go(L.find((q) => q.id === b.dataset.id)); });
       $('qs').querySelectorAll('[data-lf]').forEach((b) => { b.onclick = () => { lf = b.dataset.lf; try { localStorage.setItem('qz.lop', lf); } catch (e) {} draw(); }; });
     };
     draw();
-    if (want) { const q = L.find((x) => x.id === want); if (q) create(q); }
+    if (want) { const q = L.find((x) => x.id === want); if (q) go(q); }
   } catch (e) { $('qs').innerHTML = '<div class="err">Không đọc được bộ câu hỏi (' + esc(e.code || e.message) + ').</div>'; }
 }
 
@@ -286,6 +296,7 @@ async function create(q) {
   meta.at = Date.now();
   setRuns(); GRP = await probeGrp(); setRuns();
   try { localStorage.setItem(LS_KEY, PIN); } catch (e) {}
+  lopSave();
   history.replaceState(null, '', location.pathname);
   attach();
 }
@@ -303,6 +314,7 @@ async function resume(pin) {
   // bộ câu hỏi có thể đã bị sửa sau khi tạo phòng: giữ nguyên số câu như lúc tạo
   quiz.qs = quiz.qs.slice(0, meta.n);
   if (quiz.qs.length < meta.n) return false;
+  if (!lopLoad()) { LOP = quizClass(quiz); LOPG = true; }
   keys = room.key || {}; answers = room.answers || {};
   setRuns(); GRP = await probeGrp(); setRuns();
   imgP = loadImgs(); pzLoad();
@@ -690,7 +702,7 @@ async function saveResult() {
     const x = await window.MACC.fs(), F = x.F;
     const nq = quiz.qs.length;
     await F.setDoc(F.doc(x.db, 'quizResults', resultId()), {
-      title: meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq, streak: !!meta.streak,
+      title: meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq, streak: !!meta.streak, lop: LOP, ...(LOPG ? { lopg: true } : {}), fp: fps(quiz.qs),
       players: res.list.map((p) => ({ name: String(p.name || '').slice(0, 40), s: p.s, r: p.r, ok: p.ok })),
     });
     savedPin = PIN;
@@ -938,7 +950,7 @@ async function goldSave(t) {
   try {
     const x = await window.MACC.fs(), F = x.F;
     await F.setDoc(F.doc(x.db, 'quizResults', resultId()), {
-      title: '⛏️ ' + meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq: meta.n, streak: false, mode: 'gold',
+      title: '⛏️ ' + meta.title, qz: meta.qz || '', pin: PIN, at: meta.at || Date.now(), saved: Date.now(), nq: meta.n, streak: false, mode: 'gold', lop: LOP, ...(LOPG ? { lopg: true } : {}), fp: fps(quiz.qs),
       players: t.map((p) => ({ name: String(p.name || '').slice(0, 40), s: p.g, r: p.r, ok: p.c, n: p.n })),
     });
     savedPin = PIN;

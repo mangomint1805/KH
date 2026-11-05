@@ -1,5 +1,6 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
 import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack, CLASSES, quizClass, classLabel, byClass, fetchAudio, AU_PART } from './common.js?v=19';
+import { loadUses, badges, confirmUse, markDialog, warnings, lopOptions } from './dadung.js?v=1';
 
 const QP = window.QP;
 const LIB = {
@@ -25,7 +26,7 @@ function paintLop() {
 function classTabs(groups, n) {
   return '<div class="loptabs"><button type="button" class="thm' + (filt === '*' ? ' on' : '') + '" data-lf="*">Tất cả · ' + n + '</button>' + groups.map((g) => '<button type="button" class="thm' + (filt === g[0] ? ' on' : '') + '" data-lf="' + esc(g[0]) + '">' + esc(g[0] || 'Dùng chung') + ' · ' + g[1].length + '</button>').join('') + '</div>';
 }
-let FX = null, list = [], cur = null; // cur: { id, title, qs }
+let FX = null, list = [], cur = null, USES = null; // cur: { id, title, qs }
 const app = $('app');
 function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 function tpl(id) { app.innerHTML = ''; app.appendChild($(id).content.cloneNode(true)); }
@@ -60,8 +61,8 @@ async function showList() {
   if (!$('list')) return; // thầy đã bấm sang trang khác trong lúc đang tải
   const groups = byClass(list);
   if (filt !== '*' && !groups.some((g) => g[0] === filt)) filt = '*';
-  const row = (q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu' + (q.upd ? ' · sửa ' + new Date(q.upd).toLocaleString('vi-VN') : '') + '</span></div>' +
-    '<a class="btn sm pri" href="host.html?quiz=' + encodeURIComponent(q.id) + '">Tạo phòng</a><a class="btn sm" href="host.html?mode=gold&amp;quiz=' + encodeURIComponent(q.id) + '" title="Mỗi bạn tự làm trên điện thoại, tính vàng">⛏️ Đào vàng</a><button class="btn sm" data-hw="' + esc(q.id) + '" title="Gửi link cho học sinh làm ở nhà">📝 Giao về nhà</button><button class="btn sm" data-e="' + esc(q.id) + '">Sửa</button><button class="btn sm" data-d="' + esc(q.id) + '">Nhân bản</button><button class="btn sm danger" data-x="' + esc(q.id) + '">Xoá</button></div>';
+  const row = (q) => '<div class="card qrow"><div class="t"><b>' + esc(q.title || '(chưa đặt tên)') + '</b><span class="muted">' + (q.qs || []).length + ' câu' + (q.upd ? ' · sửa ' + new Date(q.upd).toLocaleString('vi-VN') : '') + '</span><span class="usedw" data-u="' + esc(q.id) + '">' + badges(USES, q) + '</span></div>' +
+    '<a class="btn sm pri" href="host.html?quiz=' + encodeURIComponent(q.id) + '">Tạo phòng</a><a class="btn sm" href="host.html?mode=gold&amp;quiz=' + encodeURIComponent(q.id) + '" title="Mỗi bạn tự làm trên điện thoại, tính vàng">⛏️ Đào vàng</a><button class="btn sm" data-hw="' + esc(q.id) + '" title="Gửi link cho học sinh làm ở nhà">📝 Giao về nhà</button><button class="btn sm" data-mk="' + esc(q.id) + '" title="Lớp nào đã làm bộ này; đánh dấu đã dùng trên giấy">📌 Đã dùng</button><button class="btn sm" data-e="' + esc(q.id) + '">Sửa</button><button class="btn sm" data-d="' + esc(q.id) + '">Nhân bản</button><button class="btn sm danger" data-x="' + esc(q.id) + '">Xoá</button></div>';
   $('list').innerHTML = list.length ? classTabs(groups, list.length) + groups.filter((g) => filt === '*' || g[0] === filt).map((g) => '<h3 class="lophd">' + esc(classLabel(g[0])) + ' <span class="muted">· ' + g[1].length + ' bộ</span></h3>' + g[1].map(row).join('')).join('')
     : '<div class="card muted">Chưa có bộ câu hỏi nào. Bấm <b>+ Bộ mới</b> rồi tải file lên.</div>';
   app.querySelectorAll('[data-lf]').forEach((b) => { b.onclick = () => { filt = b.dataset.lf; try { localStorage.setItem('qz.lop', filt); } catch (e) {} showList(); }; });
@@ -69,8 +70,12 @@ async function showList() {
   app.querySelectorAll('[data-e]').forEach((b) => { b.onclick = () => { const q = by(b.dataset.e); edit({ id: q.id, title: q.title, lop: quizClass(q), qs: JSON.parse(JSON.stringify(q.qs || [])), groups: JSON.parse(JSON.stringify(q.groups || {})) }); }; });
   app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = async () => { if (b.disabled) return; b.disabled = true; const q = by(b.dataset.d); await save({ id: null, title: (q.title || '') + ' (bản sao)', lop: quizClass(q), qs: q.qs || [], groups: q.groups || {} }).catch(err); showList(); }; });
   app.querySelectorAll('[data-hw]').forEach((b) => { b.onclick = () => hwDialog(by(b.dataset.hw)); });
+  app.querySelectorAll('[data-mk]').forEach((b) => { b.onclick = async () => { if (!USES) await usesP; if (USES) markDialog(FX.F, FX.db, USES, by(b.dataset.mk), paintUses); }; });
+  const usesP = loadUses(FX.F, FX.db, list).then((U) => { USES = U; paintUses(); }).catch((e) => console.warn('dadung', e));
   app.querySelectorAll('[data-x]').forEach((b) => { b.onclick = async () => { const q = by(b.dataset.x); if (!confirm('Xoá bộ "' + (q.title || '') + '"? Không khôi phục được.')) return; try { await FX.F.deleteDoc(FX.F.doc(FX.db, 'quizzes', q.id)); } catch (e) { return err(e); } await dropImgs(q, list.filter((x) => x.id !== q.id)); showList(); }; });
 }
+// 📌 huy hiệu "lớp nào đã làm" ở từng bộ
+function paintUses() { app.querySelectorAll('[data-u]').forEach((el) => { const q = list.find((x) => x.id === el.dataset.u); if (q) el.innerHTML = badges(USES, q); }); }
 // ---------- nhạc theme: thầy tải file nhạc lên Firestore quizMusic (chỉ tài khoản thầy đọc được), màn host tự tải về để phát ----------
 let mPlay = null, mBusy = false;
 const mName = (id) => (THEMES.find((t) => t.id === id) || {}).n || id;
@@ -169,25 +174,31 @@ function hwDialog(q) {
   const pad = (n) => String(n).padStart(2, '0'), iso = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T23:59';
   const ov = document.createElement('div'); ov.className = 'overlay hwov';
   ov.innerHTML = '<div class="card" style="max-width:520px;width:calc(100% - 32px);color:var(--ink)"><h2 style="margin-top:0">📝 Giao về nhà</h2><p class="muted">' + esc(q.title || '') + ' · ' + q.qs.length + ' câu' + (q.qs.some((x) => x.img) || Object.values(q.groups || {}).some((G) => G.img || G.au || G.aurl) ? ' · <b>bài về nhà không kèm hình và âm thanh</b> (nhóm câu vẫn hiện đoạn văn)' : '') + '</p>' +
+    '<label>Giao cho lớp<br><select id="hwLop" style="font:inherit;padding:6px">' + lopOptions(quizClass(q)) + '</select></label><div id="hwWarn"></div>' +
     '<label>Hạn nộp<br><input type="datetime-local" id="hwDue" value="' + iso + '" style="font:inherit;padding:6px"></label>' +
     '<label style="display:flex;gap:8px;align-items:center;margin:12px 0"><input type="checkbox" id="hwTimed"> Tính giờ từng câu (theo số giây đã đặt cho mỗi câu)</label>' +
     '<div id="hwOut"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn" id="hwX">Đóng</button><button class="btn pri" id="hwGo">Tạo link</button></div></div>';
   document.body.appendChild(ov);
   ov.querySelector('#hwX').onclick = () => ov.remove();
+  const hwLop = () => ov.querySelector('#hwLop').value;
+  const warn = () => { const W = USES ? warnings(USES, q, hwLop()) : []; ov.querySelector('#hwWarn').innerHTML = W.length ? '<div class="ddbox">⚠️ ' + W.join('<br>') + '</div>' : ''; };
+  ov.querySelector('#hwLop').onchange = warn; warn();
   ov.querySelector('#hwGo').onclick = async (e) => {
     const b = e.target, due = new Date(ov.querySelector('#hwDue').value).getTime();
     if (!due || due < Date.now() + 60000) return toast('Hạn nộp phải ở tương lai.');
+    if (!(await confirmUse(USES, q, hwLop(), 'giao về nhà'))) return;
     b.disabled = true; b.textContent = 'Đang tạo…';
     try {
       const F = FX.F, ref = F.doc(F.collection(FX.db, 'quizHW')), qs = q.qs.slice(0, 500);
       await F.setDoc(F.doc(FX.db, 'quizHWKey', ref.id), { c: qs.map((x) => ({ c: (x.c || []).slice(0, 4) })) });
-      await F.setDoc(ref, { title: String(q.title || 'Bài về nhà').slice(0, 120), qz: q.id, lop: quizClass(q), due, timed: ov.querySelector('#hwTimed').checked, n: qs.length,
+      await F.setDoc(ref, { title: String(q.title || 'Bài về nhà').slice(0, 120), qz: q.id, lop: hwLop(), due, timed: ov.querySelector('#hwTimed').checked, n: qs.length,
         qs: qs.map((x) => Object.assign({ t: String(x.t || '').slice(0, 1000), o: (x.o || []).map((o) => String(o || '').slice(0, 500)), time: x.time || 20 }, x.g && q.groups && q.groups[x.g] ? { g: x.g } : {})),
         groups: hwGroups(q), at: Date.now() });
       const url = new URL('hw.html?id=' + ref.id, location.href).href;
       ov.querySelector('#hwOut').innerHTML = '<p>✅ Đã tạo. Gửi link này cho học sinh (hạn ' + esc(new Date(due).toLocaleString('vi-VN')) + '):</p><div class="hwlink"><input readonly value="' + esc(url) + '"><button class="btn sm pri" id="hwCp">Chép</button></div><p class="muted">Xem bài nộp ở <a href="ket-qua.html#hw">Kết quả → Bài về nhà</a>.</p>';
       ov.querySelector('#hwCp').onclick = () => { navigator.clipboard.writeText(url).then(() => toast('Đã chép link'), () => ov.querySelector('.hwlink input').select()); };
       b.hidden = true;
+      if (USES) { USES.uses.unshift({ qz: q.id, title: q.title || '', lop: hwLop(), at: Date.now(), kind: 'hw', fp: USES.fpQ(q) }); paintUses(); }
     } catch (x) {
       console.error(x); b.disabled = false; b.textContent = 'Tạo link';
       ov.querySelector('#hwOut').innerHTML = '<p class="err">' + (/permission/i.test(x.code || x.message || '') ? 'Firestore chưa cho phép bài về nhà: thầy dán luật mới trong firebase/firestore.rules.quiz.txt (khối quizHW, quizHWKey, quizHWSub) vào Firebase Console → Firestore → Rules rồi thử lại.' : 'Lỗi: ' + esc(x.code || x.message)) + '</p>';
