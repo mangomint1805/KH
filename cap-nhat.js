@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.20.2', d: '2026-11-05', items: [
+      '📜 Chữa nhóm câu nghe (Part 3, 4) giờ cũng hiện transcript song ngữ như chữa câu lẻ: dòng đáp án đúng ở trên, rồi tới lời thoại tiếng Anh kèm tiếng Việt. Khung transcript tự cuộn nếu dài.'
+    ] },
     { v: '1.20.1', d: '2026-11-05', items: [
       '🎧 Thanh âm thanh của nhóm câu nghe (Part 3, 4) giờ điều khiển được hết: ▶/⏸ Phát, dừng (phím A), ⏪ lùi 5 giây và ⏩ tới 5 giây (phím ← →), kéo thanh thời gian để nghe lại đúng đoạn cần chữa, đổi tốc độ 1× / 0,85× / 0,75×.',
       'Thanh âm thanh có ở cả lúc làm bài và lúc chữa từng câu, nên chữa câu nào thì tua tới đúng đoạn đó.'
