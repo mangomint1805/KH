@@ -595,7 +595,7 @@ function gRevealView(q) {
     (R ? '<div class="gdots">' + span(q).map((i) => '<span class="' + (i === q ? 'on' : i < q ? 'done' : '') + '">' + lbl(i) + '</span>').join('') + '</div>' : '') +
     '<div class="gq cur"><div class="st"><b>' + lbl(q) + '.</b> ' + qtHtml(Q.t) + '</div></div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
-    '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div></div></div>' +
+    (trHtml(Q) || '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>') + '</div></div>' +
     '<div style="text-align:right">' + (G.img && IMGS[G.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của nhóm (phím Z)">🖼 Xem lại ảnh</button> ' : '') +
     '<button class="btn big pri" id="bNext">' + (more ? 'Câu ' + lbl(q + 1) + ' ▶' : q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = next;
