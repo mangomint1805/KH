@@ -2,6 +2,10 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.20.1', d: '2026-11-05', items: [
+      '🎧 Thanh âm thanh của nhóm câu nghe (Part 3, 4) giờ điều khiển được hết: ▶/⏸ Phát, dừng (phím A), ⏪ lùi 5 giây và ⏩ tới 5 giây (phím ← →), kéo thanh thời gian để nghe lại đúng đoạn cần chữa, đổi tốc độ 1× / 0,85× / 0,75×.',
+      'Thanh âm thanh có ở cả lúc làm bài và lúc chữa từng câu, nên chữa câu nào thì tua tới đúng đoạn đó.'
+    ] },
     { v: '1.20', d: '2026-11-04', items: [
       '📦 Nhóm câu cho Part 3, 4, 6, 7: các câu liền nhau (ví dụ 32–34) làm thành một nhóm có đoạn văn, hình và/hoặc âm thanh dùng chung. Trong trang soạn bấm "📦 Gộp với câu trên" ở câu thứ hai, thứ ba… rồi điền đoạn văn, thêm hình hoặc âm thanh (file mp3 hoặc dán link) và "Số câu trên đề" (ví dụ 32) ở khung nhóm.',
       'Nhập Excel: thêm cột I "Nhóm" (các câu cùng nhóm ghi cùng một tên, ví dụ P7-1) và cột J "Đoạn văn" (ghi ở câu đầu nhóm); cột A ghi số câu trên đề (32, 33, 34). Nhập văn bản đề / Word / PDF: đoạn "Questions 147-149 refer to…" giờ được giữ lại làm đoạn văn của nhóm 147–149. File cũ vẫn đọc như trước.',

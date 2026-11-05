@@ -715,10 +715,11 @@ html[data-qz=y2k] .podium .p .blk { font-size: 80px; }
 .gstim .qzw { align-self: center; max-width: 100%; }
 .gstim .gimg { max-height: 46vh; max-width: 100%; box-shadow: none; border: 1px solid var(--line); }
 .gaud { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.gaud .aub { flex: 1; min-width: 80px; height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
-.gaud .auf { display: block; height: 100%; width: 0; background: var(--brand-ink); transition: width .25s linear; }
+.gaud .aur { flex: 1 1 160px; min-width: 120px; height: 28px; accent-color: var(--brand-ink); cursor: pointer; }
+.gaud .aur:disabled { opacity: .4; cursor: default; }
+.gaud [data-au=spd] { min-width: 3.4em; font-variant-numeric: tabular-nums; }
 .gaud .aut { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 7.5em; }
-.gaud.wait .aub, .gaud.wait [data-au=re] { opacity: .4; }
+.gaud.wait [data-au=re], .gaud.wait [data-au=back], .gaud.wait [data-au=fwd] { opacity: .4; }
 .gqs { min-height: 0; overflow: auto; display: grid; gap: 10px; align-content: start; padding-bottom: 6px; }
 .gq { background: var(--card); color: var(--ink); border-radius: 14px; padding: 10px 14px; box-shadow: 0 4px 0 rgba(0,0,0,.15); }
 .gq .st { font-weight: 600; font-size: clamp(17px, min(1.6vw, 2.8vh), 28px); line-height: 1.3; }

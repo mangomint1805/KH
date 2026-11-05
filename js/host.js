@@ -59,21 +59,31 @@ function audPaint() {
   b.classList.toggle('wait', !src);
   const p = b.querySelector('[data-au=play]'); if (p) p.textContent = !src ? '⏳ Đang tải âm thanh' : aud.paused ? '▶ Phát' : '⏸ Dừng';
   const t = b.querySelector('.aut'); if (t) t.textContent = src ? mmss(aud.currentTime) + ' / ' + mmss(aud.duration) : '';
-  const f = b.querySelector('.auf'); if (f) f.style.width = (aud.duration ? aud.currentTime / aud.duration * 100 : 0) + '%';
+  const r = b.querySelector('.aur'); if (r && !audDrag) { r.value = aud.duration ? Math.round(aud.currentTime / aud.duration * 1000) : 0; r.disabled = !src; }
+  const sp = b.querySelector('[data-au=spd]'); if (sp) sp.textContent = (aud.playbackRate === 1 ? '1×' : String(aud.playbackRate).replace('.', ',') + '×');
 }
+let audDrag = false;
+// tua: kéo thanh thời gian, ⏪/⏩ 5 giây (phím ← →), đổi tốc độ 1× → 0,85× → 0,75×
+function audSeek(t) { if (!aud.src || !isFinite(aud.duration)) return; aud.currentTime = Math.min(Math.max(0, t), Math.max(0, aud.duration - 0.05)); audPaint(); }
+document.addEventListener('input', (e) => { const r = e.target.closest && e.target.closest('.gaud .aur'); if (!r) return; audDrag = true; if (aud.duration) { aud.currentTime = r.value / 1000 * aud.duration; const t = r.closest('.gaud').querySelector('.aut'); if (t) t.textContent = mmss(aud.currentTime) + ' / ' + mmss(aud.duration); } });
+document.addEventListener('change', (e) => { if (e.target.closest && e.target.closest('.gaud .aur')) { audDrag = false; audPaint(); e.target.blur(); } });
 ['play', 'pause', 'timeupdate', 'loadedmetadata', 'ended'].forEach((ev) => aud.addEventListener(ev, audPaint));
 function gAudPlay(fromStart) { const b = main.querySelector('.gaud'); if (!b) return; audPaint(); if (!aud.src) return; if (fromStart) aud.currentTime = 0; Sound.mode(null); aud.play().catch((e) => console.warn('audio', e)); }
 function gAudStop() { if (!aud.paused) aud.pause(); }
 function gAudToggle() { if (aud.paused) gAudPlay(aud.ended); else gAudStop(); }
 document.addEventListener('click', (e) => {
   const b = e.target.closest && e.target.closest('[data-au]'); if (!b) return;
-  if (b.dataset.au === 'play') gAudToggle(); else if (b.dataset.au === 're') gAudPlay(true);
+  const k = b.dataset.au;
+  if (k === 'play') gAudToggle(); else if (k === 're') gAudPlay(true);
+  else if (k === 'back') audSeek(aud.currentTime - 5); else if (k === 'fwd') audSeek(aud.currentTime + 5);
+  else if (k === 'spd') { const R = [1, 0.85, 0.75]; aud.playbackRate = R[(R.indexOf(aud.playbackRate) + 1) % R.length]; audPaint(); }
+  if (b.blur) b.blur();
 });
 // khung nội dung chung của nhóm: âm thanh + hình + đoạn văn (đoạn dài tự cuộn)
 function stimHtml(q) {
   const G = gData(q); if (!G) return '';
   const au = !!(G.au || G.aurl), im = G.img && IMGS[G.img];
-  return '<div class="gstim">' + (au ? '<div class="gaud" data-q="' + q + '"><button type="button" class="btn" data-au="play">▶ Phát</button><button type="button" class="btn" data-au="re" title="Phát lại từ đầu">↺</button><span class="aub"><i class="auf"></i></span><span class="aut"></span></div>' : '') +
+  return '<div class="gstim">' + (au ? '<div class="gaud" data-q="' + q + '"><button type="button" class="btn" data-au="play">▶ Phát</button><button type="button" class="btn" data-au="back" title="Lùi 5 giây (phím ←)" aria-label="Lùi 5 giây">⏪ 5s</button><button type="button" class="btn" data-au="fwd" title="Tới 5 giây (phím →)" aria-label="Tới 5 giây">5s ⏩</button><button type="button" class="btn" data-au="re" title="Phát lại từ đầu" aria-label="Phát lại từ đầu">↺</button><button type="button" class="btn" data-au="spd" title="Tốc độ phát" aria-label="Đổi tốc độ phát">1×</button><input type="range" class="aur" min="0" max="1000" step="1" value="0" aria-label="Kéo để nghe tại đoạn bất kỳ"><span class="aut"></span></div>' : '') +
     (im ? '<span class="qzw"><img class="qimg gimg" src="' + IMGS[G.img] + '" alt="Hình của nhóm câu" title="Bấm để phóng to"><button type="button" class="qzoom" title="Phóng to (phím Z)" aria-label="Phóng to hình">🔍</button></span>' : '') +
     (G.p ? '<div class="gp">' + qtHtml(G.p) + '</div>' : '') + (!im && !G.p && !au ? '<div class="gp muted">(Nhóm này chưa có đoạn văn, hình hay âm thanh)</div>' : '') + '</div>';
 }
@@ -780,6 +790,7 @@ document.addEventListener('keydown', (e) => {
     next();
   }
   if ((e.key === 'a' || e.key === 'A') && main.querySelector('.gaud')) { e.preventDefault(); gAudToggle(); return; }
+  if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && main.querySelector('.gaud')) { e.preventDefault(); audSeek(aud.currentTime + (e.key === 'ArrowLeft' ? -5 : 5)); return; }
   if (e.key === 'f' || e.key === 'F') full();
   if (e.key === 't' || e.key === 'T') nextTheme();
   if ((e.key === 'p' || e.key === 'P') && PIN && !busy && revealing === -1) { if (state.phase === 'answer') pause(); else if (isPaused()) unpause(); }
