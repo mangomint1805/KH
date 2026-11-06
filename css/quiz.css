@@ -696,6 +696,12 @@ html[data-qz=y2k] .podium .p .blk { font-size: 80px; }
 /* 1.19 — câu nghe có audio + transcript lúc chữa */
 .audbar { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; font: 600 clamp(18px, 2vw, 26px)/1.2 "IBM Plex Sans", sans-serif; }
 .audbar .sp { flex: 1; }
+.audbar.qaud { flex-wrap: wrap; margin-top: 10px; }
+.audbar.qaud #audst { flex: 1 1 100%; font-size: .8em; opacity: .85; }
+.audbar.qaud .qar { flex: 1 1 160px; min-width: 120px; height: 28px; accent-color: var(--brand-ink); cursor: pointer; }
+.audbar.qaud [data-qa=spd] { min-width: 3.4em; font-variant-numeric: tabular-nums; }
+.audbar.qaud #bGo { margin-left: auto; }
+.trbox[hidden] { display: none !important; }
 .trbox { background: var(--card); color: var(--ink, #222); border: 1px solid var(--line); border-radius: 16px; padding: 14px 20px; text-align: left; overflow: auto; max-height: 46vh; }
 .trh { font: 700 clamp(16px, 1.6vw, 22px)/1.2 "IBM Plex Sans", sans-serif; opacity: .7; margin-bottom: 6px; }
 .trl { display: flex; gap: 14px; padding: 7px 10px; border-radius: 10px; align-items: baseline; }

@@ -110,18 +110,51 @@ function zoomClose() { const d = document.getElementById('qzbox'); if (d) d.remo
 let qAud = null;
 const isEx = (Q) => !!(Q && Q.aud && quiz && quiz.exam);
 function audStop() { if (qAud) { qAud.onended = null; qAud.onerror = null; try { qAud.pause(); } catch (e) {} qAud = null; } }
-function audPlay(Q, q, onEnd) {
+function audPlay(Q, q, onEnd, noPlay) {
   audStop();
   const a = new Audio(Q.aud); a.preload = 'auto'; qAud = a;
   const st = (t) => { const el = $('audst'); if (el) el.textContent = t; };
-  a.onended = () => { if (qAud !== a) return; st('✓ Nghe xong'); if (onEnd) onEnd(); };
-  a.onerror = () => { if (qAud !== a) return; st('⚠ Không tải được audio, bấm ▶ Phát lại hoặc ⏭ Cho trả lời'); };
-  const p = a.play(); if (p && p.catch) p.catch(() => { if (qAud === a) st('Bấm ▶ Phát lại để nghe'); });
+  a.onended = () => { if (qAud !== a) return; st('✓ Nghe xong'); qPaint(); if (onEnd) onEnd(); };
+  a.onerror = () => { if (qAud !== a) return; st('⚠ Không tải được audio, bấm ▶ để thử lại'); };
+  ['timeupdate', 'play', 'pause', 'loadedmetadata', 'ratechange', 'seeked'].forEach((ev) => a.addEventListener(ev, () => { if (qAud === a) qPaint(); }));
+  if (noPlay) { st('🔊 Bấm ▶ để nghe'); return; }
+  const p = a.play(); if (p && p.catch) p.catch(() => { if (qAud === a) st('Bấm ▶ để nghe'); });
   st('🔊 Đang phát…');
 }
+// thanh điều khiển audio câu nghe: ▶/⏸, ⏪/⏩ 5 giây, ↺, tốc độ, kéo thanh để nghe đúng đoạn
+let qDrag = false, qCur = null;
+function qBarHtml(extra) {
+  return '<div class="audbar qaud"><span id="audst">🔊 Đang tải audio…</span>' +
+    '<button type="button" class="btn big" data-qa="play" title="Phát / dừng (phím A)">▶</button>' +
+    '<button type="button" class="btn" data-qa="back" title="Lùi 5 giây (phím ←)">⏪ 5s</button><button type="button" class="btn" data-qa="fwd" title="Tới 5 giây (phím →)">5s ⏩</button>' +
+    '<button type="button" class="btn" data-qa="re" title="Nghe lại từ đầu">↺</button><button type="button" class="btn" data-qa="spd" title="Tốc độ phát">1×</button>' +
+    '<input type="range" class="aur qar" min="0" max="1000" step="1" value="0" aria-label="Kéo để nghe tại đoạn bất kỳ"><span class="aut qat"></span>' + (extra || '') + '</div>';
+}
+function qPaint() {
+  const b = main && main.querySelector('.qaud'); if (!b) return; const a = qAud;
+  const pl = b.querySelector('[data-qa=play]'); if (pl) pl.textContent = a && !a.paused && !a.ended ? '⏸' : '▶';
+  const t = b.querySelector('.qat'); if (t) t.textContent = a ? mmss(a.currentTime) + ' / ' + mmss(a.duration) : '';
+  const r = b.querySelector('.qar'); if (r && !qDrag) r.value = a && a.duration ? Math.round(a.currentTime / a.duration * 1000) : 0;
+  const sp = b.querySelector('[data-qa=spd]'); if (sp) sp.textContent = (!a || a.playbackRate === 1 ? '1×' : String(a.playbackRate).replace('.', ',') + '×');
+}
+function qEnsure() { if (!qAud && qCur) audPlay(qCur, -1, null, true); return qAud; }
+function qToggle() { const a = qEnsure(); if (!a) return; if (a.paused || a.ended) { const p = a.play(); if (p && p.catch) p.catch(() => {}); const el = $('audst'); if (el) el.textContent = '🔊 Đang phát…'; } else { a.pause(); const el = $('audst'); if (el) el.textContent = '⏸ Đang dừng'; } qPaint(); }
+function qSeek(t) { const a = qEnsure(); if (!a || !isFinite(a.duration)) return; a.currentTime = Math.min(Math.max(0, t), Math.max(0, a.duration - 0.05)); qPaint(); }
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('.qaud [data-qa]'); if (!b) return;
+  const k = b.dataset.qa, a = qEnsure(); if (!a) return;
+  if (k === 'play') qToggle(); else if (k === 'back') qSeek(a.currentTime - 5); else if (k === 'fwd') qSeek(a.currentTime + 5);
+  else if (k === 're') { a.currentTime = 0; if (a.paused) qToggle(); }
+  else if (k === 'spd') { const RR = [1, 0.85, 0.75]; a.playbackRate = RR[(RR.indexOf(a.playbackRate) + 1) % RR.length]; }
+  qPaint(); if (b.blur) b.blur();
+});
+document.addEventListener('input', (e) => { const r = e.target.closest && e.target.closest('.qaud .qar'); if (!r) return; const a = qEnsure(); if (!a || !a.duration) return; qDrag = true; a.currentTime = r.value / 1000 * a.duration; const t = r.parentNode.querySelector('.qat'); if (t) t.textContent = mmss(a.currentTime) + ' / ' + mmss(a.duration); });
+document.addEventListener('change', (e) => { if (e.target.closest && e.target.closest('.qaud .qar')) { qDrag = false; qPaint(); e.target.blur(); } });
+// transcript: ẩn sẵn, bấm nút 📜 (phím S) mới hiện
+document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('#bTr'); if (!b) return; const x = main.querySelector('.trbox'); if (x) { x.hidden = !x.hidden; b.classList.toggle('pri', !x.hidden); } if (b.blur) b.blur(); });
 function trHtml(Q) {
   if (!Array.isArray(Q.tr) || !Q.tr.length) return '';
-  return '<div class="trbox"><div class="trh">📜 Transcript</div>' + Q.tr.map((l) => '<div class="trl' + (l.ok ? ' ok' : '') + '"><b class="trk">' + esc(l.k || '') + '</b><div><div class="tren">' + esc(l.en || '') + (l.ok ? ' <span class="trok">✔</span>' : '') + '</div>' + (l.vi ? '<div class="trvi">' + esc(l.vi) + '</div>' : '') + '</div></div>').join('') + '</div>';
+  return '<div class="trbox" hidden><div class="trh">📜 Transcript</div>' + Q.tr.map((l) => '<div class="trl' + (l.ok ? ' ok' : '') + '"><b class="trk">' + esc(l.k || '') + '</b><div><div class="tren">' + esc(l.en || '') + (l.ok ? ' <span class="trok">✔</span>' : '') + '</div>' + (l.vi ? '<div class="trvi">' + esc(l.vi) + '</div>' : '') + '</div></div>').join('') + '</div>';
 }
 function curImgSrc() { const i = main && main.querySelector('.qimg'); const G = quiz && state && gData(state.q); return i ? i.src : (quiz && state && quiz.qs[state.q] && IMGS[quiz.qs[state.q].img]) || (G && IMGS[G.img]) || ''; }
 document.addEventListener('click', (e) => {
@@ -429,10 +462,10 @@ async function goShow(q) {
   if (Q.aud) {
     const pr = main.querySelector('.prog'); if (pr) pr.remove();
     if (isEx(Q)) { const qt = main.querySelector('.qtext'); if (qt) qt.innerHTML = '🎧 Câu ' + (q + 1) + '<div style="font-size:.55em;opacity:.75;margin-top:8px">Nghe và chọn câu trả lời đúng nhất</div>'; }
-    main.insertAdjacentHTML('beforeend', '<div class="audbar"><span id="audst">🔊 Đang tải audio…</span><span class="sp"></span><button class="btn big" id="bRe">▶ Phát lại</button> <button class="btn big pri" id="bGo">⏭ Cho trả lời</button></div>');
-    $('bRe').onclick = () => audPlay(Q, q, () => { autoT = setTimeout(() => goAnswer(q), 800); });
+    qCur = Q;
+    main.insertAdjacentHTML('beforeend', qBarHtml('<button class="btn big pri" id="bGo">⏭ Cho trả lời</button>'));
     $('bGo').onclick = () => { audStop(); goAnswer(q); };
-    audPlay(Q, q, () => { autoT = setTimeout(() => goAnswer(q), 800); });
+    audPlay(Q, q, () => { const el = $('audst'); if (el) el.textContent = '✓ Nghe xong · bấm ⏭ Cho trả lời'; });
     return;
   }
   requestAnimationFrame(() => requestAnimationFrame(() => { const pg = $('pg'); if (pg) pg.style.width = '100%'; }));
@@ -588,10 +621,11 @@ function revealView(q) {
   const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
   main.innerHTML = qHead(q) + '<div class="qtext' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
-    (trHtml(Q) || '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>') +
-    '<div style="text-align:right">' + (Q.aud ? '<button class="btn big" id="bAud" title="Nghe lại audio câu này (phím R)">🔁 Nghe lại</button> ' : '') + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
+    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) +
+    (Q.aud ? qBarHtml() : '') +
+    '<div style="text-align:right">' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = () => { audStop(); next(); };
-  if ($('bAud')) $('bAud').onclick = () => { if (qAud) { audStop(); } else audPlay(Q, q, null); };
+  if (Q.aud) { qCur = Q; if (!qAud) audPlay(Q, q, null, true); else qPaint(); const el = $('audst'); if (el && qAud.paused) el.textContent = '🔊 Bấm ▶ để nghe lại'; }
   if ($('bZoom')) $('bZoom').dataset.src = IMGS[Q.img];
   requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
 }
@@ -607,8 +641,8 @@ function gRevealView(q) {
     (R ? '<div class="gdots">' + span(q).map((i) => '<span class="' + (i === q ? 'on' : i < q ? 'done' : '') + '">' + lbl(i) + '</span>').join('') + '</div>' : '') +
     '<div class="gq cur"><div class="st"><b>' + lbl(q) + '.</b> ' + qtHtml(Q.t) + '</div></div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
-    (trHtml(Q) || '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>') + '</div></div>' +
-    '<div style="text-align:right">' + (G.img && IMGS[G.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của nhóm (phím Z)">🖼 Xem lại ảnh</button> ' : '') +
+    '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) + '</div></div>' +
+    '<div style="text-align:right">' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (G.img && IMGS[G.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của nhóm (phím Z)">🖼 Xem lại ảnh</button> ' : '') +
     '<button class="btn big pri" id="bNext">' + (more ? 'Câu ' + lbl(q + 1) + ' ▶' : q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = next;
   if ($('bZoom')) $('bZoom').dataset.src = IMGS[G.img];
@@ -794,7 +828,11 @@ document.addEventListener('keydown', (e) => {
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
   if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if (document.getElementById('qzbox')) { if (/^( |Enter|Escape|z|Z)$/.test(e.key)) { e.preventDefault(); zoomClose(); } return; }
-  if ((e.key === 'r' || e.key === 'R') && $('bAud')) { e.preventDefault(); $('bAud').click(); return; }
+  if ((e.key === 's' || e.key === 'S') && $('bTr')) { e.preventDefault(); $('bTr').click(); return; }
+  if (main.querySelector('.qaud')) {
+    if (e.key === 'a' || e.key === 'A' || e.key === 'r' || e.key === 'R') { e.preventDefault(); qToggle(); return; }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); const a = qEnsure(); if (a) qSeek(a.currentTime + (e.key === 'ArrowLeft' ? -5 : 5)); return; }
+  }
   if ((e.key === 'z' || e.key === 'Z') && main && (main.querySelector('.qimg') || $('bZoom'))) { e.preventDefault(); const b = $('bZoom'); zoomOpen(b ? b.dataset.src : curImgSrc()); return; }
   if ((e.key === ' ' || e.key === 'Enter') && PIN && state.phase && state.phase !== 'end') {
     e.preventDefault();

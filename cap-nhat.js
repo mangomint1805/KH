@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.21.1', d: '2026-11-06', items: [
+      '🎧 Câu nghe có audio riêng: thanh âm thanh mới điều khiển hết được: ▶/⏸ (phím A), ⏪/⏩ 5 giây (phím ← →), kéo thanh thời gian để nghe đúng đoạn, ↺ nghe lại từ đầu, đổi tốc độ. Bấm nhiều lần cũng không bị nhảy câu nữa.',
+      'Nghe xong không tự chuyển sang phần trả lời: thầy bấm ⏭ Cho trả lời khi cả lớp sẵn sàng.',
+      'Màn chữa luôn hiện đủ 4 đáp án. Transcript ẩn sẵn, bấm 📜 Transcript (phím S) mới hiện.'
+    ] },
     { v: '1.21', d: '2026-11-05', items: [
       '📌 Nhớ đề đã dùng với lớp nào: ở trang Bộ câu hỏi, dưới tên mỗi bộ có nhãn xanh ghi lớp đã làm bộ đó, ngày và cách làm (▶ trên lớp, ⛏️ Đào vàng, 📝 về nhà, ✋ đánh dấu tay). Rê chuột vào nhãn để xem đủ các lần. Nhãn vàng "≈ trùng 9/12" nghĩa là bộ này trùng nhiều câu với một bộ khác lớp đó đã làm (so theo nội dung câu hỏi và đáp án, nên bộ nhập lại câu ETS cũ cũng nhận ra).',
       'Tạo phòng: màn chọn bộ có thêm ô "Lớp" (mặc định theo lớp của bộ câu hỏi, hoặc lớp đang lọc). Nếu lớp đó đã làm bộ này hoặc một bộ trùng nhiều câu, máy hiện cảnh báo kiểu "Lớp TOA117110 đã làm bộ này ngày 05/11 (▶ trên lớp)". Không chặn: bấm "Vẫn dùng" là tạo phòng bình thường.',
