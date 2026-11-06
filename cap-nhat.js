@@ -2,6 +2,10 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.21.2', d: '2026-11-06', items: [
+      '✎ Sửa đáp án lúc chữa: bấm ✎ Sửa đáp án (phím E) rồi bấm vào ô đáp án để thêm hoặc bỏ đáp án đúng, ví dụ cho một câu có 2 đáp án đúng. Điểm cả lớp được chấm lại ngay, điện thoại học sinh cũng cập nhật.',
+      'Đáp án mới được lưu luôn vào bộ câu hỏi, lần sau chơi lại không cần sửa nữa.'
+    ] },
     { v: '1.21.1', d: '2026-11-06', items: [
       '🎧 Câu nghe có audio riêng: thanh âm thanh mới điều khiển hết được: ▶/⏸ (phím A), ⏪/⏩ 5 giây (phím ← →), kéo thanh thời gian để nghe đúng đoạn, ↺ nghe lại từ đầu, đổi tốc độ. Bấm nhiều lần cũng không bị nhảy câu nữa.',
       'Nghe xong không tự chuyển sang phần trả lời: thầy bấm ⏭ Cho trả lời khi cả lớp sẵn sàng.',

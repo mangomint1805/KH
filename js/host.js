@@ -621,9 +621,9 @@ function revealView(q) {
   const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
   main.innerHTML = qHead(q) + '<div class="qtext' + qlen(Q.t) + '">' + qtHtml(Q.t) + '</div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
-    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) +
+    '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '" data-i="' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) +
     (Q.aud ? qBarHtml() : '') +
-    '<div style="text-align:right">' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
+    '<div style="text-align:right"><button class="btn big" id="bKey" title="Thêm / bỏ đáp án đúng rồi chấm lại (phím E)">✎ Sửa đáp án</button> ' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = () => { audStop(); next(); };
   if (Q.aud) { qCur = Q; if (!qAud) audPlay(Q, q, null, true); else qPaint(); const el = $('audst'); if (el && qAud.paused) el.textContent = '🔊 Bấm ▶ để nghe lại'; }
   if ($('bZoom')) $('bZoom').dataset.src = IMGS[Q.img];
@@ -641,8 +641,8 @@ function gRevealView(q) {
     (R ? '<div class="gdots">' + span(q).map((i) => '<span class="' + (i === q ? 'on' : i < q ? 'done' : '') + '">' + lbl(i) + '</span>').join('') + '</div>' : '') +
     '<div class="gq cur"><div class="st"><b>' + lbl(q) + '.</b> ' + qtHtml(Q.t) + '</div></div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
-    '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) + '</div></div>' +
-    '<div style="text-align:right">' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (G.img && IMGS[G.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của nhóm (phím Z)">🖼 Xem lại ảnh</button> ' : '') +
+    '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '" data-i="' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) + '</div></div>' +
+    '<div style="text-align:right"><button class="btn big" id="bKey" title="Thêm / bỏ đáp án đúng rồi chấm lại (phím E)">✎ Sửa đáp án</button> ' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (G.img && IMGS[G.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của nhóm (phím Z)">🖼 Xem lại ảnh</button> ' : '') +
     '<button class="btn big pri" id="bNext">' + (more ? 'Câu ' + lbl(q + 1) + ' ▶' : q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = next;
   if ($('bZoom')) $('bZoom').dataset.src = IMGS[G.img];
@@ -650,7 +650,46 @@ function gRevealView(q) {
   requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
 }
 
+// ✎ Sửa đáp án lúc chữa: bấm nút (phím E) rồi bấm vào ô đáp án để thêm / bỏ đáp án đúng; chấm lại cả lớp, lưu luôn vào bộ câu hỏi
+let keyEdit = false;
+function keyEditPaint() {
+  const g = main.querySelector('.hgrid'), b = $('bKey'); if (!g || !b) return;
+  g.classList.toggle('kedit', keyEdit); b.classList.toggle('pri', keyEdit);
+  b.textContent = keyEdit ? '✓ Xong sửa đáp án' : '✎ Sửa đáp án';
+  let h = main.querySelector('.khint');
+  if (keyEdit && !h) { h = document.createElement('div'); h.className = 'khint'; h.textContent = 'Bấm vào đáp án để thêm hoặc bỏ đáp án đúng. Điểm cả lớp được chấm lại ngay.'; g.parentNode.insertBefore(h, g); }
+  if (!keyEdit && h) h.remove();
+}
+async function setKey(q, c) {
+  const Q = quiz.qs[q]; if (!Q || !c.length) return;
+  c = c.slice().sort((x, y) => x - y);
+  Q.c = c.slice(); keys[q] = { ...(keys[q] || { s: state.startAt, e: state.endAt }), c: c.slice() };
+  const res = compute(), up = { ['key/' + q]: keys[q] };
+  Object.keys(players).forEach((uid) => {
+    const x = res.by[uid], it = x.q[q] || {};
+    up['scores/' + uid] = { s: x.s, k: x.k, r: x.r, n: res.n, q, p: it.pts || 0, b: it.b || 0, ok: !!it.ok, c: c.slice() };
+  });
+  try { await D.update(r(), up); } catch (e) { return fail(e); }
+  revealView(q); keyEditPaint();
+  try {
+    const x = await window.MACC.fs(), ref = x.F.doc(x.db, 'quizzes', quiz.id), d = await x.F.getDoc(ref);
+    const qs = d.exists() && d.data().qs;
+    if (qs && qs[q] && qs[q].t === Q.t) { qs[q].c = c.slice(); await x.F.setDoc(ref, { qs, upd: Date.now() }, { merge: true }); toast('✓ Đã chấm lại và lưu đáp án câu ' + lbl(q) + ' vào bộ câu hỏi'); }
+    else toast('✓ Đã chấm lại câu ' + lbl(q) + ' (bộ câu hỏi đã đổi nên chưa lưu vào bộ)');
+  } catch (e) { toast('✓ Đã chấm lại câu ' + lbl(q) + ' · chưa lưu được vào bộ câu hỏi'); }
+}
+document.addEventListener('click', (e) => {
+  const kb = e.target.closest && e.target.closest('#bKey');
+  if (kb) { keyEdit = !keyEdit; keyEditPaint(); kb.blur(); return; }
+  const t = keyEdit && e.target.closest && e.target.closest('.hgrid.kedit .hopt[data-i]');
+  if (!t || state.phase !== 'reveal') return;
+  const q = state.q, Q = quiz.qs[q], i = +t.dataset.i;
+  const c = Q.c.includes(i) ? Q.c.filter((x) => x !== i) : Q.c.concat(i);
+  if (!c.length) return toast('Câu nào cũng phải có ít nhất 1 đáp án đúng');
+  setKey(q, c);
+});
 async function goBoard(q) {
+  keyEdit = false;
   gAudStop();
   try { await D.update(r('state'), { phase: 'board' }); } catch (e) { return fail(e); }
   state.phase = 'board';
@@ -828,6 +867,7 @@ document.addEventListener('keydown', (e) => {
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
   if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if (document.getElementById('qzbox')) { if (/^( |Enter|Escape|z|Z)$/.test(e.key)) { e.preventDefault(); zoomClose(); } return; }
+  if ((e.key === 'e' || e.key === 'E') && $('bKey')) { e.preventDefault(); $('bKey').click(); return; }
   if ((e.key === 's' || e.key === 'S') && $('bTr')) { e.preventDefault(); $('bTr').click(); return; }
   if (main.querySelector('.qaud')) {
     if (e.key === 'a' || e.key === 'A' || e.key === 'r' || e.key === 'R') { e.preventDefault(); qToggle(); return; }
