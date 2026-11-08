@@ -1,0 +1,36 @@
+# title: Unit 7: Agreement (Hòa hợp chủ ngữ – động từ) · Art
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 07 + Chapter 2 Unit 07 (Art)
+v|painting (n)|bức tranh (vẽ bằng màu)
+v|painter (n)|họa sĩ
+v|artist (n)|nghệ sĩ
+v|exhibit (n)|cuộc triển lãm
+v|gallery (n)|phòng trưng bày
+v|statue (n)|bức tượng
+v|sculpture (n)|tác phẩm điêu khắc
+v|paintbrush (n)|cọ vẽ
+v|sketch (n)|bản phác họa
+v|landscape (n)|tranh phong cảnh
+v|portrait (n)|tranh chân dung
+v|clay (n)|đất sét
+v|competition (n)|cuộc thi
+v|studio (n)|xưởng vẽ
+v|colorful (adj)|nhiều màu sắc
+v|prize (n)|giải thưởng
+# hand
+grammar|Chủ ngữ số ít (he, she, the artist) đi với động từ…|thêm -s / -es (paints)|giữ nguyên (paint)|V-ing (painting)|to V (to paint)
+grammar|The artist ____ every morning.|paints|paint|painting|are painting
+grammar|The paintings ____ in the gallery.|are|is|be|was being
+grammar|The painter, with his students, ____ to the museum.|goes|go|are going|have gone
+grammar|Ten dollars ____ too much for a ticket.|is|are|were|have
+grammar|Every student ____ a paintbrush.|has|have|having|are having
+grammar|____ statues are very old.|These|This|That|Each
+grammar|Either Tom or his sisters ____ coming.|are|is|has|was
+grammar|Each of the paintings ____ beautiful.|is|are|were|be
+grammar|She painted the picture ____. (tự mình)|herself|himself|themselves|yourself
+form|He is a famous ____. (người vẽ tranh)|painter|paint|painting|painted
+form|The museum has many ____. (những cuộc triển lãm)|exhibits|exhibit is|exhibiting|exhibited
+colloc|____ first prize (đoạt giải nhất)|win|get on|take part|make
+colloc|____ a picture (vẽ một bức tranh, dùng màu)|paint|write|do|make up
+tip|Part 2: "Where is the art museum?" Đáp án hay nhất?|Down the street, next to the post office.|Not today. I'm busy.|Last week.|Yes, it is.
+tip|Câu hỏi "When…?" thì đáp án đúng thường nói về…|thời gian (Next Saturday)|địa điểm (At the museum)|người (My friend)|lý do (Because…)

@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.22', d: '2026-11-08', items: [
+      '📚 Tạo từ bài học có thêm khoá "Starter TOEIC" (sách Starter TOEIC 3rd ed.) cho lớp mới bắt đầu: 12 unit, mỗi unit ghép một chủ điểm ngữ pháp với một chủ đề (Unit 1 Trợ động từ · Sức khoẻ, Unit 2 Các thì · Trường học … Unit 12 Liên từ, giới từ · Sở thích).',
+      'Mỗi unit có sẵn 31–33 câu ngắn, dễ: nghĩa từ vựng của chủ đề (Anh → Việt, Việt → Anh), loại từ, cụm từ đi kèm, ngữ pháp kiểu Part 5 câu ngắn, mẹo Part 1 / Part 2. Câu soạn mới theo nội dung từng unit, không chép bài tập trong sách.',
+      'Bản nháp Starter để "Dùng chung · chưa gán lớp"; muốn gán lớp nào thì chọn ở ô Lớp trước khi Lưu. Phần nghe của sách không đưa vào (audio là một file dài cho cả Part, Part 1 cần ảnh trong sách); thầy vẫn tự gắn audio cho câu hoặc nhóm câu được như thường.'
+    ] },
     { v: '1.21.2', d: '2026-11-06', items: [
       '✎ Sửa đáp án lúc chữa: bấm ✎ Sửa đáp án (phím E) rồi bấm vào ô đáp án để thêm hoặc bỏ đáp án đúng, ví dụ cho một câu có 2 đáp án đúng. Điểm cả lớp được chấm lại ngay, điện thoại học sinh cũng cập nhật.',
       'Đáp án mới được lưu luôn vào bộ câu hỏi, lần sau chơi lại không cần sửa nữa.'

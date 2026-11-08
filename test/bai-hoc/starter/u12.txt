@@ -1,0 +1,36 @@
+# title: Unit 12: Conjunctions & Prepositions (Liên từ, giới từ) · Hobbies
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 12 + Chapter 2 Unit 12 (Hobbies & Free time)
+v|hobby (n)|sở thích
+v|collect (v)|sưu tầm
+v|stamp (n)|con tem
+v|knit (v)|đan (len)
+v|pottery (n)|đồ gốm; nghề làm gốm
+v|photography (n)|nhiếp ảnh
+v|fishing (n)|câu cá
+v|horse race (n)|cuộc đua ngựa
+v|recreation center (n)|trung tâm giải trí
+v|sign up for (v)|đăng ký (lớp, hoạt động)
+v|nap (n)|giấc ngủ ngắn
+v|admission (n)|sự vào cửa; phí vào cửa
+v|watercolor (n)|tranh màu nước
+v|garage (n)|nhà để xe
+v|lecture (n)|bài giảng
+v|ceremony (n)|buổi lễ
+# hand
+grammar|Sau LIÊN TỪ (because, although, while) là…|S + V (mệnh đề)|danh từ / V-ing|to V|V nguyên mẫu
+grammar|Sau GIỚI TỪ (because of, despite, during) là…|danh từ / V-ing|S + V (mệnh đề)|to V|V nguyên mẫu
+grammar|I stayed home ____ it was raining.|because|because of|despite|during
+grammar|We went fishing ____ the rain.|despite|although|because|while
+grammar|____ he was knitting, she was reading.|While|During|But|So
+grammar|I like painting, ____ my brother likes music.|but|because|so|until
+grammar|I was tired, ____ I took a nap.|so|but|because|although
+grammar|I have collected stamps ____ ten years.|for|during|since|in
+grammar|Please finish the photos ____ Friday. (hạn chót)|by|until|for|during
+grammar|The ticket was shared ____ the three of us.|among|between|during|for
+form|She loves taking ____. (những bức ảnh)|photos|photographic|photograph's|photographer
+form|He is a good ____. (nhiếp ảnh gia)|photographer|photography|photographic|photograph
+colloc|take ____ a hobby (bắt đầu một sở thích)|up|on|off|in
+colloc|____ stamps (sưu tầm tem)|collect|take|make|do
+tip|Part 2: "How long have you been learning the piano?" Đáp án hay nhất?|For about 5 years.|Every Monday.|It takes an hour.|Yes, I have.
+tip|Part 2: "What's your hobby?" Đáp án hay nhất?|I paint watercolor pictures.|My mother likes to knit.|It's not my hobby.|At the center.

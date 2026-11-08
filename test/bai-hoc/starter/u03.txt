@@ -1,0 +1,36 @@
+# title: Unit 3: Infinitives & Gerunds (To V / V-ing) · Home
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 03 + Chapter 2 Unit 03 (Home & Family)
+v|laundry (n)|quần áo cần giặt; việc giặt giũ
+v|dishwasher (n)|máy rửa chén
+v|washing machine (n)|máy giặt
+v|furniture (n)|đồ nội thất
+v|curtain (n)|rèm cửa
+v|garden (n)|khu vườn
+v|mow (v)|cắt (cỏ)
+v|vacuum cleaner (n)|máy hút bụi
+v|appliance (n)|thiết bị gia dụng
+v|tidy (adj)|gọn gàng
+v|refrigerator (n)|tủ lạnh
+v|rent (n)|tiền thuê nhà
+v|homeowner (n)|chủ nhà
+v|twins (n)|cặp song sinh
+v|decorate (v)|trang trí
+v|neighbor (n)|hàng xóm
+# hand
+grammar|Sau "decide, agree, promise, expect, want" là…|to V|V-ing|V nguyên mẫu không to|V-ed
+grammar|Sau "enjoy, avoid, mind, give up, feel like" là…|V-ing|to V|V nguyên mẫu không to|V-ed
+grammar|She decided ____ a new house.|to buy|buying|buy|bought
+grammar|I enjoy ____ in the garden.|working|to work|work|worked
+grammar|Do you mind ____ the window?|closing|to close|close|closed
+grammar|My mom made me ____ my room.|clean|to clean|cleaning|cleaned
+grammar|They allow us ____ pets in the house.|to keep|keep|keeping|kept
+grammar|Please let him ____ the dishes.|wash|to wash|washing|washes
+grammar|"I forgot ____ the door." (= quên chưa khóa)|to lock|locking|lock|locked
+grammar|He promised to help ____ with the laundry.|us|we|our|ours
+form|Our ____ is quiet and friendly. (khu hàng xóm)|neighborhood|neighbor|neighborly|neighboring
+form|We need to ____ the living room for the party.|decorate|decoration|decorative|decorating
+colloc|____ the laundry (giặt đồ)|do|make|take|have
+colloc|____ the grass (cắt cỏ)|mow|cut off|wash|make
+tip|Part 2: "Have you finished the laundry yet?" Đáp án hay nhất?|No, the washing machine is broken.|He is a dry cleaner.|I like the laundry.|Yes, I have a machine.
+tip|Part 1: tranh cái máy rửa chén đầy chén đĩa. Câu đúng?|The dishwasher is almost full.|The dishes are broken.|The box is full of toys.|He is washing a car.

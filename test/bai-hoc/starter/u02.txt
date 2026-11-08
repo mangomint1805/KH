@@ -1,0 +1,37 @@
+# title: Unit 2: Tenses (Các thì) · School
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 02 + Chapter 2 Unit 02 (School & Education)
+v|semester (n)|học kỳ
+v|subject (n)|môn học
+v|exam (n)|kỳ thi, bài thi
+v|grade (n)|điểm số
+v|scholarship (n)|học bổng
+v|enroll (v)|ghi danh, đăng ký học
+v|library (n)|thư viện
+v|chemistry (n)|hóa học
+v|history (n)|lịch sử
+v|classmate (n)|bạn cùng lớp
+v|professor (n)|giáo sư, giảng viên
+v|diploma (n)|bằng tốt nghiệp
+v|freshman (n)|sinh viên năm nhất
+v|schedule (n)|lịch, thời khóa biểu
+v|graduate (v)|tốt nghiệp
+v|experiment (n)|thí nghiệm
+# hand
+grammar|Thói quen, việc lặp lại (every day, usually) → dùng thì…|Hiện tại đơn|Hiện tại tiếp diễn|Quá khứ đơn|Tương lai đơn
+grammar|She ____ to school by bus every day.|goes|go|is go|going
+grammar|Look! The students ____ in the library now.|are studying|study|studied|studies
+grammar|We ____ the exam two days ago.|took|take|have taken|will take
+grammar|So far, I ____ three exams this week.|have had|had|have|am having
+grammar|When you called, I ____ my homework.|was doing|did|am doing|do
+grammar|He ____ English before he moved to London.|had studied|has studied|studies|is studying
+grammar|We will start the class when the teacher ____.|arrives|will arrive|arrive|arrived
+grammar|OK, I ____ help you with your homework. (quyết định ngay)|will|am going|was|have
+grammar|They ____ take a test next Monday. (kế hoạch có sẵn)|are going to|is going to|going to|were going
+form|She got a ____ to study in Japan. (học bổng)|scholarship|scholar|scholarly|scholastic
+form|He wants to ____ from university next year.|graduate|graduation|graduated|graduating
+colloc|____ an exam (thi đậu)|pass|win|get on|make
+colloc|____ a high grade (đạt điểm cao)|get|do|make|take
+tip|Part 2: "Which class do you have on Tuesday?" Đáp án hay nhất?|French.|Yes, I do.|I wake up early.|We can go together.
+tip|Câu hỏi bắt đầu bằng What / Where / When / Which… thì đáp án Yes / No thường…|Sai|Đúng|Đúng một nửa|Luôn là đáp án A
+tip|Part 2: "I got an A in History!" Đáp án tự nhiên nhất?|Congratulations!|History is a subject.|He is in class.|Yes, I got.

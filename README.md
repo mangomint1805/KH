@@ -18,7 +18,7 @@ Cài đặt Firebase lần đầu: xem [FIREBASE.md](FIREBASE.md).
    - CSV cùng các cột (có hoặc không có dòng tiêu đề, phân cách bằng `,` `;` hoặc tab).
    - Văn bản dạng đề (`.txt`, `.docx`, `.pdf`, hoặc dán thẳng): `1. …` rồi `(A) … (B) …` hoặc `A. …` mỗi dòng một đáp án, dòng `Answer: B` / `Đáp án: B` / `Correct answer: B`. Cũng nhận bảng đáp án ở cuối (`Answer key` rồi `1-B 2-A …`).
 
-   Hoặc bấm **📚 Tạo từ bài học**: chọn khoá (Pre mới / A mới / Pre cũ), chọn bài, số câu, loại câu (từ vựng, loại từ, cụm từ, ngữ pháp, mẹo làm bài), thời gian, trộn câu / đáp án → bản nháp mở ngay trong trang soạn, xem lại rồi Lưu như bộ thường.
+   Hoặc bấm **📚 Tạo từ bài học**: chọn khoá (Pre mới / A mới / Pre cũ / Starter TOEIC), chọn bài, số câu, loại câu (từ vựng, loại từ, cụm từ, ngữ pháp, mẹo làm bài), thời gian, trộn câu / đáp án → bản nháp mở ngay trong trang soạn, xem lại rồi Lưu như bộ thường.
 
    **📦 Nhóm câu (Part 3/4/6/7):** bấm **📦 Gộp với câu trên** ở các câu liền nhau, khung nhóm hiện phía trên: đoạn văn chung, hình, âm thanh (file ≤ 6 MB hoặc link mp3), **Số câu trên đề** (vd. 32 → hiện 32, 33, 34). Tối đa 5 câu một nhóm; **✂ Tách** đưa câu ra khỏi nhóm, **Bỏ nhóm** để bỏ cả nhóm. Excel: cột I `Nhóm` (câu liền nhau ghi cùng tên), cột J `Đoạn văn` (ghi ở câu đầu nhóm), cột A là số câu trên đề. Văn bản đề: `Questions 147-149 refer to…` + đoạn văn tự thành nhóm 147–149.
 

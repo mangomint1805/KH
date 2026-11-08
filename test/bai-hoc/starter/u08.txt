@@ -1,0 +1,36 @@
+# title: Unit 8: Relative Clauses (Mệnh đề quan hệ) · Music
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 08 + Chapter 2 Unit 08 (Music)
+v|concert (n)|buổi hòa nhạc
+v|musician (n)|nhạc sĩ, người chơi nhạc
+v|instrument (n)|nhạc cụ
+v|album (n)|album nhạc
+v|download (v)|tải xuống
+v|singer (n)|ca sĩ
+v|band (n)|ban nhạc
+v|drums (n)|bộ trống
+v|violin (n)|đàn vi-ô-lông
+v|opera (n)|nhạc kịch opera
+v|voice (n)|giọng hát
+v|out of tune (adj)|lạc tông, sai nhạc
+v|audition (n)|buổi thử giọng
+v|practice (v)|luyện tập
+v|composer (n)|nhà soạn nhạc
+v|fan (n)|người hâm mộ
+# hand
+grammar|Thay cho NGƯỜI (the singer ___ …) dùng…|who|which|where|when
+grammar|Thay cho VẬT (the song ___ …) dùng…|which|who|whose|where
+grammar|The man ____ plays the violin is my uncle.|who|which|whose|where
+grammar|This is the song ____ I like best.|that|who|whose|where
+grammar|I met a singer ____ voice is beautiful.|whose|who|which|who's
+grammar|This is the hall ____ the concert was held.|where|which|when|who
+grammar|I remember the day ____ we met the band.|when|where|which|who
+grammar|____ he said surprised everyone. (điều mà)|What|Which|That|Who
+grammar|Tom, ____ plays the drums, is my friend.|who|that|which|whom he
+grammar|She bought the album ____ I told her about.|which|who|where|whose
+form|He is a great ____. (người chơi nhạc)|musician|music|musical|musically
+form|We went to see a new ____. (nhạc kịch)|musical|music|musician|musically
+colloc|____ an instrument (chơi nhạc cụ)|play|do|make|hit on
+colloc|____ the radio (nghe radio)|listen to|hear on|look at|listen
+tip|Part 2: "How often do you listen to the radio?" Đáp án hay nhất?|I usually listen every morning.|It is not a radio.|Yes, I like the radio.|In my car radio.
+tip|Câu hỏi "How often…?" hỏi về…|mức độ thường xuyên|giá tiền|thời gian bao lâu|cách làm

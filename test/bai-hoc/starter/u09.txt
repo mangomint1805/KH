@@ -1,0 +1,36 @@
+# title: Unit 9: Modification & Word Order (Tính từ / Trạng từ, trật tự từ) · Sports
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 09 + Chapter 2 Unit 09 (Sports)
+v|referee (n)|trọng tài
+v|coach (n)|huấn luyện viên
+v|player (n)|cầu thủ, người chơi
+v|stadium (n)|sân vận động
+v|team (n)|đội
+v|penalty (n)|quả phạt, hình phạt
+v|lift weights (v)|nâng tạ
+v|rock climbing (n)|leo núi đá
+v|instructor (n)|người hướng dẫn
+v|discount (n)|giảm giá
+v|fit (adj)|khỏe mạnh, cân đối
+v|surfer (n)|người lướt sóng
+v|injure (v)|làm bị thương
+v|rule (n)|luật lệ
+v|practice session (n)|buổi tập
+v|tournament (n)|giải đấu
+# hand
+grammar|Bổ nghĩa cho DANH TỪ (a ___ player) dùng…|tính từ (good)|trạng từ (well)|động từ|danh từ khác
+grammar|Bổ nghĩa cho ĐỘNG TỪ (he runs ___) dùng…|trạng từ (quickly)|tính từ (quick)|danh từ|to V
+grammar|He is a very ____ player.|good|well|goodly|goodness
+grammar|She runs very ____.|fast|fastly|faster than|fasting
+grammar|The team played ____ yesterday.|badly|bad|badness|worse than
+grammar|It is ____ cold to swim today.|terribly|terrible|terror|terrify
+grammar|He is old ____ to join the team.|enough|so|too much|very
+grammar|We don't have ____ to play.|enough balls|balls enough|enough of ball|ball enough
+grammar|Is there ____ about the game?|anything new|new anything|newly anything|anything newly
+grammar|Do you know where ____?|the stadium is|is the stadium|the stadium are|does the stadium be
+form|Our coach is very ____. (thân thiện)|friendly|friend|friendship|friends
+form|Swimming is a ____ sport. (tốt cho sức khỏe)|healthy|health|healthily|healthiness
+colloc|____ soccer (chơi bóng đá)|play|do|go|make
+colloc|____ yoga (tập yoga)|do|play|go|make
+tip|Part 2: "How did you injure your leg?" Đáp án hay nhất?|Playing soccer.|It's my left leg.|It doesn't hurt much.|Yes, I did.
+tip|Part 1: người phụ nữ đang leo vách đá. Câu đúng?|She is rock climbing.|She is weight-lifting.|She is dancing.|She is playing guitar.

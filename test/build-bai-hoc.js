@@ -1,6 +1,6 @@
 // Sinh ngân hàng câu hỏi "Tạo từ bài học" cho admin: node test/build-bai-hoc.js
 // Nguồn: test/bai-hoc/<khoá>/<bài>.txt (thầy/Claude soạn tay, lấy ý từ web tóm tắt bài học) -> data/bai-hoc/
-//   # title: … / # group: Listening | Reading | Weekly Revision
+//   # title: … / # group: Listening | Reading | Weekly Revision | Units
 //   v|từ tiếng Anh|nghĩa tiếng Việt          (bảng từ vựng: tự sinh câu hỏi nghĩa Anh→Việt và Việt→Anh)
 //   loại|câu hỏi|đáp án đúng|sai 1|sai 2|sai 3   (loại: form, colloc, grammar, tip, vocab)
 // Mỗi câu đều qua QP.check (bộ kiểm tra của trang soạn) và không vượt giới hạn Kahoot (120 / 75 ký tự).
@@ -11,9 +11,10 @@ const COURSES = [
   { id: 'pre-moi', name: 'TOEIC Pre (mới)', lop: 'TOPRE115276' },
   { id: 'a-moi', name: 'TOEIC A (mới)', lop: 'TOA117110' },
   { id: 'pre-cu', name: 'TOEIC Pre (cũ)', lop: 'PRE115275' },
+  { id: 'starter', name: 'Starter TOEIC', lop: '' }, // sách Starter TOEIC 3rd ed. (12 unit: ngữ pháp + chủ đề), dùng chung, chưa gán lớp
 ];
 const KINDS = { vocab: 20, form: 20, colloc: 20, grammar: 30, tip: 30 };
-const GROUPS = ['Listening', 'Reading', 'Weekly Revision'];
+const GROUPS = ['Listening', 'Reading', 'Weekly Revision', 'Units'];
 const MAXV = 16; // tối đa số câu từ vựng tự sinh mỗi bài
 
 function hash(s) { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619); } return x >>> 0; }

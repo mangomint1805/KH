@@ -1,0 +1,36 @@
+# title: Unit 4: Participles (-ing / -ed) · Entertainment
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 04 + Chapter 2 Unit 04 (Movies & Entertainment)
+v|movie theater (n)|rạp chiếu phim
+v|comedy (n)|phim hài
+v|action movie (n)|phim hành động
+v|audience (n)|khán giả
+v|ticket (n)|vé
+v|seat (n)|chỗ ngồi
+v|aisle (n)|lối đi (giữa các hàng ghế)
+v|performance (n)|buổi biểu diễn
+v|actress (n)|nữ diễn viên
+v|stage (n)|sân khấu
+v|costume (n)|trang phục biểu diễn
+v|popcorn (n)|bắp rang
+v|review (n)|bài đánh giá, bài bình luận
+v|talk show (n)|chương trình trò chuyện
+v|musical (n)|nhạc kịch
+v|ending (n)|đoạn kết
+# hand
+grammar|Vật/việc GÂY RA cảm xúc (bộ phim gây chán) → dùng…|-ing (boring)|-ed (bored)|to V|V nguyên mẫu
+grammar|Người CẢM THẤY (tôi thấy chán) → dùng…|-ed (bored)|-ing (boring)|to V|V nguyên mẫu
+grammar|The movie was very ____.|exciting|excited|excite|excites
+grammar|I was ____ by the ending.|surprised|surprising|surprise|surprises
+grammar|That comedy is really ____.|interesting|interested|interest|interests
+grammar|The audience felt ____ after the long show.|tired|tiring|tire|tires
+grammar|____ tired, he left the theater early.|Feeling|Felt|Feel|To feels
+grammar|____ in 1990, the theater is very old.|Built|Building|Build|Builds
+grammar|She watched TV, ____ popcorn. (vừa xem vừa ăn)|eating|eaten|ate|eats
+form|Her ____ in the movie was great. (diễn xuất)|performance|perform|performer|performed
+form|It was an ____ story. (gây ngạc nhiên)|amazing|amazed|amaze|amazement
+colloc|____ in line (xếp hàng)|wait|stand on|sit|make
+colloc|____ a movie (đi xem phim)|see|look|make|look at
+tip|Part 2: "What time does the movie start?" Đáp án hay nhất?|I think it starts at 3:30.|Yes, let's see a movie.|There are three theaters.|It's a good movie.
+tip|Part 2: "Do you like watching comedies?" Đáp án hay nhất?|No, I prefer action movies.|It is not a comedy.|This is very funny.|The comedy is long.
+tip|Part 1: người đàn ông đang cười trước màn hình. Câu đúng?|The man is laughing.|The man is selling tickets.|The man is crying.|The man is on stage.

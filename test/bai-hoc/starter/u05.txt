@@ -1,0 +1,36 @@
+# title: Unit 5: Negation & Parallel Structure · Work
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 05 + Chapter 2 Unit 05 (Work & Jobs)
+v|apply for (v)|nộp đơn xin (việc)
+v|hire (v)|thuê, tuyển (người)
+v|salary (n)|tiền lương
+v|benefits (n)|phúc lợi
+v|shift (n)|ca làm việc
+v|supervisor (n)|người giám sát, quản lý
+v|employee (n)|nhân viên
+v|insurance (n)|bảo hiểm
+v|deadline (n)|hạn chót
+v|file (v)|sắp xếp (hồ sơ) vào tập
+v|punctuality (n)|sự đúng giờ
+v|training (n)|sự đào tạo
+v|exhausted (adj)|kiệt sức
+v|parking fee (n)|phí đỗ xe
+v|break (n)|giờ nghỉ giải lao
+v|business meeting (n)|cuộc họp công việc
+# hand
+grammar|Câu không có trợ động từ, muốn phủ định thì thêm…|do / does / did + not|not ở cuối câu|no trước động từ|never + V-ing
+grammar|She ____ like her new job.|does not|do not|not|is not
+grammar|They ____ work on Sundays.|do not|does not|are not|not
+grammar|He will ____ come to the meeting.|not|no|don't|doesn't
+grammar|We have ____ time for lunch today.|no|not|none|don't
+grammar|She doesn't have ____ money.|any|no|some|none
+grammar|I can ____ hear you. (hầu như không)|hardly|not hardly|hard|no hardly
+grammar|He is smart, kind, and ____.|honest|honesty|honestly|is honest
+grammar|She likes reading and ____.|swimming|to swimming|swims|swam
+grammar|____ having a car, he walks to work.|Not|No|Don't|None
+form|Our ____ arrive at 9 a.m. (nhân viên, số nhiều)|employees|employ|employment|employer
+form|My new job has better ____. (tiền lương)|pay|paid|paying|payer
+colloc|____ a job (nộp đơn xin việc)|apply for|apply to do|ask|make
+colloc|work the night ____ (làm ca đêm)|shift|time|turn|clock
+tip|Part 2: "Where do you work?" Đáp án hay nhất?|In the office building on the corner.|At 9 a.m., usually.|He went on vacation.|Yes, I work.
+tip|Part 2: "Can you help me file these papers?" Đáp án hay nhất?|Sure. Let's do it together.|I don't know how to type.|My desk is in the corner.|The file is big.

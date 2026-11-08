@@ -1,0 +1,35 @@
+# title: Unit 6: Comparisons (So sánh) · Travel
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 06 + Chapter 2 Unit 06 (Travel)
+v|vacation (n)|kỳ nghỉ
+v|flight (n)|chuyến bay
+v|luggage (n)|hành lý
+v|passport (n)|hộ chiếu
+v|boarding pass (n)|thẻ lên máy bay
+v|tourist (n)|khách du lịch
+v|seaside (n)|bờ biển, vùng biển
+v|museum (n)|bảo tàng
+v|balcony (n)|ban công
+v|cruise ship (n)|tàu du lịch biển
+v|jet lag (n)|mệt mỏi do lệch múi giờ
+v|sunscreen (n)|kem chống nắng
+v|resort (n)|khu nghỉ dưỡng
+v|check in (v)|làm thủ tục (khách sạn, sân bay)
+v|tour guide (n)|hướng dẫn viên du lịch
+v|announcement (n)|thông báo
+# hand
+grammar|Có "than" trong câu → chọn dạng…|so sánh hơn (-er / more)|so sánh nhất (-est / most)|nguyên mẫu|as … as
+grammar|This hotel is ____ than that one.|cheaper|cheap|cheapest|more cheap
+grammar|Paris is ____ than my city.|more expensive|expensiver|most expensive|expensive
+grammar|It is the ____ beach I have ever seen.|most beautiful|more beautiful|beautifuller|beautiful
+grammar|This is the ____ trip of my life. (good)|best|better|goodest|most good
+grammar|Today is ____ than yesterday. (bad)|worse|worst|badder|more bad
+grammar|My bag is as heavy ____ yours.|as|than|so|like
+grammar|The flight was ____ longer than we thought.|much|very|most|more
+grammar|Of all the cities, Rome is the ____.|oldest|older|old|more old
+form|We had a ____ time on vacation.|wonderful|wonder|wonderfully|wondering
+form|The ____ was clear: the flight is late. (thông báo)|announcement|announce|announced|announcing
+colloc|go on ____ (đi nghỉ)|vacation|travel|tourist|traveler
+colloc|____ a flight (đặt chuyến bay)|book|take on|do|make up
+tip|Part 2: "Where did you go on vacation?" Đáp án hay nhất?|We went to Spain for a week.|Yes, the weather was bad.|Yes, we went on vacation.|It was hot.
+tip|Part 2: "How was your flight?" Đáp án hay nhất?|It was just awful.|Yes, it was.|I woke up late.|At 9 o'clock.

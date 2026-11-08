@@ -1,0 +1,36 @@
+# title: Unit 10: Indefinite Pronouns (Đại từ bất định) · Food
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 10 + Chapter 2 Unit 10 (Food)
+v|recipe (n)|công thức nấu ăn
+v|ingredient (n)|nguyên liệu
+v|vegetarian (n)|người ăn chay
+v|dessert (n)|món tráng miệng
+v|flavor (n)|hương vị
+v|vending machine (n)|máy bán hàng tự động
+v|sink (n)|bồn rửa
+v|fork (n)|cái nĩa
+v|snack (n)|đồ ăn vặt
+v|delivery (n)|sự giao hàng
+v|skip (v)|bỏ qua (bỏ bữa)
+v|order (v)|gọi món, đặt hàng
+v|fresh (adj)|tươi
+v|supermarket (n)|siêu thị
+v|nutritionist (n)|chuyên gia dinh dưỡng
+v|service (n)|sự phục vụ
+# hand
+grammar|"some" thường dùng trong câu…, "any" dùng trong câu phủ định / câu hỏi.|khẳng định|phủ định|câu hỏi Yes/No|mệnh lệnh phủ định
+grammar|Would you like ____ coffee? (mời)|some|any|few|no one
+grammar|We don't have ____ eggs.|any|some|no|none
+grammar|____ the cake nor the ice cream is sweet.|Neither|Either|Both|Each
+grammar|____ coffee and tea are on the table.|Both|Either|Neither|Each
+grammar|I have two cakes: one is chocolate, and ____ is vanilla.|the other|another|other|others
+grammar|I don't like this dish ____.|either|too|neither|also
+grammar|____ of the students eat lunch here.|Most|Almost|Most the|Mostly
+grammar|There is ____ in the fridge. It is empty.|nothing|anything|something|everything
+grammar|Is there ____ to eat? I'm hungry.|anything|nothing|everything to|none
+form|This soup has a lot of ____. (hương vị)|flavor|flavorful|flavored|flavoring is
+form|The food here is very ____. (tươi)|fresh|freshly|freshness|freshen
+colloc|____ breakfast (bỏ bữa sáng)|skip|jump|miss out|pass by
+colloc|____ dinner (ăn tối)|have|do|make on|take on
+tip|Part 2: "Do you eat meat?" Đáp án hay nhất?|No, I'm a vegetarian.|Beef and pork are meats.|No, I don't have any meat.|Yes, I am meat.
+tip|Part 2: "How was that new restaurant?" Đáp án hay nhất?|The food was OK, but the service was poor.|It's an Italian restaurant.|I never eat there.|Yes, it was new.

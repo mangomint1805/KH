@@ -610,6 +610,157 @@
      }
     }
    ]
+  },
+  {
+   "id": "starter",
+   "name": "Starter TOEIC",
+   "lop": "",
+   "lessons": [
+    {
+     "id": "u01",
+     "title": "Unit 1: Auxiliary Verbs (Trợ động từ) · Health",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 3
+     }
+    },
+    {
+     "id": "u02",
+     "title": "Unit 2: Tenses (Các thì) · School",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 3
+     }
+    },
+    {
+     "id": "u03",
+     "title": "Unit 3: Infinitives & Gerunds (To V / V-ing) · Home",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u04",
+     "title": "Unit 4: Participles (-ing / -ed) · Entertainment",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 9,
+      "form": 2,
+      "colloc": 2,
+      "tip": 3
+     }
+    },
+    {
+     "id": "u05",
+     "title": "Unit 5: Negation & Parallel Structure · Work",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u06",
+     "title": "Unit 6: Comparisons (So sánh) · Travel",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 9,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u07",
+     "title": "Unit 7: Agreement (Hòa hợp chủ ngữ – động từ) · Art",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u08",
+     "title": "Unit 8: Relative Clauses (Mệnh đề quan hệ) · Music",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u09",
+     "title": "Unit 9: Modification & Word Order (Tính từ / Trạng từ, trật tự từ) · Sports",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u10",
+     "title": "Unit 10: Indefinite Pronouns (Đại từ bất định) · Food",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u11",
+     "title": "Unit 11: Voice (Câu bị động) · Science",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    },
+    {
+     "id": "u12",
+     "title": "Unit 12: Conjunctions & Prepositions (Liên từ, giới từ) · Hobbies",
+     "group": "Units",
+     "n": {
+      "vocab": 16,
+      "grammar": 10,
+      "form": 2,
+      "colloc": 2,
+      "tip": 2
+     }
+    }
+   ]
   }
  ]
 }

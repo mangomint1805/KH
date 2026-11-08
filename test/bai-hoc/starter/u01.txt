@@ -1,0 +1,37 @@
+# title: Unit 1: Auxiliary Verbs (Trợ động từ) · Health
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 01 + Chapter 2 Unit 01 (Health & Medicine)
+v|medicine (n)|thuốc
+v|headache (n)|đau đầu
+v|toothache (n)|đau răng
+v|dentist (n)|nha sĩ
+v|appointment (n)|cuộc hẹn
+v|bandage (n)|băng (băng vết thương)
+v|injure (v)|làm bị thương
+v|ankle (n)|mắt cá chân
+v|wrist (n)|cổ tay
+v|tablet (n)|viên thuốc
+v|eyesight (n)|thị lực
+v|wheelchair (n)|xe lăn
+v|nurse (n)|y tá
+v|blood pressure (n)|huyết áp
+v|check-up (n)|buổi khám sức khỏe định kỳ
+v|patient (n)|bệnh nhân
+# hand
+grammar|Sau trợ động từ "can / may / must / will" là…|V nguyên mẫu (go)|V-ing (going)|to V (to go)|V-ed (went)
+grammar|He may ____ a new job soon.|get|gets|getting|to get
+grammar|You ____ see a doctor. You look very sick.|should|should to|shoulds|are should
+grammar|She ____ like to make an appointment.|would|will to|is|does to
+grammar|He just ate. He ____ be hungry now. (chắc chắn KHÔNG)|cannot|must|should|will
+grammar|I ____ take this medicine every day. (bắt buộc)|have to|has to|having to|had better to
+grammar|You ____ eat too much sugar.|had better not|had not better|better not to|not had better
+grammar|When I was young, I ____ play in this park.|used to|use to|am used|using to
+grammar|She ____ called the dentist, but she forgot. (lẽ ra nên)|should have|should has|must|should to
+grammar|____ you like some water?|Would|Do you|Are|Shall to
+form|The ____ was not serious. (sự bị thương)|injury|injure|injured|injuring
+form|The nurse checked the ____. (người bệnh)|patient|patiently|patience|patients is
+colloc|____ an appointment (đặt lịch hẹn)|make|do|take|give
+colloc|____ medicine (uống thuốc)|take|eat|make|do
+tip|Part 1, câu đúng mô tả tranh người bệnh: "____ is putting medicine in her eye."|She|He|They|It
+tip|Part 2: "Can you recommend a good eye doctor?" Đáp án hay nhất?|Yes, I go to Dr. Park.|I wear glasses.|Monday is a weekday.|Yes, he can.
+tip|Part 2: đáp án lặp lại đúng từ trong câu hỏi (doctor… doctor) thường là…|Bẫy, dễ sai|Luôn đúng|Đáp án chắc chắn đúng|Không quan trọng

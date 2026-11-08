@@ -1,0 +1,36 @@
+# title: Unit 11: Voice (Câu bị động) · Science
+# group: Units
+# src: Starter TOEIC 3rd ed., Chapter 1 Unit 11 + Chapter 2 Unit 11 (Science)
+v|microscope (n)|kính hiển vi
+v|telescope (n)|kính thiên văn
+v|planet (n)|hành tinh
+v|astronaut (n)|phi hành gia
+v|rocket (n)|tên lửa
+v|chemical (n)|hóa chất
+v|physics (n)|vật lý
+v|biology (n)|sinh học
+v|scientist (n)|nhà khoa học
+v|calculator (n)|máy tính bỏ túi
+v|goggles (n)|kính bảo hộ
+v|observatory (n)|đài thiên văn
+v|gauge (n)|đồng hồ đo
+v|tank (n)|bình chứa
+v|seminar (n)|buổi hội thảo
+v|research (n)|sự nghiên cứu
+# hand
+grammar|Công thức câu bị động:|be + V3 (p.p.)|be + V-ing|have + V-ing|do + V3
+grammar|English ____ in many countries.|is spoken|speaks|is speaking|spoke
+grammar|The rocket ____ last year.|was built|built|is building|was build
+grammar|The test ____ by the scientists.|was done|did|was doing|has do
+grammar|The report has already ____.|been finished|finished by|be finished|finishing
+grammar|The telescope ____ every night.|is used|uses|is using|used to
+grammar|The new planet was found ____ a young scientist.|by|with|at|from
+grammar|She is interested ____ physics.|in|at|with|on
+grammar|We were surprised ____ the results.|at|in|on|to
+grammar|The students were made ____ goggles.|to wear|wear|wearing|worn
+form|He is a famous ____. (nhà khoa học)|scientist|science|scientific|scientifically
+form|Be careful with ____. (hóa chất, số nhiều)|chemicals|chemistry|chemist|chemically
+colloc|look ____ a microscope (nhìn qua kính hiển vi)|through|on|across|over to
+colloc|____ an experiment (làm thí nghiệm)|do|make on|play|take on
+tip|Part 2: "Can I borrow your telescope tonight?" Đáp án hay nhất?|Sure. It's in my bedroom.|I have two TVs.|No thanks, I'm busy.|It's a telescope.
+tip|Part 1: tranh tên lửa đang bay lên. Câu đúng?|The rocket is taking off.|The rocket is landing.|The rocket is broken.|People are in a bus.
