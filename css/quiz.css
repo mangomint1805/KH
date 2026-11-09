@@ -797,3 +797,8 @@ html[data-qz=y2k] .podium .p .blk { font-size: 80px; }
 .hgrid.kedit .hopt { cursor: pointer; outline: 3px dashed rgba(255,255,255,.85); outline-offset: -6px; }
 .hgrid.kedit .hopt:hover { filter: brightness(1.12); }
 .khint { margin: 8px 0; padding: 8px 14px; border-radius: 12px; background: #fff7d6; color: #5a4300; font: 600 clamp(15px, 1.5vw, 20px)/1.35 "IBM Plex Sans", sans-serif; }
+
+/* Ẩn câu hỏi ở câu nhóm: bài đọc chiếm cả màn hình (nút 📝 / phím H) */
+body.hideqs .gwrap:not(.rev) { grid-template-columns: minmax(0, 1fr); }
+body.hideqs .gwrap:not(.rev) .gqs { display: none; }
+body.hideqs .gwrap:not(.rev) .gstim .gp { font-size: clamp(20px, min(2.3vw, 3.8vh), 40px); }

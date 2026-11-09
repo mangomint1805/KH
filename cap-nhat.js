@@ -3,7 +3,8 @@
   'use strict';
   var NEWS = [
     { v: '1.22.1', d: '2026-11-09', items: [
-      'Câu hỏi theo nhóm (Part 6, 7…): bài đọc rộng hơn và chữ to hơn, khung câu hỏi gọn lại cho đỡ chiếm chỗ.'
+      'Câu hỏi theo nhóm (Part 6, 7…): bài đọc rộng hơn và chữ to hơn, khung câu hỏi gọn lại cho đỡ chiếm chỗ.',
+      'Thêm nút 📝 Ẩn câu hỏi (phím H) khi làm câu nhóm: bấm để bài đọc chiếm cả màn hình, bấm lần nữa để hiện lại câu hỏi. Máy nhớ lựa chọn cho các câu sau.'
     ] },
     { v: '1.22', d: '2026-11-08', items: [
       '📚 Tạo từ bài học có thêm khoá "Starter TOEIC" (sách Starter TOEIC 3rd ed.) cho lớp mới bắt đầu: 12 unit, mỗi unit ghép một chủ điểm ngữ pháp với một chủ đề (Unit 1 Trợ động từ · Sức khoẻ, Unit 2 Các thì · Trường học … Unit 12 Liên từ, giới từ · Sở thích).',

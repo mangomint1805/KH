@@ -496,7 +496,7 @@ function answerView(q, still) {
   const ring = '<div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + T + '</div></div>';
   if (G) {
     main.innerHTML = qHead(q) + '<div class="gwrap">' + stimHtml(q) + '<div class="gqs">' + span(q).map((i) => gqHtml(i, true)).join('') + '</div></div>' +
-      '<div class="gbot"><span style="flex:1"></span>' + ring + '<div class="answered"><b id="na">0</b>' + (grpOf(q) ? 'đã nộp' : 'đã trả lời') + '</div><button class="btn" id="bPause" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip">Bỏ qua ⏭</button></div>';
+      '<div class="gbot">' + qsBtn() + '<span style="flex:1"></span>' + ring + '<div class="answered"><b id="na">0</b>' + (grpOf(q) ? 'đã nộp' : 'đã trả lời') + '</div><button class="btn" id="bPause" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip">Bỏ qua ⏭</button></div>';
     audPaint();
   } else main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + (ex ? '' : qlen(Q.t)) + '">' + (ex ? '🎧 Câu ' + (q + 1) + ': chọn A, B hay C?' : qtHtml(Q.t)) + '</div>' +
     '<div class="mid">' + ring + '<div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
@@ -863,12 +863,24 @@ function csv() {
 }
 
 // ---------- điều khiển ----------
+// Ẩn / hiện khung câu hỏi ở câu nhóm (bài đọc chiếm cả màn hình) · phím H
+let hideQs = false; try { hideQs = localStorage.getItem('mq.hideQs') === '1'; } catch (e) {}
+document.body.classList.toggle('hideqs', hideQs);
+const qsLbl = () => hideQs ? '📝 Hiện câu hỏi' : '📝 Ẩn câu hỏi';
+function qsBtn() { return '<button class="btn" id="bQs" title="Ẩn / hiện câu hỏi (phím H)">' + qsLbl() + '</button>'; }
+function toggleQs() {
+  hideQs = !hideQs; document.body.classList.toggle('hideqs', hideQs);
+  try { localStorage.setItem('mq.hideQs', hideQs ? '1' : '0'); } catch (e) {}
+  const b = $('bQs'); if (b) b.textContent = qsLbl();
+}
+main.addEventListener('click', (e) => { if (e.target.closest('#bQs')) toggleQs(); });
 document.addEventListener('keydown', (e) => {
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
   if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if (document.getElementById('qzbox')) { if (/^( |Enter|Escape|z|Z)$/.test(e.key)) { e.preventDefault(); zoomClose(); } return; }
   if ((e.key === 'e' || e.key === 'E') && $('bKey')) { e.preventDefault(); $('bKey').click(); return; }
   if ((e.key === 's' || e.key === 'S') && $('bTr')) { e.preventDefault(); $('bTr').click(); return; }
+  if ((e.key === 'h' || e.key === 'H') && main.querySelector('.gwrap:not(.rev)')) { e.preventDefault(); toggleQs(); return; }
   if (main.querySelector('.qaud')) {
     if (e.key === 'a' || e.key === 'A' || e.key === 'r' || e.key === 'R') { e.preventDefault(); qToggle(); return; }
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); const a = qEnsure(); if (a) qSeek(a.currentTime + (e.key === 'ArrowLeft' ? -5 : 5)); return; }
