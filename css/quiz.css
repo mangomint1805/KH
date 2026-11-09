@@ -802,3 +802,28 @@ html[data-qz=y2k] .podium .p .blk { font-size: 80px; }
 body.hideqs .gwrap:not(.rev) { grid-template-columns: minmax(0, 1fr); }
 body.hideqs .gwrap:not(.rev) .gqs { display: none; }
 body.hideqs .gwrap:not(.rev) .gstim .gp { font-size: clamp(20px, min(2.3vw, 3.8vh), 40px); }
+
+/* ---- 1.23: dừng giờ, câu nhóm không giới hạn, chữa lùi lại, xem câu hỏi to ---- */
+.timer.inf { font-size: .9em; }
+.ring.frz .fg { stroke: #9aa3ad; }
+.ring.frz .timer::after { content: " ⏸"; font-size: .45em; vertical-align: middle; }
+.nolim { font-weight: 700; color: #fff; opacity: .9; padding: 0 6px; }
+.mid .ctl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
+.mid .ctl .nolim { color: inherit; }
+.gdots button { font: inherit; padding: 4px 14px; border-radius: 99px; border: 0; background: rgba(255,255,255,.22); color: #fff; font-weight: 700; cursor: pointer; }
+.gdots button.on { background: #fff; color: var(--ink); }
+.gdots button.done { background: rgba(255,255,255,.45); color: var(--ink); opacity: 1; }
+.gdots button.done:hover { background: #fff; }
+.gdots button:disabled { cursor: default; }
+.gdots button:not(.on):not(.done) { opacity: .55; }
+/* transcript lúc chữa: chữ to hơn, khung cao hơn */
+.trbox { max-height: 62vh; }
+.tren { font-size: clamp(22px, 2.6vw, 38px); }
+.trvi { font-size: clamp(17px, 1.9vw, 27px); }
+.trk { font-size: clamp(21px, 2.4vw, 33px); }
+/* ❓ Xem câu hỏi: hiện câu hỏi + đáp án thật to */
+#qzbox.qv { cursor: zoom-out; padding: 3vh 3vw; }
+#qzbox .qvcard { background: var(--card, #fff); color: var(--ink, #222); border-radius: 22px; padding: clamp(18px, 3vh, 40px) clamp(20px, 3vw, 48px); width: min(94vw, 1500px); max-height: 90vh; overflow: auto; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+#qzbox .qvt { font: 700 clamp(26px, 3.4vw, 54px)/1.3 "IBM Plex Sans", sans-serif; margin-bottom: clamp(14px, 2.5vh, 30px); }
+#qzbox .qvo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#qzbox .qvo .hopt { font-size: clamp(22px, 2.7vw, 42px); min-height: 0; padding: 18px 22px; }

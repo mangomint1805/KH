@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.23', d: '2026-11-09', items: [
+      '⏸ Dừng giờ (phím P): chỉ dừng đồng hồ, học viên vẫn làm bài, âm thanh vẫn chạy. Bấm ▶ Chạy giờ để đếm tiếp. Muốn dừng hẳn (khoá điện thoại, tắt âm thanh) thì bấm ⏹ Dừng tất cả.',
+      'Câu nhóm Part 3/4/6/7 không giới hạn thời gian nữa (đồng hồ hiện ∞, điện thoại ghi "Không giới hạn"): cả lớp làm xong thì tự chấm, hoặc thầy bấm Chấm bài ⏭. Trả lời đúng là được trọn điểm, không tính nhanh chậm.',
+      'Lúc chữa nhóm câu: quay lại câu trước được (nút ◀ hoặc bấm số câu ở trên), chữa lại bao nhiêu lần cũng được.',
+      '❓ Xem câu hỏi (phím Q) lúc chữa: hiện câu hỏi và 4 đáp án thật to giữa màn hình, bấm để đóng. Transcript lúc chữa chữ to hơn, khung cao hơn.'
+    ] },
     { v: '1.22.1', d: '2026-11-09', items: [
       'Câu hỏi theo nhóm (Part 6, 7…): bài đọc rộng hơn và chữ to hơn, khung câu hỏi gọn lại cho đỡ chiếm chỗ.',
       'Thêm nút 📝 Ẩn câu hỏi (phím H) khi làm câu nhóm: bấm để bài đọc chiếm cả màn hình, bấm lần nữa để hiện lại câu hỏi. Máy nhớ lựa chọn cho các câu sau.'

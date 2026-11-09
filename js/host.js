@@ -33,6 +33,9 @@ const gData = (q) => (SR[q] && quiz.groups && quiz.groups[SR[q].id]) || null;
 const lbl = (q) => qLabel(SR, quiz.groups, q);
 const span = (q) => { const R = grpOf(q); return R ? Array.from({ length: R.n }, (_, i) => R.f + i) : [q]; };
 const pk = (q) => (grpOf(q) ? grpOf(q).f : q); // khoá tạm dừng: cả nhóm dùng chung khoảng dừng của câu đầu
+// 1.23: câu nhóm (Part 3/4/6/7) không giới hạn thời gian; thầy bấm "Chấm bài ⏭" khi cả lớp xong
+const untimed = (q) => !!grpOf(q);
+const OPEN_MS = 6 * 3600 * 1000; // "không giới hạn" = mở 6 tiếng (luật RTDB vẫn cần endAt)
 function limitOf(q) { return span(q).reduce((t, i) => t + (quiz.qs[i].time || 20), 0); }
 function setRuns() { SR = groupRuns(quiz.qs); RUN = GRP && meta.mode !== 'gold' ? SR : quiz.qs.map(() => null); }
 const hasGroups = () => SR.some(Boolean);
@@ -167,7 +170,7 @@ document.addEventListener('click', (e) => {
 // (8) tạm dừng: lúc dừng, state.phase = 'show' nhưng vẫn giữ startAt/endAt (luật cũ chấp nhận, điện thoại không gửi được đáp án).
 // Khoảng dừng lưu trên máy thầy để trừ ra khi tính thời gian trả lời.
 let PZ = {};
-function pzLoad() { try { PZ = JSON.parse(localStorage.getItem('qz.pz.' + PIN) || '{}'); } catch (e) { PZ = {}; } }
+function pzLoad() { try { PZ = JSON.parse(localStorage.getItem('qz.pz.' + PIN) || '{}'); } catch (e) { PZ = {}; } try { FRZ = JSON.parse(localStorage.getItem('qz.frz.' + PIN) || 'null'); } catch (e) { FRZ = null; } }
 function pzSave() { try { localStorage.setItem('qz.pz.' + PIN, JSON.stringify(PZ)); } catch (e) {} }
 function pausedMs(q, at) { return (PZ[q] || []).reduce((t, [a, b]) => t + (a < at ? Math.min(b, at) - a : 0), 0); }
 const isPaused = () => state.phase === 'show' && state.endAt != null;
@@ -481,7 +484,8 @@ function qHead(q, one) {
 
 async function goAnswer(q) {
   clearTimeout(autoT); if (qAud && !qAud.ended) audStop();
-  const startAt = Math.round(now()) + 300, endAt = startAt + limitOf(q) * 1000;
+  const startAt = Math.round(now()) + 300, endAt = startAt + (untimed(q) ? OPEN_MS : limitOf(q) * 1000);
+  FRZ = null; frzSave();
   try { await D.set(r('state'), { phase: 'answer', q, qs: String(q), startAt, endAt }); } catch (e) { return fail(e); }
   state = { phase: 'answer', q, qs: String(q), startAt, endAt };
   answerView(q);
@@ -493,15 +497,16 @@ function answerView(q, still) {
   if (!still) Sound.mode(G && (G.au || G.aurl) ? null : 'q'); // nhóm có đoạn nghe: tắt nhạc nền
   const C = 2 * Math.PI * 58;
   const ex = isEx(Q);
-  const ring = '<div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer" id="tm">' + T + '</div></div>';
+  const ring = '<div class="ring" id="ring"><svg viewBox="0 0 140 140"><circle class="bgc" cx="70" cy="70" r="58"/><circle class="fg" id="arc" cx="70" cy="70" r="58" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg><div class="timer' + (untimed(q) ? ' inf' : '') + '" id="tm">' + (untimed(q) ? '∞' : T) + '</div></div>';
   if (G) {
     main.innerHTML = qHead(q) + '<div class="gwrap">' + stimHtml(q) + '<div class="gqs">' + span(q).map((i) => gqHtml(i, true)).join('') + '</div></div>' +
-      '<div class="gbot">' + qsBtn() + '<span style="flex:1"></span>' + ring + '<div class="answered"><b id="na">0</b>' + (grpOf(q) ? 'đã nộp' : 'đã trả lời') + '</div><button class="btn" id="bPause" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip">Bỏ qua ⏭</button></div>';
+      '<div class="gbot">' + qsBtn() + '<span style="flex:1"></span>' + ring + '<div class="answered"><b id="na">0</b>' + (grpOf(q) ? 'đã nộp' : 'đã trả lời') + '</div>' + ctrlBtns(q) + '</div>';
     audPaint();
   } else main.innerHTML = qHead(q) + '<div class="qtext' + (imgTag(Q, 'x') ? ' sm' : '') + (ex ? '' : qlen(Q.t)) + '">' + (ex ? '🎧 Câu ' + (q + 1) + ': chọn A, B hay C?' : qtHtml(Q.t)) + '</div>' +
-    '<div class="mid">' + ring + '<div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><button class="btn" id="bPause" style="margin-top:10px" title="Tạm dừng (phím P)">⏸ Tạm dừng</button> <button class="btn" id="bSkip" style="margin-top:10px">Bỏ qua ⏭</button></div></div>' +
+    '<div class="mid">' + ring + '<div id="pics">' + imgTag(Q, 'qimg') + '</div><div class="answered"><b id="na">0</b>đã trả lời<br><div class="ctl">' + ctrlBtns(q) + '</div></div></div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + '</div>' : '<div></div>').join('') + '</div>';
   $('bSkip').onclick = () => goReveal(q);
+  if ($('bFrz')) $('bFrz').onclick = () => toggleFrz();
   $('bPause').onclick = () => pause();
   stopAns();
   let heard = -1, lastBeep = 0;
@@ -517,8 +522,11 @@ function answerView(q, still) {
   let last = -1;
   clearInterval(timer);
   if (still) return;
+  if (untimed(q)) return; // không giới hạn: không đếm ngược
   timer = setInterval(() => {
+    if (FRZ && FRZ.q === q) { const tm = $('tm'); if (tm) { tm.textContent = Math.ceil(FRZ.left / 1000); $('ring').classList.add('frz'); } Sound.hurry(false); return; }
     const ms = Math.max(0, state.endAt - now()), left = Math.min(T, Math.ceil(ms / 1000)), tm = $('tm');
+    if ($('ring')) $('ring').classList.remove('frz');
     if (tm) { tm.textContent = left; $('ring').classList.toggle('low', left <= 5); $('arc').style.strokeDashoffset = (C * (1 - Math.min(1, ms / (T * 1000)))).toFixed(1); }
     if (left !== last && left <= 5 && left > 0) { Sound.tick(); Sound.hurry(true); }
     last = left;
@@ -529,6 +537,7 @@ let pauseOv = null;
 async function pause() {
   if (state.phase !== 'answer') return;
   const q = state.q, at = Math.round(now());
+  if (FRZ && FRZ.q === q) { state.endAt = at + FRZ.left; (PZ[pk(q)] = PZ[pk(q)] || []).push([FRZ.at, at]); pzSave(); FRZ = null; frzSave(); }
   clearInterval(timer); Sound.mode(null); gAudStop();
   PZ.cur = { q, at }; pzSave();
   const st = { phase: 'show', q, qs: String(q), startAt: state.startAt, endAt: state.endAt };
@@ -546,6 +555,26 @@ function pauseView(q) {
   pauseOv.innerHTML = '<div class="pic">⏸</div><div class="t">Tạm dừng · còn ' + left + ' giây</div><div class="pbtns"><button class="btn pri" id="bResume">▶ Tiếp tục</button><button class="btn" id="bSkip2">Bỏ qua ⏭</button></div><div class="ph">Phím Space hoặc P để tiếp tục</div>';
   document.body.appendChild(pauseOv);
   $('bResume').onclick = unpause; $('bSkip2').onclick = () => goReveal(q);
+}
+// ⏸ Dừng giờ: chỉ dừng đồng hồ, học viên vẫn làm bài, âm thanh vẫn chạy (mở endAt thật xa, nhớ số giây còn lại)
+let FRZ = null;
+function frzSave() { try { localStorage.setItem('qz.frz.' + PIN, JSON.stringify(FRZ)); } catch (e) {} }
+function ctrlBtns(q) {
+  const f = FRZ && FRZ.q === q;
+  return (untimed(q) ? '<span class="nolim">⏱ Không giới hạn thời gian</span> ' : '<button class="btn' + (f ? ' pri' : '') + '" id="bFrz" title="Dừng / chạy lại đồng hồ, học viên vẫn làm bài (phím P)">' + (f ? '▶ Chạy giờ' : '⏸ Dừng giờ') + '</button> ') +
+    '<button class="btn" id="bPause" title="Dừng tất cả: khoá điện thoại, dừng âm thanh">⏹ Dừng tất cả</button> <button class="btn" id="bSkip">' + (untimed(q) ? 'Chấm bài ⏭' : 'Bỏ qua ⏭') + '</button>';
+}
+async function toggleFrz() {
+  if (state.phase !== 'answer' || untimed(state.q)) return;
+  const q = state.q, t = Math.round(now());
+  let st;
+  if (FRZ && FRZ.q === q) { st = { phase: 'answer', q, qs: String(q), startAt: state.startAt, endAt: t + FRZ.left }; }
+  else { const left = Math.max(1000, state.endAt - t); st = { phase: 'answer', q, qs: String(q), startAt: state.startAt, endAt: t + OPEN_MS }; FRZ = { q, left, at: t }; }
+  try { await D.set(r('state'), st); } catch (e) { return fail(e); }
+  if (st.endAt !== t + OPEN_MS) { (PZ[pk(q)] = PZ[pk(q)] || []).push([FRZ.at, t]); pzSave(); FRZ = null; }
+  frzSave(); state = st;
+  const b = $('bFrz'); if (b) { const f = FRZ && FRZ.q === q; b.textContent = f ? '▶ Chạy giờ' : '⏸ Dừng giờ'; b.classList.toggle('pri', !!f); }
+  toast(FRZ ? '⏸ Đã dừng đồng hồ · học viên vẫn làm bài' : '▶ Đồng hồ chạy tiếp');
 }
 function closePause() { if (pauseOv) { pauseOv.remove(); pauseOv = null; } }
 async function unpause() {
@@ -572,6 +601,7 @@ async function goReveal(q) {
   revealing = q;
   clearInterval(timer); stopAns(); Sound.mode(null); closePause(); audStop();
   const wasOpen = state.phase === 'answer' || isPaused();
+  if (FRZ && FRZ.q === q) { (PZ[pk(q)] = PZ[pk(q)] || []).push([FRZ.at, Math.round(now())]); pzSave(); FRZ = null; frzSave(); }
   if (isPaused()) { const t = Math.round(now()), from = PZ.cur ? PZ.cur.at : t; (PZ[pk(q)] = PZ[pk(q)] || []).push([from, t]); delete PZ.cur; pzSave(); }
   const Q = quiz.qs[q];
   if (wasOpen) gAudStop();
@@ -606,6 +636,21 @@ async function goReveal(q) {
   revealing = -1;
 }
 
+// quay lại / nhảy tới câu đã chữa trong cùng nhóm
+function goRevealBack(i) {
+  const R = grpOf(state.q);
+  if (state.phase !== 'reveal' || !R || i < R.f || i > R.l || i === state.q || !keys[i] || busy || revealing !== -1) return;
+  keyEdit = false; goReveal(i);
+}
+// ❓ Xem câu hỏi: hiện câu hỏi + 4 đáp án thật to (bấm để đóng), giống xem hình
+function qvOpen() {
+  const q = state.q, Q = quiz && quiz.qs[q]; if (!Q) return;
+  zoomClose();
+  const d = document.createElement('div'); d.id = 'qzbox'; d.className = 'qv'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Câu hỏi phóng to');
+  d.innerHTML = '<div class="qvcard"><div class="qvt"><b>' + lbl(q) + '.</b> ' + qtHtml(Q.t) + '</div><div class="qvo">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '').join('') + '</div></div><button type="button" class="qzx" aria-label="Đóng">✕</button>';
+  d.onclick = zoomClose; document.body.appendChild(d);
+}
+
 // Lời thầy trên màn chiếu (sửa được qua form lời nhắn)
 const HL = {
   allOk: ['Cả lớp đúng hết luôn, tự hào ghê 🥹', '100% đúng, quá đỉnh 💯', 'Everyone got it! 🥹', 'Perfect score, class! 💯'],
@@ -623,8 +668,9 @@ function revealView(q) {
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
     '<div class="hgrid">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '" data-i="' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) +
     (Q.aud ? qBarHtml() : '') +
-    '<div style="text-align:right"><button class="btn big" id="bKey" title="Thêm / bỏ đáp án đúng rồi chấm lại (phím E)">✎ Sửa đáp án</button> ' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
+    '<div style="text-align:right"><button class="btn big" id="bKey" title="Thêm / bỏ đáp án đúng rồi chấm lại (phím E)">✎ Sửa đáp án</button> ' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (Q.img && IMGS[Q.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của câu này (phím Z)">🖼 Xem lại ảnh</button> ' : '') + '<button class="btn big" id="bQv" title="Xem lại câu hỏi to (phím Q)">❓ Xem câu hỏi</button> ' + '<button class="btn big pri" id="bNext">' + (q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = () => { audStop(); next(); };
+  $('bQv').onclick = qvOpen;
   if (Q.aud) { qCur = Q; if (!qAud) audPlay(Q, q, null, true); else qPaint(); const el = $('audst'); if (el && qAud.paused) el.textContent = '🔊 Bấm ▶ để nghe lại'; }
   if ($('bZoom')) $('bZoom').dataset.src = IMGS[Q.img];
   requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
@@ -638,13 +684,16 @@ function gRevealView(q) {
   const vibe = tot >= 2 && Q.c.length < 4 ? (right === tot ? hsay(HL.allOk, PIN + q) : right === 0 ? hsay(HL.allNo, PIN + q) : '') : '';
   const more = R && q < R.l;
   main.innerHTML = qHead(q, true) + '<div class="gwrap rev">' + stimHtml(q) + '<div class="grev">' +
-    (R ? '<div class="gdots">' + span(q).map((i) => '<span class="' + (i === q ? 'on' : i < q ? 'done' : '') + '">' + lbl(i) + '</span>').join('') + '</div>' : '') +
+    (R ? '<div class="gdots">' + span(q).map((i) => '<button type="button" data-gq="' + i + '" class="' + (i === q ? 'on' : keys[i] ? 'done' : '') + '"' + (i === q || !keys[i] ? ' disabled' : '') + ' title="' + (keys[i] && i !== q ? 'Quay lại chữa câu ' + lbl(i) : '') + '">' + lbl(i) + '</button>').join('') + '</div>' : '') +
     '<div class="gq cur"><div class="st"><b>' + lbl(q) + '.</b> ' + qtHtml(Q.t) + '</div></div>' + (vibe ? '<div class="vibe">' + esc(vibe) + '</div>' : '') +
     '<div class="chart" id="chart">' + Q.o.map((o, i) => o ? '<div class="col' + (Q.c.includes(i) ? '' : ' dim') + '"><span class="n">' + cnt[i] + (Q.c.includes(i) ? ' ✔' : '') + '</span><div class="b k' + i + '" style="--h:' + Math.max(8, Math.round(cnt[i] / mx * 120)) + 'px"></div><div class="s k' + i + '">' + SHAPES[i] + '</div></div>' : '').join('') + '</div>' +
     '<div class="hgrid gh">' + Q.o.map((o, i) => o ? '<div class="hopt k' + i + (Q.c.includes(i) ? ' win' : ' dim') + '" data-i="' + i + '"><span class="shape">' + SHAPES[i] + '</span>' + esc(o) + (Q.c.includes(i) ? '<span class="ok">✔</span>' : '') + '</div>' : '<div></div>').join('') + '</div>' + trHtml(Q) + '</div></div>' +
     '<div style="text-align:right"><button class="btn big" id="bKey" title="Thêm / bỏ đáp án đúng rồi chấm lại (phím E)">✎ Sửa đáp án</button> ' + (trHtml(Q) ? '<button class="btn big" id="bTr" title="Hiện / ẩn transcript (phím S)">📜 Transcript</button> ' : '') + (G.img && IMGS[G.img] ? '<button class="btn big" id="bZoom" title="Xem lại hình của nhóm (phím Z)">🖼 Xem lại ảnh</button> ' : '') +
-    '<button class="btn big pri" id="bNext">' + (more ? 'Câu ' + lbl(q + 1) + ' ▶' : q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
+    (R && q > R.f ? '<button class="btn big" id="bPrev" title="Quay lại chữa câu trước">◀ Câu ' + lbl(q - 1) + '</button> ' : '') + '<button class="btn big" id="bQv" title="Xem lại câu hỏi to (phím Q)">❓ Xem câu hỏi</button> ' + '<button class="btn big pri" id="bNext">' + (more ? 'Câu ' + lbl(q + 1) + ' ▶' : q + 1 < quiz.qs.length ? 'Bảng xếp hạng ▶' : 'Xem kết quả 🏆') + '</button></div>';
   $('bNext').onclick = next;
+  if ($('bPrev')) $('bPrev').onclick = () => goRevealBack(q - 1);
+  main.querySelectorAll('[data-gq]').forEach((b) => { b.onclick = () => goRevealBack(+b.dataset.gq); });
+  $('bQv').onclick = qvOpen;
   if ($('bZoom')) $('bZoom').dataset.src = IMGS[G.img];
   audPaint();
   requestAnimationFrame(() => requestAnimationFrame(() => { const c = $('chart'); if (c) c.classList.add('go'); }));
@@ -833,7 +882,7 @@ function compute() {
       if (an && an.at < K.s - 1500) an = null;
       const ok = !!(an && K.c.includes(an.a));
       const ms = an ? an.at - K.s - pausedMs(pk(q), an.at) : null;
-      let pts = points(ok, ms, limitOf(q), Q.pts), b = 0;
+      let pts = points(ok, untimed(q) ? 0 : ms, limitOf(q), Q.pts), b = 0;
       if (Q.pts) { x.k = ok ? x.k + 1 : 0; if (ok && meta.streak) b = streakBonus(x.k); }
       pts += b; x.s += pts; if (ok) x.ok++;
       x.q[q] = { a: an ? an.a : null, ok, pts, b, ms };
@@ -895,7 +944,8 @@ document.addEventListener('keydown', (e) => {
   if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && main.querySelector('.gaud')) { e.preventDefault(); audSeek(aud.currentTime + (e.key === 'ArrowLeft' ? -5 : 5)); return; }
   if (e.key === 'f' || e.key === 'F') full();
   if (e.key === 't' || e.key === 'T') nextTheme();
-  if ((e.key === 'p' || e.key === 'P') && PIN && !busy && revealing === -1) { if (state.phase === 'answer') pause(); else if (isPaused()) unpause(); }
+  if ((e.key === 'p' || e.key === 'P') && PIN && !busy && revealing === -1) { if (state.phase === 'answer') { if (untimed(state.q)) pause(); else toggleFrz(); } else if (isPaused()) unpause(); }
+  if ((e.key === 'q' || e.key === 'Q') && PIN && state.phase === 'reveal') { e.preventDefault(); qvOpen(); return; }
 });
 function full() { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
 $('bFull').onclick = full;

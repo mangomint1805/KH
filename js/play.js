@@ -193,7 +193,7 @@ function answerScreen(q, Q, st) {
     b.onclick = () => { b.classList.add('chosen'); pick(q, i); };
     g.appendChild(b);
   });
-  const tickT = () => { const s = Math.min(Q.time, Math.max(0, Math.ceil((st.endAt - now()) / 1000))); $('aTime').textContent = '⏱ ' + s + 's'; if (s <= 0) { clearInterval(tmr); render(); } };
+  const tickT = () => { if (st.endAt - now() > 3600e3) { $('aTime').textContent = '⏸ Thầy đang dừng giờ'; return; } const s = Math.min(Q.time, Math.max(0, Math.ceil((st.endAt - now()) / 1000))); $('aTime').textContent = '⏱ ' + s + 's'; if (s <= 0) { clearInterval(tmr); render(); } };
   tickT(); tmr = setInterval(tickT, 250);
 }
 
@@ -272,6 +272,7 @@ function groupScreen(f, ids, QS, st) {
   paintG(f, ids);
   const tickT = () => {
     const ms = st.endAt - now(), s = Math.max(0, Math.ceil(ms / 1000));
+    if (ms > 3600e3) { $('gTime').textContent = '⏱ Không giới hạn · làm xong bấm Nộp'; return; }
     $('gTime').textContent = '⏱ ' + s + 's';
     // sắp hết giờ: tự nộp những câu đã chọn (luật cho trễ tối đa 1,5 giây)
     if (ms <= 700) { clearInterval(tmr); if (state === st) gSubmit(f, ids, true); }
