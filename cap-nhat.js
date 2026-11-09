@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.22.1', d: '2026-11-09', items: [
+      'Câu hỏi theo nhóm (Part 6, 7…): bài đọc rộng hơn và chữ to hơn, khung câu hỏi gọn lại cho đỡ chiếm chỗ.'
+    ] },
     { v: '1.22', d: '2026-11-08', items: [
       '📚 Tạo từ bài học có thêm khoá "Starter TOEIC" (sách Starter TOEIC 3rd ed.) cho lớp mới bắt đầu: 12 unit, mỗi unit ghép một chủ điểm ngữ pháp với một chủ đề (Unit 1 Trợ động từ · Sức khoẻ, Unit 2 Các thì · Trường học … Unit 12 Liên từ, giới từ · Sở thích).',
       'Mỗi unit có sẵn 31–33 câu ngắn, dễ: nghĩa từ vựng của chủ đề (Anh → Việt, Việt → Anh), loại từ, cụm từ đi kèm, ngữ pháp kiểu Part 5 câu ngắn, mẹo Part 1 / Part 2. Câu soạn mới theo nội dung từng unit, không chép bài tập trong sách.',
