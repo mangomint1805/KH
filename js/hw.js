@@ -1,7 +1,7 @@
 /* Minto Quiz — 📝 bài về nhà (màn học sinh, hw.html?id=…).
    Đề ở Firestore quizHW/{id} (không kèm đáp án). Học sinh làm theo tốc độ của mình, nộp một lần vào quizHWSub/{id}_{uid};
    nộp xong mới đọc được đáp án quizHWKey/{id} để xem điểm và xem lại từng câu. */
-import { $, esc, qtHtml, show, player, bgfx, confetti, SDK, SHAPES, LETTERS, CLASSES, classLabel, groupRuns, qLabel } from './common.js?v=20';
+import { $, esc, qtHtml, show, player, bgfx, confetti, SDK, SHAPES, LETTERS, CLASSES, classLabel, groupRuns, qLabel } from './common.js?v=21';
 // 📦 nhóm câu (Part 6/7…): cả nhóm trên một màn kèm đoạn văn; bài về nhà không có hình / âm thanh (chỉ thầy đọc được)
 let RUNS = [];
 const lbl = (i) => qLabel(RUNS, H.groups, i);

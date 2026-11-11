@@ -131,7 +131,31 @@ export const Sound = (() => {
   // tải xong mới có src. g = mức chỉnh cho đều tai giữa các bài (tính lúc thầy tải nhạc lên)
   // loop = [giây bắt đầu, giây kết thúc]: chỉ lặp một đoạn của bài. Thiên thần (Approval desire, ~165 BPM, 1 ô nhịp ≈ 1,454 giây)
   // lặp 16 ô nhịp dạo đầu (0–23,27 giây), quay lại ngay trước phách trống đầu tiên vào ở 23,29 giây (thầy muốn ngắn hơn bản 33,7 giây)
-  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089 } };
+  // seam = lặp liền mạch cả bài bằng Web Audio (không bị khựng như thẻ <audio>): a = phách đầu tiên của bài, b = phách cuối,
+  // tới b thì vào lại a đúng nhịp; xf giây đuôi sau b được giảm dần chồng lên đoạn đầu cho khỏi bị "tách". dur để nhận đúng bài
+  // (thầy đổi bài khác thì không khớp dur, tự quay về cách phát thường). Thiên thần: Kyubism inst, 143,35 giây.
+  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089, seam: { dur: 143.35, a: 0.6502, b: 140.4343, xf: 0.25 } } };
+  let sbSrc = null, sbGain = null, sbT0 = 0, sbPos = 0, sbRate = 1;
+  async function seamBuf(T) {
+    if (T.sbuf && T.sbufSrc === T.src) return T.sbuf;
+    const ab = await (await fetch(T.src)).arrayBuffer();
+    const buf = await new Promise((ok, no) => { const r = ctx.decodeAudioData(ab, ok, no); if (r && r.then) r.then(ok, no); });
+    const S = T.seam;
+    if (!S || Math.abs(buf.duration - S.dur) > 0.3) return null;
+    const sr = buf.sampleRate, a = Math.round(S.a * sr), b = Math.round(S.b * sr), n = b - a, xf = Math.min(Math.round(S.xf * sr), buf.length - b);
+    const L = ctx.createBuffer(buf.numberOfChannels, n, sr);
+    for (let ch = 0; ch < buf.numberOfChannels; ch++) {
+      const src = buf.getChannelData(ch), d = L.getChannelData(ch);
+      d.set(src.subarray(a, b));
+      for (let i = 0; i < xf; i++) { const k = 1 - i / xf; d[i] += src[b + i] * k * k; } // đuôi phách cuối tắt dần dưới phách đầu
+    }
+    T.sbuf = L; T.sbufSrc = T.src; return L;
+  }
+  function seamStop() {
+    if (!sbSrc) return;
+    sbPos += (ctx.currentTime - sbT0) * sbRate; try { sbSrc.stop(); } catch (e) {} sbSrc.disconnect(); sbSrc = null;
+  }
+  function seamRate(r) { if (!sbSrc) return; sbPos += (ctx.currentTime - sbT0) * sbRate; sbT0 = ctx.currentTime; sbRate = r; sbSrc.playbackRate.setValueAtTime(r, ctx.currentTime); }
   let trk = null, trkSrc = null, trkGain = null, trkOn = false, trkTok = 0, trkWatch = 0, trkJump = false;
   // canh vòng lặp: gần tới điểm kết thúc thì giảm nhỏ rất nhanh, nhảy về đầu đoạn rồi mở lại (nghe liền, không bị khựng)
   function watchLoop() {
@@ -264,7 +288,21 @@ export const Sound = (() => {
   }
   function startLoop() {
     if (loop || trkOn || !musicOn || paused) return; if (!ac()) return;
-    if (TRACKS[theme] && TRACKS[theme].src && !TRACKS[theme].bad) {
+    const TT = TRACKS[theme];
+    if (TT && TT.src && !TT.bad && TT.seam) {
+      trkOn = true; const tok = ++trkTok;
+      seamBuf(TT).then((L) => {
+        if (tok !== trkTok || !trkOn) return;
+        if (!L) { TT.seam = null; trkOn = false; startLoop(); return; } // bài khác: phát kiểu thường
+        if (!sbGain) { sbGain = ctx.createGain(); sbGain.connect(musicBus); }
+        if (TT.sbufAt !== TT.src) { sbPos = 0; TT.sbufAt = TT.src; }
+        sbGain.gain.value = TT.g; sbRate = fast ? 1.06 : 1;
+        sbSrc = ctx.createBufferSource(); sbSrc.buffer = L; sbSrc.loop = true; sbSrc.playbackRate.value = sbRate; sbSrc.connect(sbGain);
+        sbPos = sbPos % L.duration; sbT0 = ctx.currentTime + 0.02; sbSrc.start(sbT0, sbPos);
+      }).catch((e) => { if (tok !== trkTok) return; console.warn('Không lặp liền mạch được, phát kiểu thường', e); TT.seam = null; trkOn = false; startLoop(); });
+      return;
+    }
+    if (TT && TT.src && !TT.bad) {
       const a = track();
       if (a) {
         trkOn = true; const tok = ++trkTok; a.playbackRate = fast ? 1.06 : 1; watchLoop();
@@ -278,7 +316,7 @@ export const Sound = (() => {
     }
     nextT = 0; loop = setInterval(pump, 50); pump();
   }
-  function stopLoop() { clearInterval(loop); loop = 0; clearInterval(trkWatch); trkWatch = 0; trkJump = false; if (trk && trkOn) { trk.pause(); } trkOn = false; }
+  function stopLoop() { clearInterval(loop); loop = 0; clearInterval(trkWatch); trkWatch = 0; trkJump = false; if (trk && trkOn) { trk.pause(); } seamStop(); trkTok++; trkOn = false; }
 
   // ===== âm báo theo theme =====
   const arp = (fs, ty, vol, gap, dur) => fs.forEach((f, i) => tone(f, dur || 0.22, ty, vol, later(i * gap)));
@@ -364,7 +402,7 @@ export const Sound = (() => {
     unlock() { const ua = navigator.userActivation; if (!ua || ua.hasBeenActive) unlocked = true; ac(); },
     // kiểu nhạc: 'lobby' | 'q' | null (tắt tạm)
     mode(m) { stopLoop(); fast = false; if (!m) { paused = true; return; } if (m !== mode) step = 0; mode = m; levels(); paused = false; startLoop(); },
-    hurry(v) { fast = !!v; if (trk && trkOn) trk.playbackRate = fast ? 1.06 : 1; },
+    hurry(v) { fast = !!v; if (trk && trkOn) trk.playbackRate = fast ? 1.06 : 1; seamRate(fast ? 1.06 : 1); },
     pauseMusic() { paused = true; stopLoop(); }, resumeMusic() { paused = false; startLoop(); },
     // có bạn vừa chọn đáp án: tiếng nhỏ, cao dần theo số người đã trả lời
     answer(n) { if (!sfxOn || !live()) return; duck(); fx().answer(n); },

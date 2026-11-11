@@ -129,7 +129,7 @@ const CSV = 'Số;Question;A1;A2;A3;A4;Time;Correct;Nhóm;Đoạn văn\n' +
   await host.waitForTimeout(400);
   check(/2\/3/.test(await host.textContent('#na')), 'màn chiếu đếm 2/3 đã nộp');
   // thử gian lận: nộp lại lần 2 bị chặn
-  const again = await A.evaluate(async (pin) => { const m = await import(new URL('js/common.js?v=20', location.href).href); const P = await m.player(); try { await P.D.set(P.D.ref(P.db, 'quiz/' + pin + '/answers/2/' + P.uid), { a: 1, at: P.D.serverTimestamp() }); return 'ok'; } catch (e) { return 'ERR'; } }, PIN);
+  const again = await A.evaluate(async (pin) => { const m = await import(new URL('js/common.js?v=21', location.href).href); const P = await m.player(); try { await P.D.set(P.D.ref(P.db, 'quiz/' + pin + '/answers/2/' + P.uid), { a: 1, at: P.D.serverTimestamp() }); return 'ok'; } catch (e) { return 'ERR'; } }, PIN);
   check(again === 'ERR', 'không nộp lại câu đã nộp');
   await C.click('#gGo'); await C.click('#gGo'); // Chi chỉ làm 1 câu rồi nộp
   // chữa từng câu
@@ -161,7 +161,7 @@ const CSV = 'Số;Question;A1;A2;A3;A4;Time;Correct;Nhóm;Đoạn văn\n' +
   await host.click('[data-gq="3"]');
   await host.waitForFunction(() => (document.querySelector('.gq.cur') || {}).textContent && document.querySelector('.gq.cur').textContent.startsWith('34.'));
   check(true, 'nhảy tới lại câu 34');
-  const sc = await host.evaluate(async (pin) => { const x = await window.MACC.ready(); const m = await import(new URL('js/common.js?v=20', location.href).href); const B = await m.base(); const s = await B.D.get(B.D.ref(B.db, 'quiz/' + pin)); const v = s.val(); const nm = {}; Object.keys(v.players).forEach((u) => { nm[v.players[u].name] = u; }); return { s: Object.fromEntries(Object.entries(nm).map(([n, u]) => [n, v.scores[u].s])), ans: Object.fromEntries(Object.entries(nm).map(([n, u]) => [n, [1, 2, 3].map((q) => (v.answers[q] && v.answers[q][u] ? v.answers[q][u].a : '-')).join('')])), at: [1, 2, 3].map((q) => v.answers[q] && v.answers[q][nm.An] && v.answers[q][nm.An].at), st: v.state }; }, PIN);
+  const sc = await host.evaluate(async (pin) => { const x = await window.MACC.ready(); const m = await import(new URL('js/common.js?v=21', location.href).href); const B = await m.base(); const s = await B.D.get(B.D.ref(B.db, 'quiz/' + pin)); const v = s.val(); const nm = {}; Object.keys(v.players).forEach((u) => { nm[v.players[u].name] = u; }); return { s: Object.fromEntries(Object.entries(nm).map(([n, u]) => [n, v.scores[u].s])), ans: Object.fromEntries(Object.entries(nm).map(([n, u]) => [n, [1, 2, 3].map((q) => (v.answers[q] && v.answers[q][u] ? v.answers[q][u].a : '-')).join('')])), at: [1, 2, 3].map((q) => v.answers[q] && v.answers[q][nm.An] && v.answers[q][nm.An].at), st: v.state }; }, PIN);
   check(sc.ans.An === '022' && sc.ans['Bình'] === '02-' && sc.ans.Chi === '--2', 'câu trả lời từng câu ở answers/{câu}: ' + JSON.stringify(sc.ans));
   check(sc.at[0] === sc.at[1] && sc.at[1] === sc.at[2], 'cả nhóm cùng một giờ nộp');
   check(sc.s.An > sc.s['Bình'] && sc.s['Bình'] > sc.s.Chi, 'điểm: An > Bình > Chi ' + JSON.stringify(sc.s));
@@ -198,7 +198,7 @@ const CSV = 'Số;Question;A1;A2;A3;A4;Time;Correct;Nhóm;Đoạn văn\n' +
   await host.click('#bStart');
   await D.waitForSelector('#sAns:not([hidden]) .pbtn', { timeout: 20000 });
   check(await host.$('.gwrap') === null && await host.$('.hgrid') !== null, 'màn chiếu bộ cũ như trước');
-  const qp = await host.evaluate(async (pin) => { const m = await import(new URL('js/common.js?v=20', location.href).href); const B = await m.base(); return Object.keys((await B.D.get(B.D.ref(B.db, 'quiz/' + pin + '/qpub/0'))).val()).sort().join(); }, PIN2);
+  const qp = await host.evaluate(async (pin) => { const m = await import(new URL('js/common.js?v=21', location.href).href); const B = await m.base(); return Object.keys((await B.D.get(B.D.ref(B.db, 'quiz/' + pin + '/qpub/0'))).val()).sort().join(); }, PIN2);
   check(qp === 'o,pts,t,time', 'qpub bộ cũ chỉ có t, o, time, pts');
   await D.click('.pbtn.k0');
   await host.waitForSelector('#chart', { timeout: 15000 });

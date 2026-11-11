@@ -1,6 +1,6 @@
 /* Minto Quiz — soạn bộ câu hỏi (chỉ giáo viên) */
-import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack, CLASSES, quizClass, classLabel, byClass, fetchAudio, AU_PART } from './common.js?v=20';
-import { loadUses, badges, confirmUse, markDialog, warnings, lopOptions } from './dadung.js?v=2';
+import { $, esc, isTeacher, COLORS, SHAPES, LETTERS, THEMES, MUSIC_THEMES, MUSIC_PART, musicPartId, fetchTrack, CLASSES, quizClass, classLabel, byClass, fetchAudio, AU_PART } from './common.js?v=21';
+import { loadUses, badges, confirmUse, markDialog, warnings, lopOptions } from './dadung.js?v=3';
 
 const QP = window.QP;
 const LIB = {

@@ -3,7 +3,7 @@
   'use strict';
   var NEWS = [
     { v: '1.23.1', d: '2026-11-11', items: [
-      'Theme Thiên thần: nhạc nền phát trọn cả bài rồi lặp lại, không còn cắt đoạn đầu.'
+      'Theme Thiên thần: nhạc nền phát trọn cả bài, hết bài nối lại từ đầu liền mạch đúng nhịp (không khựng, không có khoảng lặng).'
     ] },
     { v: '1.23', d: '2026-11-09', items: [
       '⏸ Dừng giờ (phím P): chỉ dừng đồng hồ, học viên vẫn làm bài, âm thanh vẫn chạy. Bấm ▶ Chạy giờ để đếm tiếp. Muốn dừng hẳn (khoá điện thoại, tắt âm thanh) thì bấm ⏹ Dừng tất cả.',

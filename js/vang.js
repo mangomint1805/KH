@@ -1,7 +1,7 @@
 /* Minto Quiz — ⛏️ Đào vàng cả lớp (màn học sinh).
    Mỗi bạn tự trả lời liên tục tới khi hết giờ, không chờ cả lớp. Đúng: 10 vàng × hệ số chuỗi (×1.5 từ 3, ×2 từ 5, ×3 từ 10).
    Sai: hiện đáp án đúng vài giây, chuỗi về 0. Tiến độ ghi vào quiz/$pin/gold/$uid để máy chiếu hiện bảng vàng. */
-import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, Sound, SHAPES, LETTERS, applyTheme } from './common.js?v=20';
+import { $, esc, qtHtml, show, player, serverClock, bgfx, confetti, Sound, SHAPES, LETTERS, applyTheme } from './common.js?v=21';
 
 const SS = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} } };
 const PIN = (new URLSearchParams(location.search).get('pin') || SS.get('qz.pin') || '').replace(/\D/g, '').slice(0, 6);
