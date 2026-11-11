@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var NEWS = [
+    { v: '1.23.1', d: '2026-11-11', items: [
+      'Theme Thiên thần: nhạc nền phát trọn cả bài rồi lặp lại, không còn cắt đoạn đầu.'
+    ] },
     { v: '1.23', d: '2026-11-09', items: [
       '⏸ Dừng giờ (phím P): chỉ dừng đồng hồ, học viên vẫn làm bài, âm thanh vẫn chạy. Bấm ▶ Chạy giờ để đếm tiếp. Muốn dừng hẳn (khoá điện thoại, tắt âm thanh) thì bấm ⏹ Dừng tất cả.',
       'Câu nhóm Part 3/4/6/7 không giới hạn thời gian nữa (đồng hồ hiện ∞, điện thoại ghi "Không giới hạn"): cả lớp làm xong thì tự chấm, hoặc thầy bấm Chấm bài ⏭. Trả lời đúng là được trọn điểm, không tính nhanh chậm.',

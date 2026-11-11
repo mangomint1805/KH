@@ -4,7 +4,7 @@
    - quizHW/{id}: bài về nhà (lop, qs)
    - quizResults/_dadung: thầy tự đánh dấu (dùng trên giấy, kiểm tra ngoài app), { m: [{ id, qz, title, lop, at, note, fp }] }
    Trùng nội dung: mỗi câu có một mã (fp) tính từ câu hỏi + đáp án đã chuẩn hoá (bỏ dấu, chữ hoa, thứ tự đáp án). */
-import { esc, quizClass, classLabel, CLASSES } from './common.js?v=19';
+import { esc, quizClass, classLabel, CLASSES } from './common.js?v=20';
 
 export const MARK = '_dadung';
 const KIND = { live: '▶ trên lớp', gold: '⛏️ Đào vàng', hw: '📝 về nhà', tay: '✋ đánh dấu tay' };

@@ -131,7 +131,7 @@ export const Sound = (() => {
   // tải xong mới có src. g = mức chỉnh cho đều tai giữa các bài (tính lúc thầy tải nhạc lên)
   // loop = [giây bắt đầu, giây kết thúc]: chỉ lặp một đoạn của bài. Thiên thần (Approval desire, ~165 BPM, 1 ô nhịp ≈ 1,454 giây)
   // lặp 16 ô nhịp dạo đầu (0–23,27 giây), quay lại ngay trước phách trống đầu tiên vào ở 23,29 giây (thầy muốn ngắn hơn bản 33,7 giây)
-  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089, loop: [0, 23.27] } };
+  const TRACKS = { idol: { g: 0.275 }, scifi: { g: 0.216 }, y2k: { g: 0.089 } };
   let trk = null, trkSrc = null, trkGain = null, trkOn = false, trkTok = 0, trkWatch = 0, trkJump = false;
   // canh vòng lặp: gần tới điểm kết thúc thì giảm nhỏ rất nhanh, nhảy về đầu đoạn rồi mở lại (nghe liền, không bị khựng)
   function watchLoop() {

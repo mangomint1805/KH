@@ -1,7 +1,7 @@
 /* Minto Quiz — màn host (thầy chiếu lên lớp).
    Luồng chơi tham khảo Rahoot (https://github.com/Ralex91/Rahoot, MIT); phần realtime viết lại bằng Firebase RTDB. */
-import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack, quizClass, classLabel, byClass, groupRuns, qLabel, fetchAudio, PMAX } from './common.js?v=19';
-import { loadUses, badges, confirmUse, lopOptions, fps } from './dadung.js?v=1';
+import { $, esc, qtHtml, base, isTeacher, serverClock, points, streakBonus, Sound, confetti, bgfx, countUp, simWeak, COLORS, SHAPES, LETTERS, THEMES, themeOf, applyTheme, savedTheme, loadTrack, quizClass, classLabel, byClass, groupRuns, qLabel, fetchAudio, PMAX } from './common.js?v=20';
+import { loadUses, badges, confirmUse, lopOptions, fps } from './dadung.js?v=2';
 
 const SHOW_MS = 3000, LS_KEY = 'qz.host';
 let B = null, D = null, now = () => Date.now();
